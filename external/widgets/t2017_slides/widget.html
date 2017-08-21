@@ -1,0 +1,85 @@
+<div class="mslide_content_box">
+	<!--{if !$widget_data.ads}-->
+	<div class="padding10 center">请配置</div>
+	<!--{else}-->
+	<!-- 首页轮播 -->
+	<div class="mslide_banners">
+		<ul id="pic_list{$widget_data.model_id}">
+			<!--{foreach from=$widget_data.ads item=ad name=fee_ad}-->
+			<li {if $smarty.foreach.fee_ad.first}style="opacity: 1;"{/if}><a href="{$ad.ad_link_url}" target="_blank"> 
+			<img width="778" height="440" class="DataLazyLoad" data-ks-lazyload="{$ad.ad_image_url}" src="{$ad.ad_image_url}">
+			</a></li>
+			<!--{/foreach}-->
+		</ul>
+
+	</div>
+	<div id="ico_list{$widget_data.model_id}" class="mslide_dot_box">
+		<ul>
+			<!--{foreach from=$widget_data.ads item=ad name=fee_ad}-->
+			<li class="dot_default {if $smarty.foreach.fee_ad.first}dot_show{/if}"><a href="#"></a></li>
+			<!--{/foreach}-->
+		</ul>
+	</div>
+	<script>
+		$(function() {
+			var bg_color = $('#bg_color');
+			var bg_array = [ {$widget_data.bg_colors}  ]; //'#83cdf0', '#e0b392', '#fcaaac', '#7ac8d2'
+			var box = $('#box');
+			var show = $('#pic_list{$widget_data.model_id}');
+			var bigPics = show.find('li');
+			var icons = $('#ico_list{$widget_data.model_id} li');
+			var index = 0;
+			var timers = null;
+			for (var i = 0; i < icons.length; i++) {
+				icons[i].index = i;
+			}
+			function init() {
+				bg_color.css({
+					'backgroundColor' : bg_array[0]
+				})
+			}
+			init();
+			function play() {
+				if (this.index != index) {
+					index = this.index;
+					change(index);
+				}
+			}
+			function autoplay() {
+				index++;
+				if (index > icons.length - 1) {
+					index = 0;
+				}
+				change(index);
+			}
+			function change(index) {
+				bg_color.css({
+					'backgroundColor' : bg_array[index]
+				})
+				icons.removeClass('dot_show');
+				icons.eq(index).addClass('dot_show');
+				bigPics.css({
+					"opacity" : 0,
+					"zIndex" : 0
+				});
+				bigPics.stop();
+				bigPics.eq(index).animate({
+					"opacity" : 1,
+					"zIndex" : 5
+				}, 500);
+			}
+			icons.hover(play);
+			timers = setInterval(autoplay, 5000);
+			box.hover(function() {
+				clearInterval(timers)
+			}, function() {
+				timers = setInterval(autoplay, 5000);
+			});
+
+		});
+	</script>
+	<!--{/if}-->
+</div>
+
+
+

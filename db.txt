@@ -1,0 +1,58 @@
+#例如下面是例子，不是现在表的内容
+ALTER TABLE `ecs_supplier_byagent` ADD is_delete tinyint(3) NOT NULL DEFAULT '0' COMMENT '删除 默认为0；0代表未删除，1代表已删除';
+ALTER TABLE `ecs_label_byagent` ADD is_delete tinyint(3) NOT NULL DEFAULT '0' COMMENT '删除 默认为0；0代表未删除，1代表已删除';
+
+// zjh 2017.8.9 增加缺货记录表
+ecm_goods_shortage_record
+
+// zjh 2017.8.1 ecm_th_customer_info
+加上字段 region -- 区域
+ALTER TABLE `ecm_th_customer_info` ADD `region` varchar(100) NOT NULL COMMENT '区域';
+
+
+
+// zjh 2017.7.25 ecm_goods_warehouse
+加上字段 batch_id  -- 批次号，用于关联商品所在批次
+ALTER TABLE `ecm_goods_warehouse` ADD `batch_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '所属批次号';
+
+
+//cdc 2017.7.25 退货批次录入表  
+CREATE TABLE `th_batch_goods` (
+`th_id`  int(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
+`th_batch_id`  int(12) UNSIGNED NOT NULL COMMENT '退货批次' ,
+`th_goods_sn`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '退货标签，商品编号' ,
+`th_in_time`  int(8) NOT NULL COMMENT '录入时间' ,
+`th_time`  int(8) UNSIGNED NOT NULL COMMENT '处理退货时间' ,
+PRIMARY KEY (`th_id`)
+)
+ENGINE=MyISAM
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+COMMENT='退货批次录入表'
+AUTO_INCREMENT=1
+CHECKSUM=0
+ROW_FORMAT=DYNAMIC
+DELAY_KEY_WRITE=0
+;
+
+
+// zjh 2017.7.25 ecm_goods_warehouse
+
+加上字段 batch_id  -- 批次号，用于关联商品所在批次
+
+ALTER TABLE `ecm_goods_warehouse` ADD `batch_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '所属批次号';
+
+
+//增加退货员对应退货批次表7.26
+CREATE TABLE `ecm_th_batch_user` (
+`th_id`  int(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
+`th_batch_id`  int(11) NOT NULL COMMENT '对应th_batch_goods表的th_id' ,
+`th_user_id`  int(11) UNSIGNED NOT NULL COMMENT '退货员id，对应member表的user_id' ,
+PRIMARY KEY (`th_id`)
+)
+ENGINE=MyISAM
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+AUTO_INCREMENT=1
+CHECKSUM=0
+ROW_FORMAT=FIXED
+DELAY_KEY_WRITE=0
+;

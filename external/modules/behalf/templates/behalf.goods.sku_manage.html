@@ -1,0 +1,549 @@
+{include file=header.whole.html}
+
+<script type="text/javascript">
+
+	function tag_printer(rows)
+	{		 
+		  $.post($("#form-nhd").attr('action'),  $("#form-nhd").serialize(), function(result) {
+          		console.log(result)
+			 	if(result.done)
+          		{
+          			$('#save_nhd_inp').val(result.retval);
+          		}
+          }, 'json');
+
+		  LODOP = getLodop();
+		  if(!confirm("下面将直接打印 "+rows.length+" 个标签，确定继续吗？")) return;
+		  
+		  LODOP.PRINT_INITA(0,0,326,121,"51zwd_代发_退货单_标签打印");
+		  LODOP.SET_PRINT_PAGESIZE(1,860,320,"");
+		  
+		  for(i=0;i<rows.length;i++)
+		  {
+			  if(i%2 == 0)
+			  {
+			  	LODOP.NewPage();
+			  	LODOP.ADD_PRINT_RECT(8,8,145,112,2,0);
+			  	LODOP.ADD_PRINT_TEXT(13,13,140,15,rows[i][8]);
+			  	LODOP.SET_PRINT_STYLEA(0,"FontSize",8);
+			  	LODOP.SET_PRINT_STYLEA(0,"Bold",1);
+			  	LODOP.ADD_PRINT_TEXT(28,13,140,28,rows[i][9]);
+			  	LODOP.SET_PRINT_STYLEA(0,"FontSize",7);
+			  	LODOP.ADD_PRINT_BARCODE(57,13,'37mm','9mm',"128A",rows[i][2]);
+			  	LODOP.SET_PRINT_STYLEA(0,"ShowBarText",0);
+			  	LODOP.ADD_PRINT_TEXT(42,90,30,14,rows[i][12]);
+			  	LODOP.SET_PRINT_STYLEA(0,"FontSize",8);
+			  	LODOP.ADD_PRINT_TEXT(42,116,10,14,rows[i][14]);
+			  	LODOP.SET_PRINT_STYLEA(0,"FontSize",8);
+			  	LODOP.ADD_PRINT_TEXT(42,136,10,14,rows[i][13]);
+			  	LODOP.SET_PRINT_STYLEA(0,"FontSize",8);
+			  	LODOP.ADD_PRINT_TEXT(92,10,80,20,rows[i][15]);
+			  	LODOP.SET_PRINT_STYLEA(0,"FontSize",9);
+			  	LODOP.SET_PRINT_STYLEA(0,"AlignJustify",1);
+			  	LODOP.SET_PRINT_STYLEA(0,"Bold",1);
+			  	LODOP.ADD_PRINT_TEXT(93,116,42,20,rows[i][2].substring(10,rows[i][2].length));
+			  	LODOP.SET_PRINT_STYLEA(0,"FontSize",7);
+			  }
+			  else
+			  {
+				    LODOP.ADD_PRINT_RECT(8,165,145,112,2,0);
+				  	LODOP.ADD_PRINT_TEXT(13,170,140,15,rows[i][8]);
+				  	LODOP.SET_PRINT_STYLEA(0,"FontSize",8);
+				  	LODOP.SET_PRINT_STYLEA(0,'Bold',1);
+				  	LODOP.ADD_PRINT_TEXT(28,170,140,28,rows[i][9]);//颜色尺寸
+				  	LODOP.SET_PRINT_STYLEA(0,"FontSize",7);
+				  	LODOP.ADD_PRINT_BARCODE(57,170,'37mm','9mm',"128A",rows[i][2]);//商品编码
+				  	LODOP.SET_PRINT_STYLEA(0,"ShowBarText",0);
+				  	LODOP.ADD_PRINT_TEXT(42,247,30,14,rows[i][12]);//档口优惠
+				  	LODOP.SET_PRINT_STYLEA(0,"FontSize",8);
+				  	LODOP.ADD_PRINT_TEXT(42,273,10,14,rows[i][14]);
+				  	LODOP.SET_PRINT_STYLEA(0,"FontSize",8);
+				  	LODOP.ADD_PRINT_TEXT(42,293,10,14,rows[i][13]);
+				  	LODOP.SET_PRINT_STYLEA(0,"FontSize",8);
+				  	LODOP.ADD_PRINT_TEXT(92,167,80,20,rows[i][15]);
+				  	LODOP.SET_PRINT_STYLEA(0,"FontSize",9);
+				  	LODOP.SET_PRINT_STYLEA(0,"AlignJustify",1);
+				  	LODOP.SET_PRINT_STYLEA(0,"Bold",1);
+				  	LODOP.ADD_PRINT_TEXT(93,273,42,20,rows[i][2].substring(10,rows[i][2].length));
+				  	LODOP.SET_PRINT_STYLEA(0,"FontSize",7);
+			  }
+			  
+			  
+		  }
+
+			  LODOP.SET_PRINT_MODE("TAG_PRINT_TASK","退货单标打印" + "end");
+			  LODOP.SET_PRINT_MODE("POS_BASEON_PAPER",true);
+			  LODOP.SET_SHOW_MODE("NP_NO_RESULT",true);
+			  LODOP.PRINT();			  
+		 
+	}
+	
+	
+
+	
+	function print_table(rows)
+	{
+		if($('#save_nhd_inp').val() == null || $('#save_nhd_inp').val() == '')
+		{
+			bootbox.confirm({
+				'buttons':{
+					'confirm':{
+						'label':'继续打印'
+					},
+					'cancel':{
+						'label':'取消打印'
+					}
+				},
+				'title':'打印退货单',
+				'message':'打印退货表格',
+				'callback':function(result){
+					if(result)
+					{
+						print_table_real(rows)
+					}
+					else
+					{						
+					}
+				}
+			});
+		}
+		else
+		{
+			print_table_real(rows);
+		}
+	}
+	
+	function print_table_real(rows)
+	{
+		var table_html="<table cellspacing='0' cellpadding='3' border='1' width='100%' bordercolor='#cccccc' style='border-collapse:collapse;font-size:12px;'><thead><tr><th width='3%'></th><th width='10%'>商品编码</th><th width='23%'>商品名称</th><th width='13%'>市场</th><th width='7%'>货号</th><th width='5%'>单价</th><th width='13%'>颜色尺寸</th><th width='6%'>优惠</th><th width='10%'>买家留言</th></tr></thead><tbody>";
+		
+		for($i = 0;$i < rows.length; $i++ )
+		{
+			table_html += "<tr><td width='3%'>"+($i + 1)+"</td><td width='10%'>"+rows[$i][2]+"</td><td width='23%'>"+rows[$i][4]+
+			"</td><td width='13%'>"+rows[$i][5]+"</td><td width='7%'>"+rows[$i][7]+"</td><td width='5%'>"+rows[$i][6]+"</td><td width='13%'>"+rows[$i][9]+
+			"</td><td width='6%'>"+rows[$i][10]+"</td><td width='10%'>"+rows[$i][11]+"</td></tr>";
+		}
+		
+		table_html += "</tbody><tfoot><tr><td></td><td>本页动态合计</td>"+
+		"<td tdata='pageNO' format='#'><p align='center'><b>第<font color='#0000FF'>#</font>页</b></p></td>"+
+		"<td tdata='pageCount' format='#' align='left'><p align='center'><b>总<font color='#0000FF'>##</font>页</b></td>"+
+		"<td></td><td colspan='2' tdata='subSum' format='#,##0.00' align='left'>小计<font color='#0000FF'>###</font></td>"+
+		"<td colspan='2' tdata='subSum' format='#,##0.00' align='left'>小计<font color='#0000FF'>###</font></td>"+
+		"</tr></tfoot></table>";
+		
+		var title_html ="<table cellspacing='0' cellpadding='3' border='0' width='100%' style='font-size:12px;'><thead><tr><th align='center' ><h2 style='font-size:16px;font-weight:bold;padding:0px;'>拿货单</h2></th></tr></thead><tbody><tr>"+
+		"<td align='right'>代发名称：{$bh_name}&nbsp;&nbsp;&nbsp;&nbsp;拿货日期：{$smarty.now|date:simple}&nbsp;&nbsp;&nbsp;&nbsp;拿货人：__________&nbsp;&nbsp;</td>"+
+		"</tr></tbody></table>";
+		
+		var thanks_html ="<div style='text-align:left;font-size:11px;'>感谢您对我要做网店51zwd.com的支持！"+ $('#save_nhd_inp').val() + "</div>"
+		
+		LODOP = getLodop();
+		LODOP.PRINT_INIT("打印退货单表格");
+		LODOP.ADD_PRINT_TABLE("1%","0.1%","99.8%","4%",title_html);
+		LODOP.SET_PRINT_STYLEA(0,"ItemType",1);
+		LODOP.SET_PRINT_STYLEA(0,"LinkedItem",1);			
+		LODOP.ADD_PRINT_HTM("5%","0.1%","40%","3%",thanks_html);
+		LODOP.SET_PRINT_STYLEA(0,"ItemType",1);
+		//LODOP.SET_PRINT_STYLEA(0,"LinkedItem",1);	
+		LODOP.ADD_PRINT_TABLE("7%","0.1%","99.8%","90%",table_html);
+		LODOP.SET_PRINT_STYLEA(0,"FontSize",7);
+		LODOP.SET_SHOW_MODE("NP_NO_RESULT",true);
+		LODOP.PREVIEW();	
+	}
+	
+	//
+	//Pipelining function for DataTables. To be used to the `ajax` option of DataTables
+	//
+	$.fn.dataTable.pipeline = function ( opts ) {
+	 // Configuration options
+	 var conf = $.extend( {
+	     pages: 5,     // number of pages to cache
+	     url: '',      // script url
+	     data: null,   // function or object with parameters to send to the server
+	                   // matching how `ajax.data` works in DataTables
+	     method: 'GET' // Ajax HTTP method
+	 }, opts );
+
+	 // Private variables for storing the cache
+	 var cacheLower = -1;
+	 var cacheUpper = null;
+	 var cacheLastRequest = null;
+	 var cacheLastJson = null;
+
+	 return function ( request, drawCallback, settings ) {
+	     var ajax          = false;
+	     var requestStart  = request.start;
+	     var drawStart     = request.start;
+	     var requestLength = request.length;
+	     var requestEnd    = requestStart + requestLength;
+	      
+	     if ( settings.clearCache ) {
+	         // API requested that the cache be cleared
+	         ajax = true;
+	         settings.clearCache = false;
+	     }
+	     else if ( cacheLower < 0 || requestStart < cacheLower || requestEnd > cacheUpper ) {
+	         // outside cached data - need to make a request
+	         ajax = true;
+	     }
+	     else if ( JSON.stringify( request.order )   !== JSON.stringify( cacheLastRequest.order ) ||
+	               JSON.stringify( request.columns ) !== JSON.stringify( cacheLastRequest.columns ) ||
+	               JSON.stringify( request.search )  !== JSON.stringify( cacheLastRequest.search )
+	     ) {
+	         // properties changed (ordering, columns, searching)
+	         ajax = true;
+	     }
+	      
+	     // Store the request for checking next time around
+	     cacheLastRequest = $.extend( true, {}, request );
+
+	     if ( ajax ) {
+	         // Need data from the server
+	         if ( requestStart < cacheLower ) {
+	             requestStart = requestStart - (requestLength*(conf.pages-1));
+
+	             if ( requestStart < 0 ) {
+	                 requestStart = 0;
+	             }
+	         }
+	          
+	         cacheLower = requestStart;
+	         cacheUpper = requestStart + (requestLength * conf.pages);
+
+	         request.start = requestStart;
+	         request.length = requestLength*conf.pages;
+
+	         // Provide the same `data` options as DataTables.
+	         if ( $.isFunction ( conf.data ) ) {
+	             // As a function it is executed with the data object as an arg
+	             // for manipulation. If an object is returned, it is used as the
+	             // data object to submit
+	             var d = conf.data( request );
+	             if ( d ) {
+	                 $.extend( request, d );
+	             }
+	         }
+	         else if ( $.isPlainObject( conf.data ) ) {
+	             // As an object, the data given extends the default
+	             $.extend( request, conf.data );
+	         }
+
+	         settings.jqXHR = $.ajax( {
+	             "type":     conf.method,
+	             "url":      conf.url,
+	             "data":     request,
+	             "dataType": "json",
+	             "cache":    false,
+	             "success":  function ( json ) {
+	                 cacheLastJson = $.extend(true, {}, json);
+
+	                 if ( cacheLower != drawStart ) {
+	                     json.data.splice( 0, drawStart-cacheLower );
+	                 }
+	                 json.data.splice( requestLength, json.data.length );
+	                  
+	                 drawCallback( json );
+	             }
+	         } );
+	     }
+	     else {
+	         json = $.extend( true, {}, cacheLastJson );
+	         json.draw = request.draw; // Update the echo for each response
+	         json.data.splice( 0, requestStart-cacheLower );
+	         json.data.splice( requestLength, json.data.length );
+
+	         drawCallback(json);
+	     }
+	 }
+	};
+
+	//Register an API method that will empty the pipelined data, forcing an Ajax
+	//fetch on the next draw (i.e. `table.clearPipeline().draw()`)
+	$.fn.dataTable.Api.register( 'clearPipeline()', function () {
+	 return this.iterator( 'table', function ( settings ) {
+	     settings.clearCache = true;
+	 } );
+	} );
+
+   
+  $(function(){
+  	// $('#query_time_wrapper').datetimepicker({format:'YYYY-MM-DD'});
+	  // $('#query_time_wrapper').on('dp.change',function(e){
+		  
+		 //  var setDate = Date.parse(e.date);
+		 //  var objDate = new Date(setDate);
+
+		 //  var y = objDate.getFullYear(); //年
+		 //  var m = objDate.getMonth() + 1;//月
+		 //  var d = objDate.getDate();//日
+		 //  var dateStr = y+"-"+m+"-"+d;
+		 //  $("input[name='query_time']").val(dateStr);
+		 //  $('#query_time_form').submit();
+	  // });
+
+	   $('#query_time_wrapper').datetimepicker({format:'YYYY-MM-DD HH:mm:ss'});
+	  $('#query_endtime_wrapper').datetimepicker({format:'YYYY-MM-DD HH:mm:ss'});
+	  $('#query_time_wrapper').on('dp.change',function(e){
+		  $('#query_endtime_wrapper').data("DateTimePicker").minDate(e.date);
+		  
+		  if(!$("#query_time_form").data('bootstrapValidator').isValid()) {  
+        		$("#query_time_form").data('bootstrapValidator').resetForm();  
+    		}  
+
+		  $('#query_time_form').bootstrapValidator('disableSubmitButtons', false);
+	  });
+	  $('#query_endtime_wrapper').on('dp.change',function(e){
+		  $('#query_time_wrapper').data("DateTimePicker").maxDate(e.date);
+
+		   if(!$("#query_time_form").data('bootstrapValidator').isValid()) {  
+        		$("#query_time_form").data('bootstrapValidator').resetForm();  
+    		}  
+
+		  $('#query_time_form').bootstrapValidator('disableSubmitButtons', false);
+	  }); 
+	  $('#query_time_form').bootstrapValidator({
+		  feedbackIcons: {
+	            valid: 'glyphicon glyphicon-ok',
+	            invalid: 'glyphicon glyphicon-remove',
+	            validating: 'glyphicon glyphicon-refresh'
+	        }, 
+		  fields:{
+			  query_time:{
+				  feedbackIcons:'false',
+				  validators:{
+					  notEmpty:{},
+					  date:{
+						message:'请输入有效日期,格式形如：2015-01-01 23:59:59',
+					  	format:"YYYY-MM-DD HH:mm:ss"
+					  }
+				  }
+			  },
+			  query_endtime:{
+				  validators:{
+					  notEmpty:{},
+					  date:{
+						message:'请输入有效日期,格式形如：2015-01-01 23:59:59',
+					  	format:"YYYY-MM-DD HH:mm:ss"
+					  },
+					  /* remote:{
+						url:"index.php?module=behalf&act=check_querytime",
+						data:{'query_time':$('#query_time_wrapper').data("DateTimePicker").date}
+					  },  */
+					  different:{
+						  field:'query_time',
+						  message:'结束时间应该大于开始时间'
+					 } 
+				  }
+			 },
+			
+		  }
+	  });
+	
+	  var dt = $("#sku_manage_table").DataTable({
+			// "ordering":true,
+		 //    "paging":true,
+		 //    "info":true,
+		 //    "searching":true,
+		 	"processing": true,
+	        "serverSide": true,
+		    "columnDefs":[
+		       {"orderable":true,"targets":0},           
+		       {"orderable":true,"targets":1},
+		       {"orderable":false,"targets":2},           
+		       {"orderable":false,"targets":3},  
+		       {"orderable":false,"targets":4},           
+		       {"orderable":false,"targets":5},  
+		       {"orderable":false,"targets":6},           
+		       {"orderable":false,"targets":7},  
+		       {"orderable":false,"targets":8},           
+		       {"orderable":false,"targets":9},  
+		       {"orderable":false,"targets":10},           
+		       {"orderable":false,"targets":11},  
+		       {"orderable":false,"targets":12},           
+		       {"orderable":false,"targets":13},  
+		       {"orderable":false,"targets":14},           
+		       {"orderable":false,"targets":15},  
+		       {"orderable":false,"targets":16},                   
+		      
+		     ],
+
+		    "columns":[
+		     	{ "data": "pay_time"},
+		     	{ "data": "batch_id" },
+		     	{"render":function(data,type,row){
+						
+						return '<div onclick="showBatch('+row.goods_no+');" style="cursor:pointer;">'+row.goods_no+'</div>';
+
+					}
+				},
+	            // { "data": "goods_no" },
+	            {"data": "order_sn"},
+	            { "data": "market_name" },
+	            { "data": "store_no" },
+	            { "data": "goods_sku" },
+	            { "data": "size" },
+	            { "data": "color" },
+	            { "data": "number" },
+	            { "data": "has_taken" },
+	            { "data": "warehouse" },
+	            { "data": "shortage" },
+	            { "data": "shortage_reason" },
+	            { "data": "arrive_time" },
+	            { "data": "goods_price" },
+	            {"render":function(data,type,row){
+						
+						if(row.real_price == 0 && row.has_taken == 1){
+							return row.goods_price;
+						}else{
+							return row.real_price;
+						}
+
+					}
+				},
+	            // { "data": "real_price" },
+	            { "data": "real_name" },
+	            { "data": "remark" }
+
+		     ],
+
+		     "lengthMenu": [100,250,500,1000,2000,10000,100000],   // 一页内可选的数量
+		     // "serverSide": true,
+		     // "lengthChange": false,   // 分页限定一个数据
+		     // "pageLength":1,
+		     "order":[
+		        [1,'DESC']      
+		     ],
+		     "ajax": $.fn.dataTable.pipeline( {
+	            url: "index.php?module=behalf&act=get_pipe_sku&query_time="+$("input[name='query_time']").val()+"&query_endtime="+$("input[name='query_endtime']").val(),
+	            pages: 5 // number of pages to cache
+	        } ),
+		     //dom:"Bfrtip",
+		     dom:"<'container-fluid' <'row' <'col-xs-2' l><'col-xs-7' B><'col-cs-3' f> > <t> <'row' <'col-xs-4' i><'col-xs-8 text-right' p>  >  >",
+
+		     "buttons":[
+		       'excel'
+		     ],
+			"language":{
+				"url":"{lib file='/DataTables/zn.json'}",
+				"buttons":{
+					"copy":"复制表格",
+					"excel":"导出EXCEL",
+					"print":"打印表格",
+					"colvis":"隐/显列"
+				}
+			},
+			"pagingType":'full_numbers'
+		});
+	  //add table no
+	
+  });
+
+function showBatch(goods_no)
+{
+	$.post("index.php?module=behalf&act=get_batch", {goods_no:goods_no}, function(result) {
+     	
+          	console.log(result)
+			 
+          	alert(result);
+    }, 'json');	
+}
+
+</script>
+<style type="text/css">
+	.col-xs-7{margin-left:23%;margin-top:-5px; width:250px;}
+	.col-cs-3{margin-right: 15px;}
+</style>
+
+<div class="container-fluid">
+		<div class="panel-body"></div>
+		<div class="alert alert-warning">
+			<span class="text-danger"> 可搜索的条件：</span>1.订单日期， 2.订单号， 3.货号(SKU)， 4.拿货员<br/>
+			注意：订单日期搜索的格式（如：<small class="text-muted">2017-7-19</small>）<br />
+			<span class="text-danger"> 追溯标签曾在的批次：</span>点击标签号那一列下想追溯的标签<br/>
+		</div>
+
+	  <div class="panel panel-default">
+		<!-- <div class="panel-body">	
+			<div class="row">
+				<div>
+				<form id="query_time_form" class="form-vertical" method="post" action="index.php?module=behalf&act=sku_manage">
+					  	<div class="col-xs-4">
+			   				<div class='input-group date' id='query_time_wrapper'>
+			   				    <span class="input-group-addon">日期</span>
+			                    <input type="text" class="form-control" name="query_time" value="{$date}">
+			                    <span class="input-group-addon">
+			                        <span class="glyphicon glyphicon-time"></span>
+			                    </span>
+			                </div>
+			            </div>
+			        </form>
+				</div>
+
+			</div>	
+			
+		</div> -->
+		<div class="panel-body">
+			<form id="query_time_form" class="form-vertical" method="post" action="index.php?module=behalf&act=sku_manage">
+			
+			    <div class="form-group">
+			        <div class="row">
+			            <label class="col-xs-1 text-right text-warning">分配时间</label>
+					  	<div class="col-xs-4">
+			   				<div class='input-group date' id='query_time_wrapper'>
+			   				    <span class="input-group-addon">从</span>
+			                    <input type="text" class="form-control" name="query_time" value="{$start_time}">
+			                    <span class="input-group-addon">
+			                        <span class="glyphicon glyphicon-time"></span>
+			                    </span>
+			                </div>
+			            </div>
+			            
+			            <div class="col-xs-4">
+			   				<div class='input-group date' id='query_endtime_wrapper'>
+			   					<span class="input-group-addon">至</span>
+			                    <input type="text" class="form-control" name="query_endtime" value="{$end_time}">
+			                    <span class="input-group-addon">
+			                        <span class="glyphicon glyphicon-time"></span>
+			                    </span>
+			                </div>
+			            </div>
+						
+						<input type="submit" class="btn btn-info" id="query_submit" value="筛选" />	
+
+			        </div>
+			    </div>
+			        
+			</form>
+
+		</div>
+		
+			<table id="sku_manage_table" class="table table-condensed table-striped table-bordered table-hover" width="100%">
+		  	<thead>
+		  		<tr>
+		  		    <th class="text-center ">订单日期</th>
+		  		    <th class="text-center ">批次号</th>
+		  			<th class="text-center ">标签号</th>
+		  			<th class="text-center ">订单号</th>
+		  			<th class="text-center ">市场</th>
+		  			<th class="text-center ">档口</th>
+		  			<th class="text-center ">货号</th>
+		  			<th class="text-center ">尺码</th>
+		  			<th class="text-center ">颜色</th>
+		  			<th class="text-center ">数量</th>
+		  			<th class="text-center ">已拿件数</th>
+		  			<th class="text-center ">入仓件数</th>
+		  			<th class="text-center ">缺货件数</th>
+		  			<th class="text-center ">缺货原因</th>
+		  			<th class="text-center ">到货时间</th>
+		  			<th class="text-center ">单价</th>
+		  			<th class="text-center ">拿货单价</th>
+		  			<th class="text-center ">拿货员</th>
+		  			<th class="text-center ">备注</th>
+		  		</tr>
+		  	</thead>
+		  	<tbody>
+		  
+		  </table>
+	  </div>
+</div>
+{include file=footer.whole.html}

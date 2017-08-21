@@ -1,0 +1,12 @@
+<!--{if !$widget_data.images}-->
+<div class="padding10 center">请配置</div>
+<!--{else}-->
+<div class="module_1200">
+	<div class="floor_apart">
+		<!-- {foreach from=$widget_data.images item=image name=fe_image} -->
+		<a href="{$image.ad_link_url}" title="{$image.ad_title_url}" class="item" target="_blank"> <img class="DataLazyLoad" data-ks-lazyload="{$image.ad_image_url}" src="{$image.ad_image_url}" alt="">
+		</a>
+		<!-- {/foreach} -->
+	</div>
+</div>
+<!--{/if}-->

@@ -1,0 +1,283 @@
+{include file=header.html}
+<style>
+/**/
+body, button, input, select, textarea {
+    font: 12px/1 Tahoma,Helvetica,Arial,"宋体",sans-serif;
+}
+
+.florid-gold-medal-container {
+    margin: 30px auto 0;
+    width: 1190px;
+}
+.florid-gold-medal-line-container {
+    border-bottom: 2px solid #333;
+    position: relative;
+    width: 100%;
+    z-index: 2;
+}
+.glod-medal-title-container {
+    position: absolute;
+    text-align: center;
+    top: -8px;
+    width: 1190px;
+    z-index: 2;
+}
+.glod-medal-title-container a, .glod-medal-title-container a:hover {
+    color: #333;
+    display: inline-block;
+    font-family: "Microsoft YaHei";
+    font-size: 20px;
+    font-weight: 700;
+}
+.glod-medal-title {
+    background: #fff none repeat scroll 0 0;
+    color: #333;
+    display: inline-block;
+    font-family: "Microsoft YaHei";
+    font-size: 20px;
+    font-weight: 700;
+    padding: 0 10px;
+}
+
+.xxx-adshow-container {
+    float: left;
+    margin-right: 20px;
+    width: 222px;
+}
+.xxx-img-container {
+    height: 300px;
+    overflow: hidden;
+    position: relative;
+    width: 222px;
+    z-index: 2;
+}
+.xxx-adshow-container .florid-hot-image-upload, .gold-medal-big-xxx-item .florid-hot-image-upload {
+    background: #fff none repeat scroll 0 0;
+    bottom: -28px;
+    left: 0;
+    opacity: 0.8;
+    position: absolute;
+    width: 222px;
+}
+.xxx-adshow-container .florid-hot-image-upload, .gold-medal-big-xxx-item .florid-hot-image-upload {
+    transition: all 0.3s ease 0s;
+}
+.xxx-adshow-container:hover .florid-hot-image-upload, .gold-medal-big-xxx-item:hover .florid-hot-image-upload {
+    bottom: 0;
+}
+.xxx-img-container .image-upload-item, .gold-medal-big-xxx-item .image-upload-item {
+    float: left;
+    width: 74px;
+}
+.xxx-img-container .image-upload-item a, .gold-medal-big-xxx-item .image-upload-item a {
+    color: #333;
+    display: block;
+    height: 28px;
+    line-height: 28px;
+    text-align: center;
+    transition: all 0.3s ease 0s;
+    width: 74px;
+}
+.xxx-img-container .image-upload-item a:hover, .gold-medal-big-xxx-item .image-upload-item a:hover {
+    background: #343434 none repeat scroll 0 0;
+    color: #fff;
+    text-decoration: none;
+}
+.gold-medal-big-xxx-item .florid-hot-image-upload {
+    width: 280px;
+}
+.gold-medal-big-xxx-item .image-upload-item {
+    width: 92px;
+}
+.gold-medal-big-xxx-item .image-upload-item a {
+    width: 92px;
+}
+.bix-xxx-img .middle-btn, .bix-xxx-img .middle-btn a {
+    width: 96px;
+}
+.xxx-icon-container {
+    height: 14px;
+    overflow: hidden;
+    padding: 15px 0;
+    width: 222px;
+}
+.icon-container {
+    float: left;
+    margin: 0 10px;
+}
+.xxx-icon-outside-container {
+    left: -10px;
+    position: relative;
+    z-index: 2;
+}
+
+.xxx-link-container {
+    overflow: hidden;
+    width: 222px;
+}
+.xxx-top-link {
+    -moz-box-orient: vertical;
+    color: #666;
+    height: 18px;
+    overflow: hidden;
+    padding: 2px 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.xxx-top-link .xxx-top, .xxx-top-link .xxx-bottom {
+    color: #666;
+    height: 18px;
+    line-height: 18px;
+    position: relative;
+    transition: all 0.3s ease 0s;
+    z-index: 2;
+}
+.xxx-top-link .xxx-top:hover {
+    color: #999;
+    text-decoration: none;
+}
+.xxx-top-link .xxx-bottom {
+    color: #999;
+}
+.xxx-top-link .xxx-bottom:hover {
+    color: #666;
+}
+.xxx-price-container {
+    color: #333;
+    font-family: arial;
+    font-size: 14px;
+    font-weight: 700;
+    margin-top: 10px;
+}
+.gold-medal-big-xxx-container {
+    margin-top: 45px;
+    overflow: hidden;
+    padding: 0 2px;
+    width: 1186px;
+}
+.big-xxxOutside-container {
+    width: 1212px;
+}
+.big-xxxOutside-container::before, .big-xxxOutside-container::after {
+    content: "";
+    display: table;
+    line-height: 0;
+}
+.big-xxxOutside-container::after {
+    clear: both;
+}
+.gold-medal-big-xxx-item {
+    float: left;
+    margin-right: 22px;
+    width: 280px;
+}
+.bix-xxx-img {
+    height: 380px;
+    overflow: hidden;
+    position: relative;
+    width: 280px;
+    z-index: 2;
+}
+.big-xxx-btn-container {
+    margin: 40px 0;
+    text-align: center;
+}
+.big-xxx-btn-container {
+    width: 1190px;
+}
+.big-xxx-btn-container .more-btn {
+    border: 1px solid #333;
+    color: #333;
+    display: inline-block;
+    font-size: 14px;
+    height: 34px;
+    line-height: 34px;
+    overflow: hidden;
+    padding: 0 20px;
+    position: relative;
+    text-decoration: none;
+}
+.big-xxx-btn-container .more-btn:hover {
+    background: #333 none repeat scroll 0 0;
+    color: #fff;
+}
+.xxx-top::after, .xxx-bottom::after {
+    border-bottom: 1px solid #666;
+    content: "";
+    left: 0;
+    position: absolute;
+    top: 16px;
+    transition: all 0.5s ease 0s;
+    width: 0;
+}
+.xxx-top:hover::after, .xxx-bottom:hover::after {
+    width: 100%;
+}
+.gold-medal-big-xxx-item .xxx-icon-container, .gold-medal-big-xxx-item .xxx-link-container {
+    width: 280px;
+}
+
+.more-btn {
+    background: #fff none repeat scroll 0 0;
+}
+.more-btn::after {
+    background: #fff none repeat scroll 0 0;
+    color: #333;
+    content: attr(data-text);
+    height: 50%;
+    left: 0;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    transition: transform 0.3s cubic-bezier(0.2, 1, 0.3, 1) 0s;
+    width: 100%;
+    z-index: 2;
+}
+.more-btn::before {
+    background: #fff none repeat scroll 0 0;
+    bottom: 0;
+    color: #333;
+    content: attr(data-text);
+    height: 50%;
+    left: 0;
+    line-height: 0;
+    overflow: hidden;
+    position: absolute;
+    transition: transform 0.3s cubic-bezier(0.2, 1, 0.3, 1) 0s;
+    width: 100%;
+    z-index: 2;
+}
+.more-btn:hover::after {
+    transform: translate3d(0px, -100%, 0px);
+}
+.more-btn:hover::before {
+    transform: translate3d(0px, 100%, 0px);
+}
+.more-btn > span {
+    color: #fff;
+    display: block;
+    font-size: 14px;
+    opacity: 0;
+    transform: scale3d(0.2, 0.2, 1);
+    transition-delay: 0s, 0s;
+    transition-duration: 0.3s, 0.3s;
+    transition-property: transform, opacity;
+    transition-timing-function: cubic-bezier(0.2, 1, 0.3, 1);
+}
+.more-btn:hover > span {
+    opacity: 1;
+    transform: scale3d(1, 1, 1);
+}
+
+</style>
+
+<div class="w-full">
+    <div class="w mt10" area="goldstores_adv" widget_type="area">
+    	<!--{widgets page=goldstores area=goldstores_adv}-->
+    </div>
+	<div class="clr" style="height:30px;"></div>
+	<div class="w mt10" area="top" widget_type="area">	     
+         <!--{widgets page=goldstores area=top}-->
+    </div>
+</div>
+{include file=footer.html}

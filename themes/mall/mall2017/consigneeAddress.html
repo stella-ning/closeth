@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="css/order3.css">
+    <script src="js/jquery.min.js"></script>
+</head>
+<body>
+<fieldset class="o-address" style="padding: 20px 0 10px;">
+    <div class="item clearfix">
+        <label><span class="required" aria-required="true">*</span>所在地区：</label>
+        <div id="windowRegionBox">
+        <dl class="v-select o-region">
+        <dt><i></i><span class="regionText">请选择省市区</span></dt>
+        <dd class="clearfix">
+            <ul class="region-tab clearfix">
+                <li class="region-tab-t curr" data-level="1">省份</li>
+                <li class="line"></li>
+                <li class="region-tab-t " data-level="2">城市</li>
+                <li class="line"></li>
+                <li class="region-tab-t " data-level="3">县区</li>
+            </ul>
+        <div class="region-con clearfix">
+        <ul class="region-select province-list clearfix" style="" data-level="1">
+        <li class="letters">A-G</li>
+        <li class="citys letter-A-G">
+        <a class="select-item" data-level="1" href="javascript:;" data-id="16198" data-name="安徽省">安徽</a>
+        <a class="select-item" data-level="1" href="javascript:;" data-id="16189" data-name="北京">北京</a>
+        <a class="select-item" data-level="1" href="javascript:;" data-id="16211" data-name="重庆">重庆</a><a class="select-item" data-level="1" href="javascript:;" data-id="16208" data-name="福建省">福建</a><a class="select-item" data-level="1" href="javascript:;" data-id="16186" data-name="甘肃省">甘肃</a><a class="select-item" data-level="1" href="javascript:;" data-id="16210" data-name="广东省">广东</a><a class="select-item" data-level="1" href="javascript:;" data-id="16220" data-name="广西壮族自治区">广西</a><a class="select-item" data-level="1" href="javascript:;" data-id="16197" data-name="贵州省">贵州</a></li><li class="letters">H-K</li><li class="citys letter-H-K"><a class="select-item" data-level="1" href="javascript:;" data-id="16191" data-name="海南省">海南</a><a class="select-item" data-level="1" href="javascript:;" data-id="16202" data-name="河北省">河北</a><a class="select-item" data-level="1" href="javascript:;" data-id="16214" data-name="黑龙江省">黑龙江</a><a class="select-item" data-level="1" href="javascript:;" data-id="16216" data-name="河南省">河南</a><a class="select-item" data-level="1" href="javascript:;" data-id="16207" data-name="吉林省">吉林</a><a class="select-item" data-level="1" href="javascript:;" data-id="16209" data-name="湖北省">湖北</a><a class="select-item" data-level="1" href="javascript:;" data-id="16200" data-name="湖南省">湖南</a><a class="select-item" data-level="1" href="javascript:;" data-id="16188" data-name="江苏省">江苏</a><a class="select-item" data-level="1" href="javascript:;" data-id="16213" data-name="江西省">江西</a></li><li class="letters">L-S</li><li class="citys letter-L-S"><a class="select-item" data-level="1" href="javascript:;" data-id="16204" data-name="辽宁省">辽宁</a><a class="select-item" data-level="1" href="javascript:;" data-id="16218" data-name="内蒙古自治区">内蒙古</a><a class="select-item" data-level="1" href="javascript:;" data-id="16206" data-name="宁夏回族自治区">宁夏</a><a class="select-item" data-level="1" href="javascript:;" data-id="16215" data-name="青海省">青海</a><a class="select-item" data-level="1" href="javascript:;" data-id="16187" data-name="山东省">山东</a><a class="select-item" data-level="1" href="javascript:;" data-id="16193" data-name="上海">上海</a><a class="select-item" data-level="1" href="javascript:;" data-id="16212" data-name="山西省">山西</a><a class="select-item" data-level="1" href="javascript:;" data-id="16194" data-name="陕西省">陕西</a><a class="select-item" data-level="1" href="javascript:;" data-id="16205" data-name="四川省">四川</a></li><li class="letters">T-Z</li><li class="citys letter-T-Z"><a class="select-item" data-level="1" href="javascript:;" data-id="16195" data-name="天津">天津</a><a class="select-item" data-level="1" href="javascript:;" data-id="16196" data-name="新疆维吾尔自治区">新疆</a><a class="select-item" data-level="1" href="javascript:;" data-id="16219" data-name="西藏自治区">西藏</a><a class="select-item" data-level="1" href="javascript:;" data-id="16190" data-name="云南省">云南</a><a class="select-item" data-level="1" href="javascript:;" data-id="16192" data-name="浙江省">浙江</a></li></ul><ul class="region-select city-list clearfix" style="display:none" data-level="2"></ul><ul class="region-select district-list clearfix" style="display:none" data-level="3"></ul></div></dd></dl></div>
+        <input type="hidden" name="region" id="editRegion" value="" aria-required="true" aria-invalid="false" class="valid">
+        <div class="address-error" id="unSupportAddress" for="address1">你的收货地址不在配送范围内</div>
+    </div>
+    <div class="item clearfix">
+        <label><span class="required" aria-required="true">*</span>详细地址：</label>
+        <textarea name="address" id="editAddress" class="input-address j-input-address valid" cols="30" rows="10" aria-required="true" aria-invalid="false"></textarea>
+    </div>
+    <!-- <div class="item clearfix" style="display: none;">
+        <label>邮政编码：</label>
+        <input type="zipcode" name="zipcode" maxlength="6" id="editZipcode">
+    </div> -->
+    <div class="item clearfix">
+        <label><span class="required" aria-required="true">*</span>收货人：</label>
+        <input type="text" name="consignee" id="editConsignee" aria-required="true" aria-invalid="false" class="valid">
+        <span class="desc"><span class="red">注：</span>请填写真实姓名，否则部分快递拒绝收件</span>
+    </div>
+    <div class="item clearfix">
+        <label><span class="required" aria-required="true">*</span>手机号码：</label>
+        <input type="mobile" name="mobile" id="editMobile" maxlength="11" class="input-mobile valid" data-msg-mobile="请填写正确的收货人手机号" aria-required="true">
+    </div>
+    <div class="item clearfix">
+        <label>固定号码：</label>
+        <input type="text" name="tel0" id="editTel0" class="input-area_no j-tels j-tel-0 valid" placeholder="区号" maxlength="4">
+        <input type="text" name="tel1" id="editTel1" class="input-tel j-tels j-tel-1 valid" placeholder="电话号码" maxlength="8">
+        <input type="hidden" class="j-tel valid" id="editTel" name="telephone" value="">
+    </div>
+    <div class="item clearfix mt10">
+        <label>&nbsp;</label>
+        <input type="button" style="width:90px;margin-left:112px;" class="btn btn-default btn-x-big" value="取消" name="cancel" id="cancelAddAddress">
+        <input type="submit" style="width:90px;margin-left: 10px;" class="btn btn-primary btn-x-big" value="保存" name="submit">
+        <input type="hidden" id="editId" name="id" value="">
+    </div>
+    <div class="clear"></div>
+</fieldset>
+</body>
+</html>

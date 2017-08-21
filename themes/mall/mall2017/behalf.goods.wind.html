@@ -1,0 +1,129 @@
+{include file=header2017.html}
+<!-- 推荐代发区 -->
+<script type="text/javascript" src="{lib file=search_area_goods.js}" charset="utf-8"></script>
+
+<div class="w mt10 mb10" area="top" widget_type="area">
+		<!--{widgets page=behalf_goods area=top}-->
+</div>
+<div id="main" class="w-full shop-wrap">
+	<div id="page-search-goods" class="w mb20 mt10">
+		<div class="w mb10 clearfix">
+		    {include file=curlocal_new.html}
+			
+   			<div class="col-main">
+			{include file=search.screening.html}
+
+       			<div class="glist w985 mt10">
+          			<div class="clearfix">
+                		<div class="list-sort">
+                    		<div class="search-type clearfix" style="display:block;">
+								<div class="float-left btn-type">
+									<a href="{url app=behalf_goods&act=index}" class="current" style="border-left:1px solid #ddd;">推荐代发商品</a>
+									<a href="{url app=behalf_goods&act=store}" style="brder-right:0px;background:#f5f5f5;">推荐代发店铺</a>
+
+									<!-- <a href="{url app=search&act=groupbuy}">搜索团购</a> -->
+								</div>
+
+                    		</div>
+                        	
+                    	</div>
+                        <!--{if $goods_list_order}-->
+                        <div class="goods-empty padding10 mb10">{$lang.no_records_and_give_order}</div>
+                        <!--{/if}-->
+                        <!--{if $kw_search_tips}-->
+                        <div class="goods-empty padding10 mb10">{$kw_search_tips}</div>
+                        <!--{/if}-->
+            			<div class="shop-wrap" ectype="current_display_mode">	
+            				<div class="conWrap">
+            				<div class="tab_content">
+            				<div class="goods-list">
+             				{include file=search.upload2017.html}    
+             				</div>
+             				</div>
+             				</div>
+          				</div>
+             			<!--{if !$goods_list_order}-->{include file=page.bottom.html}<!--{/if}-->
+          			</div>
+       			</div>
+  			</div>
+        	<div class="con-side fr" style="float:right;clear:none;">
+				<div class="comment-relative">
+					<div area="search_right_side" widget_type="area">
+						<!--{widgets page=behalf_goods area=search_right_side}-->
+					</div>
+	
+				</div>
+			</div>
+    	</div>
+
+    </div>
+</div>
+<script type="text/javascript">
+function item_masonry(){
+	    $('#container dl dt img').load(function(){
+	        $('#container').masonry({
+	            itemSelector: '#container dl',
+	            columnWidth:225,
+	            gutterWidth:16
+	        });
+	    });
+
+	    $('#container').masonry({
+	        itemSelector: '#container dl',
+	        columnWidth:225,
+	        gutterWidth:16
+	    });
+	}
+
+	$(function(){
+
+		function item_callback(){
+	        item_masonry();
+	    }
+
+	    item_callback();
+	    $('#container dl').fadeIn();
+
+		var sp =  <!--{if $smarty.get.page }-->{$smarty.get.page}<!--{else}-->1<!--{/if}-->;
+		var	scount = sp;
+
+		$("#container").infinitescroll({
+	        navSelector     : ".page-bottom",
+	        nextSelector    : ".page-bottom a.down",
+	        itemSelector    : "#container dl",
+	        debug:true,
+	        loading:{
+	            img: "{res file=images/loading-51zwd.GIF}",
+	            msgText: ' ',
+	            finishedMsg: '加载完毕',
+	            finished: function(){
+	                sp++;
+	                if(sp-scount>=3){ //到第10页结束事件
+	                   // $("#new_more").remove();
+	                    $("#infscr-loading").hide();
+						var tempUrl=$(".page-bottom a.down").attr("href");
+						var tempsp = 1+sp-1;
+						tempUrl=tempUrl.replace(/page=\d*/,"page="+tempsp);
+						$('.page-bottom').load(tempUrl+" div.page-bottom",function(){
+						   });
+						$('.page-top').load(tempUrl+" div.page-top",function(){
+					   });
+	                    $(".page-bottom").show();
+	                    $(window).unbind('.infscr');
+	                }
+	            }
+	        },state:{
+			   currPage: <!--{if $smarty.get.page }-->{$smarty.get.page}<!--{else}-->1<!--{/if}-->		},errorCallback:function(){
+	            $(".page-bottom").show();
+	        }
+
+	    },function(newElements){
+	        var $newElems = $(newElements);
+	        $('#container').masonry('appended', $newElems, false);
+	        $newElems.fadeIn();
+	        item_callback();
+  	    $('img.lazyload').lazyload();
+	    });
+	});
+</script>
+{include file=footer2017.html}

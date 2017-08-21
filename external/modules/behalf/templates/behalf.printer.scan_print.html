@@ -1,0 +1,270 @@
+{include file=header.whole.html}
+<script type="text/javascript">
+	var jjname="{$behalf.owner_name}";
+	var jjtel="{$behalf.bh_tel}";
+	var jjadr="{$behalf.region_name}{$behalf.bh_address}";
+	var dt;
+	var LODOP=getLodop(document.getElementById('LODOP_OB'),document.getElementById('LODOP_EM'));
+
+	$(function(){
+		//var detailRows = [];
+
+		jQuery("#checkall").on('ifChecked ifUnchecked',function(){
+			var checkall = this.checked ? 'check':'uncheck';
+			jQuery("input[name='orders']").iCheck(checkall);
+
+		});
+	});
+
+
+
+</script>
+
+<div class="container-fluid">
+	<div class="row order-list">
+		<div class="col-xs-12">
+			<form class="form-inline form" id="query_time_form" method="post">
+				<div class="form-group">
+					<div class="input-group input-group-sm">
+						<label class="input-group-addon">状态</label>
+						<select class="form-control selectpicker" name="type">
+							<option value="accepted">待发货</option>
+							<option value="shipped" {if $smarty.get.type eq 'shipped'}selected{/if}>已发货</option>
+							<option value="finished" {if $smarty.get.type eq 'finished'}selected{/if}>已完成</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="text-success">商品编码</label>
+					<input type="text" name="goods_no" id="goods_no" class="form-control input-sm">
+				</div>
+
+
+				<div class="form-group">
+					<div class="input-group input-group-sm">
+						<label class="input-group-addon">快递</label>
+						<select class="form-control selectpicker " id="exp_delivery" name="exp_delivery">
+							<option value="">所有快递</option>
+							<!--{foreach from=$deliverys item=deli}-->
+							<option value="{$deli.dl_id}" {if $query_dl eq $deli.dl_id}selected{/if}>{$deli.dl_name}</option>
+							<!--{/foreach}-->
+						</select>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<div class="input-group input-group-sm">
+						<label class="input-group-addon">打印</label>
+						<select class="form-control selectpicker " name="scan_print" id="scan_print">
+
+							<option value="1" {if $smarty.get.scan_print eq '1'} selected {/if}>是</option>
+							<option value="2" {if $smarty.get.scan_print eq '2' || $smarty.get.scan_print eq ''} selected {/if}>否</option>
+						</select>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label>商品状态</label>
+					<input type="radio" name="tomorrow" value="2" {if $smarty.get.tomorrow eq '2'}checked{/if} /> <small>不含缺货</small>
+					<input type="radio" name="tomorrow" value="1" {if $smarty.get.tomorrow eq '1'}checked{/if}/> <small>只含明天有</small>
+					<input type="radio" name="tomorrow" value="0" {if !$smarty.get.tomorrow}checked{/if}/> <small>不限</small>
+				</div>
+				<!-- <div class="form-group">
+                   <label>商品状态</label>
+                   <input type="checkbox" name="goods_status[]" value="tomorrow" {if in_array('tomorrow',$goods_status_arr)}checked{/if}/> <small>明天有</small>
+                   <input type="checkbox" name="goods_status[]" value="unformed" {if in_array('unformed',$goods_status_arr)}checked{/if}/> <small>未出货</small>
+                   <input type="checkbox" name="goods_status[]" value="outdated" {if in_array('outdated',$goods_status_arr)}checked{/if}/> <small>已下架</small>
+                </div> -->
+
+				<input type="hidden" name="module" value="behalf" />
+				<input type="hidden" name="act" value="scan_print" />
+
+				<div class="form-group">
+					<button class="btn btn-success btn-sm"><span class="glyphicon glyphicon-search"></span> 搜索</button>
+				</div>
+				<!--{if $query.buyer_name or $query.add_time_from or $query.add_time_to or $query.order_sn or $query_goods_name or $query_goods_seller_bm or $query_oos or $query.invoice_no or $query_dl}-->
+				<div class="form-group">
+					<a class="btn btn-info btn-sm" href="{url module=behalf&act=scan_print&type=$query.type}">{$lang.cancel_query}</a>
+				</div>
+				<!--{/if}-->
+			</form>
+		</div>
+	</div>
+
+	<div class="alert alert-warning alert-dismissible" role="alert">
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		只能搜索和打印待发货、已发货和已完成的订单！<strong>调整收货地址，请点击对应的订单编号！</strong>
+	</div>
+	<div class="row">
+
+		<div class="col-xs-2">
+			<div class="input-group input-group-sm">
+				<label class="input-group-addon">当前模板</label>
+				<select id="template_select" name="template" class="form-control selectpicker">
+					<option value="zto">中通快递</option>
+					<option value="yto">圆通快递</option>
+				</select>
+			</div>
+		</div>
+		<div class="col-xs-3">
+			<div id="printer_equipment" class="input-group input-group-sm"></div>
+		</div>
+
+	</div>
+
+	<div style="height:10px;"></div>
+	<div class="container-fluid">
+		<div class="row">
+			<table id="order_list_table" class="table table-striped table-bordered table-hover" celllspacing="0" border="0" width="100%">
+				<thead>
+				<tr>
+					<th class="text-center" style="width:30px;">
+						<input type="checkbox" id="checkall"/>
+					</th>
+					<th class=" text-center" style="width:60px;">订单编号</th>
+					<th class=" text-center" style="width:60px;">收件人</th>
+					<th class=" text-center" style="width:100px;">收件人省市区</th>
+					<th class=" text-center" style="width:120px;">收件人详细地址</th>
+					<th class=" text-center" style="width:60px;">收件人手机</th>
+					<th class=" text-center" style="width:60px;">收件邮编</th>
+					<th class=" text-center" style="width:60px;">快递公司</th>
+					<th class=" text-center" style="width:60px;">快递单号</th>
+					<th class=" text-center">内装货品</th>
+					<th class=" text-center" style="width:60px;">订单状态</th>
+					<th class=" text-center" style="width:60px;">支付时间</th>
+					<th></th>
+					<th></th>
+				</tr>
+				</thead>
+
+
+
+
+
+			</table>
+
+		</div>
+	</div>
+	{include file=page.bottom.html}
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			 var goods_ids = [];
+			$('#query_time_form').bootstrapValidator({
+				feedbackIcons: {
+					valid: 'glyphicon glyphicon-ok',
+					invalid: 'glyphicon glyphicon-remove',
+					validating: 'glyphicon glyphicon-refresh'
+				},
+				fields: {
+
+					goods_no: {
+						validators: {
+							notEmpty: {},
+							regexp: {
+								regexp: /^\d{14,20}$/,
+								message: '请输入14位-20位数字的商品编码'
+							},
+							remote: {
+								url: "index.php?module=behalf&act=check_goodsno"
+							}
+						}
+					}
+
+				}
+			}).on('success.field.bv', function (e, data) {
+
+				if (data.field == 'goods_no') {
+
+					// Prevent form submission
+					e.preventDefault();
+
+					// Get the form instance
+					var $form = $(e.target);
+
+					// Get the BootstrapValidator instance
+					var bv = $form.data('bootstrapValidator');
+					goods_ids.push($form[0].value);
+					var postData = {
+						'goods_no': $form[0].value,
+						'goods_ids' : goods_ids.join(','),
+						'exp_delivery':$("#exp_delivery").val(),
+						'tomorrow':$("input[name='tomorrow']:checked").val(),
+						//		'goods_action': $("input[name='goods_action']:checked").val()
+					};
+					// Use Ajax to submit form data
+
+
+					$.post($form.attr('action'), postData , function (result) {
+						//var json = $.parseJSON(result);$form.serialize()
+					//	console.log(result);
+						var botbox = bootbox.alert(result.msg);
+						//redraw data table
+
+
+
+
+
+						dt = $('#order_list_table').DataTable({
+							//	$('#example').DataTable({
+
+							data : result.data,
+							"bDestroy": true,
+						columns: [
+								{ data: 'checked_order' },
+								{ data: 'order_sn' },
+								{ data: 'consignee' },
+								{ data: 'consignee_region' },
+								{ data: 'consignee_address' },
+								{ data: 'phone_mob' },
+								{ data: 'zipcode' },   //编码
+								{ data: 'dl_name' },   //快递公司
+								{ data: 'invoice_no' },  //快递单号
+								{ data: 'goods_info' },  //内装货品
+								{ data: 'order_status' },  //订单状态
+								{ data: 'pay_date' }  //支付时间
+							]
+						});
+
+                        if(result.data){
+                        	if(result.msg == 'success'){
+								print_scan();
+								goods_ids = [];
+							}
+
+                        }else{
+
+                            dt.clear().draw();
+                        }
+
+						if(result.msg == 'fail'){
+
+							console.log(goods_ids.pop());
+						}
+                        //console.log(botbox);
+                        setTimeout(function () {
+                            botbox.modal('hide');
+                            $('#goods_no').val('').focus();
+                            //		dt.clearPipeline().draw();
+                        }, 800);
+					}, 'json');
+
+
+
+					$form.bootstrapValidator('resetForm', true);
+
+				}
+
+
+			});
+
+
+		});
+
+
+
+
+	</script>
+</div>
+<script type="text/javascript" src="{res file=js/md_print.js}?dt={$datevar}"></script>
+{include file=footer.whole.html}

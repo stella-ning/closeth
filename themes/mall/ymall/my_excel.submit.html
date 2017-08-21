@@ -1,0 +1,100 @@
+{include file=member.header.html}
+<div class="content">
+<input type="button" onclick="quickcheck()"class="submit_ajax" value="批量提交" />
+
+    <!-- {foreach from=$orders item=order name=i} -->
+
+
+        <div> <input type="checkbox" class="ordercheck"  name="ordercheck" value="{$order.info.ordersn}" checked/> {$order.info.name}<a onclick="showbox(this)" style="cursor: pointer">【点击修改】</a><span></span>
+            <input type="hidden" name="ordersn" value="{$order.info.ordersn}" data-bind="[{$i}]['ordersn']" />
+            <input type="hidden" name="tbjson" value='{$order.tbjson}' data-bind="[{$i}]['tbjson']" />
+        </div>
+    <div style="display: none">
+    <table>
+        <!-- {foreach from=$order.goods item=good name=j} -->
+    <tr>
+        <td><input type="text" value="{$good.code}" name="code" data-bind="[{$i}]['tbgoods'][{$j}]['code']"/></td><td><input type="text" value="{$good.attr}" name="attr" data-bind="[{$i}]['tbgoods'][{$j}]['attr']" /> </td><td><input type="text" name="num" value="{$good.num}" /></td><td><input type="text" name="num" value="{$good.price}" /></td>
+    </tr>
+        <!--{/foreach}-->
+    </table>
+
+        <table><tbody>
+      <tr><td><input type="input" name="name" value="{$order.info.name}" data-bind="[{$i}]['name']" /></td></tr><tr><td colspan="2"><input type="input" name="address" value="{$order.info.address}" data-bind="[{$i}]['address']" /></td></tr><tr><td><input type="input" name="mobile" value="{$order.info.mobile}" data-bind="[{$i}]['mobile']" /></td></tr>
+        </tbody></table>
+    </div>
+    <br/>
+    <!--{/foreach}-->
+
+    </div>
+
+<script type="text/javascript">
+    var tbjson = {$tbjson};
+    function showbox(node){
+        var next = getNextSibling(node.parentNode);
+
+        if(next.style.display == 'block'){
+            next.style.display = 'none';
+            node.innerHTML = '[点击修改]';
+        }else{
+            next.style.display = 'block';
+            node.innerHTML = '[保存修改]';
+        }
+
+    }
+
+    function getNextSibling(node){
+        var nextSibling = node.nextSibling;
+        while(nextSibling && nextSibling.nodeType != 1){
+            nextSibling = nextSibling.nextSibling;
+        }
+        return nextSibling;
+    }
+
+    function quickcheck(node){
+        $('.submit_ajax').attr('disabled', true);
+        $('.ordercheck').each(function(k,data){
+            tojson = $(data).closest('div').find(':input:eq(2)').val();
+            quicksub(data , tojson);
+
+        });
+
+
+        //     quicksub(result);
+    }
+
+    function quicksub(node, res){
+
+
+
+       /* if(res.error == 0){
+
+        }else if(res.error == 1){
+
+        }*/
+
+         //node =  getNextSibling(node.parentNode);
+
+
+
+            if(node.checked == true && checkform(node) == true){
+                $.post(
+                        'index.php?app=my_excel&act=ajax_submit',
+                        'jid=' + node.value + '&ojson=' +  JSON.stringify(tbjson[node.value]),
+                        function(response){
+                            $(node).closest('div').find('span').html('订单号：'+ response.order_id);
+                            $(node).attr("disabled",true);
+                        },
+                        'json'
+                );
+
+            }
+
+    }
+    //验证表单信息
+    function checkform(id){
+        //测试返回true
+        return true;
+    }
+</script>
+
+{include file=footer.html}

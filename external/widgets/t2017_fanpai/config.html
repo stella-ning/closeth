@@ -1,0 +1,73 @@
+<script type="text/javascript">
+var _d = DialogManager.get('config_dialog');
+_d.setWidth(350);
+_d.setPosition({top:0,left:window.width/2});
+$('#_config_widget_form_').submit(function(){
+    stopScroll();
+});
+$('#add_image').click(function(){
+	var field_nums = $(".field_item").size();
+	if(field_nums < 6){
+		 $(this).before('<div class="field_item">' +
+			    	'<p><b>提示文字：</b><input type="text" name="ad_title[]" value="{$image.ad_title}"> 例：学生党卫衣</p>'+
+			    	'<p style="overflow:hidden;"><strong>链接地址:</strong> <input type="text" name="ad_link_url[]" value="{$image.ad_link_url}" style="width:214px;"/></p>' +
+			        '<label>上传图片:(<span>gif|jpg|jpeg|png 格式,182px*364px</span>)</label>' +
+			        '<p><input type="file" name="ad_image_file[]" /></p>'+ 
+			        '<p><input type="button" value="删除图片" onclick="drop_image(this)" style="width:66px;" />'+
+			        '<b style="color:green;margin-left:10px">大图'+ (field_nums) +'</b>'+
+			        '</p></div>');
+	}
+	else if( field_nums < 12 && field_nums > 5){
+		$(this).before('<div class="field_item">' +
+		    	'<p><b>提示文字：</b><input type="text" name="ad_title[]" value="{$image.ad_title}"> 例：微胖巧搭</p>'+
+		    	'<p style="overflow:hidden;"><strong>链接地址:</strong> <input type="text" name="ad_link_url[]" value="{$image.ad_link_url}" style="width:214px;"/></p>' +
+		        '<label>上传图片:(<span style="color:red">gif|jpg|jpeg|png 格式,114px*114px</span>)</label>' +
+		        '<p><input type="file" name="ad_image_file[]" /></p>'+		        
+		        '<p><input type="button" value="删除图片" onclick="drop_image(this)" style="width:66px;" />'+
+		        '<b style="color:red;margin-left:10px">小图'+ (field_nums -5) +'</b>'+
+		        '</p></div>');
+	}
+	else{
+		alert('已达到最大数量!');
+	}
+   
+});
+function drop_image(btnObj)
+{
+    $(btnObj).parents('.field_item').remove();
+}
+</script>
+
+<div class="field_item">
+	<label>模块名称:</label>
+	<p><input type="text" name="model_name" value="{$options.model_name}" /></p>	
+	<label>右侧查看全部的链接地址:</label>
+	<p><input type="text" name="show_all_linkurl" value="{$options.show_all_linkurl}" style="width:214px" /></p>	
+</div>
+<!-- {if $options.ads} -->
+<!-- {foreach from=$options.ads item=image name=fe_img} -->
+<div class="field_item">
+    <p><b>提示文字：</b><input type="text" name="ad_title[]" value="{$image.ad_title}"> 例：学生党卫衣</p>
+    <p style="overflow:hidden;"><strong>链接地址:</strong> <input type="text" name="ad_link_url[]" value="{$image.ad_link_url}" style="width:214px;"/>
+    </p>
+    <label>上传图片:(<span>gif|jpg|jpeg|png格式,182px*364px</span>)</label>
+    <p><input type="file" name="ad_image_file[]" />
+        <input type="hidden" name="ad_image_url[]" value="{$image.ad_image_url}" />   
+    <p>
+    <img src="{$image.ad_image_url}" height="45" />  
+    <input  type="button" value="删除图片" onclick="drop_image(this)" style="width:66px;"/>
+    {if $smarty.foreach.fe_img.iteration lte 5}<b style="color:green;margin-left:10px">大图{$smarty.foreach.fe_img.iteration}</b>{else}<b style="color:red;margin-left:10px">小图{$smarty.foreach.fe_img.iteration|sub:5}</b>{/if}
+    </p>
+</div>
+<!-- {/foreach} -->
+<!-- {else} -->
+<div class="field_item">
+    <p><b>提示文字：</b><input type="text" name="ad_title[]" value="{$image.ad_title}"> 例：学生党卫衣</p>
+     <p style="overflow:hidden;"><strong>链接地址:</strong> <input type="text" name="ad_link_url[]" value="{$image.ad_link_url}" style="width:214px;"/>
+    </p>
+    <label>上传图片:(<span>gif|jpg|jpeg|png格式  182px*364px</span>)</label>
+    <p><input type="file" name="ad_image_file[]" /></p>
+    <p><input type="button" value="删除图片" onclick="drop_image(this)" style="width:66px;" /></p>
+</div>
+<!-- {/if} -->
+<input type="button" id="add_image" value="新增图片" />

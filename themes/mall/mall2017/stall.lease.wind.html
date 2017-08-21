@@ -1,0 +1,104 @@
+{include file=header2017.html}
+<style>
+#page-search-goods .attribute .each .pv a.selected{color:#ff4444}
+table{background:#f0f0f0}
+table td,table th{background:#fff;text-align:center;font-size:14px;padding:10px 20px}
+table td{color:#666}
+</style>
+<script type="text/javascript" src="{lib file=search_stall.js}" charset="utf-8"></script>
+<script type="text/javascript">
+function show_tips(info)
+{
+	var html= "电话："+info+"。联系时，请说是在51网看到的。谢谢！";
+	$.jBox.info(html);	
+}
+$(function(){        
+       
+
+});
+
+
+</script>
+<div class="w mt10 mb10" area="top" widget_type="area">
+                <!--{widgets page=slease area=top}-->
+</div>
+<div id="main" class="w-full">
+        <div id="page-search-goods" class="w mb20 mt10">
+                <div class="w mb10 clearfix">
+                    {include file=curlocal.html}               
+                        <div class="attribute">                        
+                                <div class="content" style="border-top:1px solid #ddd">                                   
+			                        <div class="each clearfix">
+			                           <h4>{$lang.by_market}{$lang.colon}</h4>
+			                           <div class="pv" ectype="ul_market">
+			                             <a href="javascript:void(0);" {if !$smarty.get.mkid}class="selected"{/if} title="{$lang.all}" id="0">{$lang.all}</a>			            
+			                             <!--{foreach from=$markets item=market name=market_fee}-->
+			                               <a href="javascript:void(0);" {if $smarty.get.mkid eq $market.mk_id}class="selected"{/if} title="{$market.mk_name}" id="{$market.mk_id}">{$market.mk_name}</a>
+			                             <!--{/foreach}-->
+			                           </div>
+			                        </div>
+			                       
+			                       
+			                        <div class="each clearfix">
+			                           <h4>{$lang.by_stype}{$lang.colon}</h4>
+			                           <div class="pv" ectype="ul_stype">			                             
+			                               <a href="javascript:void(0);" {if !$smarty.get.stype }class="selected"{/if} title="{$lang.all}" data-value="" id="all_stype">{$lang.all}</a>			                            
+			                               <a href="javascript:void(0);" {if $smarty.get.stype eq '招租'}class="selected"{/if}  data-value="招租" id="all_stype1">招租</a>			                            
+			                               <a href="javascript:void(0);" {if $smarty.get.stype eq '求租'}class="selected"{/if} data-value="求租" id="all_stype2">求租</a>			                            
+			                           </div>
+			                        </div>
+			                        
+			                         <div class="each clearfix" style="border:none">
+			                           <h4>{$lang.by_ssize}{$lang.colon}</h4>
+			                           <div class="pv" ectype="ul_ssize">
+			                              <a href="javascript:void(0);" {if !$smarty.get.ssize }class="selected"{/if} title="{$lang.all}" data-value="" id="all_ssize">{$lang.all}</a>			                            
+			                               <a href="javascript:void(0);" {if $smarty.get.ssize eq '整档'}class="selected"{/if}  data-value="整档" id="all_ssize1">整档</a>			                            
+			                               <a href="javascript:void(0);" {if $smarty.get.ssize eq '半档'}class="selected"{/if} data-value="半档" id="all_ssize2">半档</a>		
+			                               <a href="javascript:void(0);" {if $smarty.get.ssize eq '1/3档'}class="selected"{/if} data-value="1/3档" id="all_ssize3">1/3档</a>		
+			                               <a href="javascript:void(0);" {if $smarty.get.ssize eq '1/4档'}class="selected"{/if} data-value="1/4档" id="all_ssize4">1/4档</a>		
+			                           </div>
+			                        </div>
+			                        
+                                </div>
+                        </div>
+                
+                        <div class="">
+                       		 <div class="glist mt10">
+                                <div class="clearfix"> 
+	                                <div id="container" class=" clearfix relative">
+	                                  	<table width="100%" cellpadding="3" cellspacing="1" border="0">
+	                                  		<thead>
+	                                  			<tr>
+	                                  				<th width="10%">类型</th>
+	                                  				<th width="15%">有效期</th>
+	                                  				<th width="15%">档口号</th>
+	                                  				<th width="10%">档口大小</th>
+	                                  				<th width="40%">详述</th>
+	                                  				<th width="10%">操作</th>
+	                                  			</tr>
+	                                  		</thead>
+	                                  		<tbody>
+	                                  		   <!--{foreach from=$stall_list item=stall name=stall_fee}-->
+	                                  			<tr>
+	                                  				<td width="10%">{$stall.stall_type}</td>
+	                                  				<td width="15%">{$stall.end_time|date:complete}</td>
+	                                  				<td width="15%">{$stall.mk_name}&nbsp;{$stall.stall_addr}</td>
+	                                  				<td width="10%">{$stall.stall_size}</td>
+	                                  				<td width="40%">{$stall.detail}</td>
+	                                  				<td width="10%"><a href="javascript:show_tips({$stall.mobile})" class="f33">联系档主</a></td>
+	                                  			</tr>
+	                                  		   <!--{/foreach}-->
+	                                  		</tbody>
+	                                  	</table>
+	                                </div>
+	                                <div class="mt10">
+	                                	{include file=page.bottom.html}
+	                                </div>
+                                </div>
+                       		 </div>
+                        </div>
+              
+   			 </div>
+		</div>
+</div>
+{include file=footer2017.html}

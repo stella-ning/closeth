@@ -1,0 +1,78 @@
+﻿<h3 class="mt10">{$lang.order_goods_service}<span class="ml10 f60" style="font-weight:normal">一共有{$goods_info.quantity}件商品</span></h3>
+<div class=" mt5 mb10 padding10 clearfix" style="text-align:left;border:1px solid #bad8fa">
+	<div class="clearfix">
+		<i class="gs_heart float-left"></i>
+		<span class="fs14 strong float-left ml20 w200 inline-block">服务</span>
+		<span class="fs14 strong float-left w200 inline-block">单价</span>
+		<span class="fs14 strong float-left w200 inline-block">数量</span>
+		<span class="fs14 strong float-left w200 inline-block">小计</span>
+	</div>
+	<div class="pl36 clearfix mt3">
+		<span class="w200 inline-block float-left">代发服务费</span>
+		<span class="f999 price w200 inline-block float-left">{$smarty.const.BEHALF_GOODS_SERVICE_FEE|default:0|price}</span>
+		<span class="f999 w200 inline-block float-left">X{$goods_info.quantity}</span>
+		<span class="f90 price w200 inline-block float-left">{$goods_info.behalf_fee|price}</span>
+	</div>
+	<div class="clearfix mt5">
+		<i class="gs_fix float-left"></i>
+		<span class="fs14 strong float-left ml20">质检</span>
+	</div>
+	<div class="pl36 mt3">
+		<ul>
+			<li class="clearfix">
+				<span class="float-left w200 inline-block">
+					<input type="radio" name="quality_check" value="1" checked class="vt" />
+					<label>初级质检<span class="f90">（款式颜色尺码）</span></label>
+				</span>
+				<span class="f999 float-left w200 inline-block price">{$smarty.const.BEHALF_GOODS_QUALITY_ELEMENTARY_CHECK_FEE|default:0|price}</span>
+				<span class="f999 float-left w200 inline-block">X{$goods_info.quantity}</span>
+				<span class="f90 float-left w200 inline-block price">{$goods_info.elementary_quality_check_fee|default:0|price}</span>
+			</li>
+			<li class="clearfix">
+				<span class="float-left w200 inline-block">
+					<input type="radio" name="quality_check" value="2" class="vt" />
+					<label>中级质检<span class="f90">（线头破损等）</span></label>
+				</span>
+				<span class="f999 float-left w200 inline-block price">{$smarty.const.BEHALF_GOODS_QUALITY_SECONDARY_CHECK_FEE|default:0|price}</span>
+				<span class="f999 float-left w200 inline-block">X{$goods_info.quantity}</span>
+				<span class="f90 float-left w200 inline-block price">{$goods_info.secondary_quality_check_fee|default:0|price}</span>
+			</li>
+		</ul>
+	</div>
+	<div class="clearfix mt5">
+		<i class="gs_tag float-left"></i>
+		<span class="fs14 strong float-left ml20">卡标</span>
+	</div>
+	<div class="pl36 clearfix mt3">
+		<span class="float-left w200 inline-block">
+			<input type="checkbox" name="tag_change" class="vt"/>
+			<label>更换吊牌</label>
+		</span>
+		<span class="f999 float-left w200 inline-block price">{$smarty.const.BEHALF_GOODS_CHANGE_TAGS_FEE|default:0|price}</span>
+		<span class="f999 float-left w200 inline-block">X{$goods_info.quantity}</span>
+		<span class="f90 float-left w200 inline-block price">{$goods_info.tags_change_fee|default:0|price}</span>
+	</div>
+	<div class="clearfix mt5">
+		<i class="gs_pack float-left"></i>
+		<span class="fs14 strong float-left ml20">包装</span>
+	</div>
+	<div class="pl36 clearfix mt3">
+		<span class="float-left w200 inline-block">
+			<input type="checkbox" name="bag_change" class="vt"/>
+			<label>更换包装袋</label>
+		</span>
+		<span class="f999 float-left w200 inline-block price">{$smarty.const.BEHALF_GOODS_CHANGE_PACKING_BAG_FEE|default:0|price}</span>
+		<span class="f999 float-left w200 inline-block">X{$goods_info.quantity}</span>
+		<span class="f90 float-left w200 inline-block price">{$goods_info.packing_bag_change_fee|default:0|price}</span>
+	</div>
+	<div class="clearfix mt5">
+		<i class="gs_pack float-left"></i>
+		<span class="fs14 strong float-left ml20">发货</span>
+	</div>
+	<div class="pl36 clearfix mt3">
+		<span class="float-left w200 inline-block">
+			<input type="checkbox" name="isfa" class="vt"/>
+			<label>有货就发</label>
+		</span>
+		</div>
+</div>

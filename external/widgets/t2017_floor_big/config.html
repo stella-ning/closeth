@@ -1,0 +1,180 @@
+<script type="text/javascript">
+	var _d = DialogManager.get('config_dialog');
+	_d.setWidth(650);
+	_d.setPosition({
+		top : 0,
+		left : window.width / 2
+	});
+	$('#_config_widget_form_').submit(function() {
+		stopScroll();
+	});
+	$('#add_image')
+			.click(
+					function() {
+						var field_nums = $(".field_item").size();
+
+						var html = '<div class="field_item">'
+								+ '<p>'
+								+ '<b>档口名称：</b><input type="text" name="ad_sname[]" value="{$image.ad_sname}">&nbsp;&nbsp; <b>档口地址：</b><input type="text" name="ad_saddr[]" value="{$image.ad_saddr}" />'
+								+ '</p>'
+								+ '<p>'
+								+ '<b>档口链接：</b><input type="text" name="store_link_url[]" value="{$image.store_link_url}" style="width: 280px;" />'
+								+ '</p>'
+								+ '<p>'
+								+ '<strong>档口大图：</strong>(<span style="color: red">gif|jpg|jpeg|png格式,590px*325px</span>) <input type="file" name="store_img_file[]" />'
+								+ '</p>'
+								+ '<div style="background:#f1f1f1">'
+								+ '<p>'
+								+ '<b>商品名称：</b><input type="text" name="ad_gname[]" value="{$image.ad_gname}">&nbsp;&nbsp; <b>价格：</b>&yen; <input type="text" name="ad_gprice[]" value="{$image.ad_gprice}" style="width: 50px" />&nbsp;&nbsp;例:'
+								+ '50.00'
+								+ '</p>'
+								+ '<p>'
+								+ '<b>商品链接：</b><input type="text" name="goods_link_url[]" value="{$image.goods_link_url}" style="width: 280px;" />'
+								+ '</p>'
+								+ '<p>'
+								+ '<strong>上传图片：</strong>(<span style="color: green">gif|jpg|jpeg|png格式,110px*165px</span>) <input type="file" name="ad_image_file[]" />'
+								+ '</p>'
+								+ '</div>'
+								+ '<div style="background:#f1f1f1;margin-top:3px">'
+								+ '<p>'
+								+ '<b>商品名称：</b><input type="text" name="ad_gname[]" value="{$image.ad_gname}">&nbsp;&nbsp; <b>价格：</b>&yen; <input type="text" name="ad_gprice[]" value="{$image.ad_gprice}" style="width: 50px" />&nbsp;&nbsp;例:'
+								+ '50.00'
+								+ '</p>'
+								+ '<p>'
+								+ '<b>商品链接：</b><input type="text" name="goods_link_url[]" value="{$image.goods_link_url}" style="width: 280px;" />'
+								+ '</p>'
+								+ '<p>'
+								+ '<strong>上传图片：</strong>(<span style="color: green">gif|jpg|jpeg|png格式,110px*165px</span>) <input type="file" name="ad_image_file[]" />'
+								+ '</p>'
+								+ '</div>'
+								+ '<div style="background:#f1f1f1;margin-top:3px">'
+								+ '<p>'
+								+ '<b>商品名称：</b><input type="text" name="ad_gname[]" value="{$image.ad_gname}">&nbsp;&nbsp; <b>价格：</b>&yen; <input type="text" name="ad_gprice[]" value="{$image.ad_gprice}" style="width: 50px" />&nbsp;&nbsp;例:'
+								+ '50.00'
+								+ '</p>'
+								+ '<p>'
+								+ '<b>商品链接：</b><input type="text" name="goods_link_url[]" value="{$image.goods_link_url}" style="width: 280px;" />'
+								+ '</p>'
+								+ '<p>'
+								+ '<strong>上传图片：</strong>(<span style="color: green">gif|jpg|jpeg|png格式,110px*165px</span>) <input type="file" name="ad_image_file[]" />'
+								+ '</p>'
+								+ '</div>'
+								+ '<p>'
+								+ '<input type="button" value="删除图片" onclick="drop_image(this)" style="width: 66px;" />'
+								+ '</p>' + '</div>';
+						if (field_nums <= 4) {
+							$(this).before(html);
+						} else {
+							alert('已达到最大数量!');
+						}
+
+					});
+	function drop_image(btnObj) {
+		$(btnObj).parents('.field_item').remove();
+	}
+</script>
+
+<div class="field_item">
+	<p>
+		<strong>楼层名称：</strong><input type="text" name="floor_name" value="{$options.floor_name}" />&nbsp;&nbsp; <strong>楼层：</strong> <select name="floor_no">
+			<option value="1" {if $options.floor_no eq 1}selected{/if} >一楼</option>
+			<option value="2" {if $options.floor_no eq 2}selected{/if} >二楼</option>
+			<option value="3" {if $options.floor_no eq 3}selected{/if} >三楼</option>
+			<option value="4" {if $options.floor_no eq 4}selected{/if} >四楼</option>
+			<option value="5" {if $options.floor_no eq 5}selected{/if} >五楼</option>
+			<option value="6" {if $options.floor_no eq 6}selected{/if} >六楼</option>
+			<option value="7" {if $options.floor_no eq 7}selected{/if} >七楼</option>
+			<option value="8" {if $options.floor_no eq 8}selected{/if} >八楼</option>
+			<option value="9" {if $options.floor_no eq 9}selected{/if} >九楼</option>
+		</select>
+	</p>
+</div>
+<!-- {if $options.ads} -->
+<!-- {foreach from=$options.ads item=image name=fe_img} -->
+<div class="field_item">
+	<p>
+		<b>档口名称：</b><input type="text" name="ad_sname[]" value="{$image.ad_sname}">&nbsp;&nbsp; <b>档口地址：</b><input type="text" name="ad_saddr[]" value="{$image.ad_saddr}" />
+	</p>
+	<p>
+		<b>档口链接：</b><input type="text" name="store_link_url[]" value="{$image.store_link_url}" style="width: 280px;" />
+	</p>
+	<p>
+		<strong>档口大图：</strong>(<span style="color: red">gif|jpg|jpeg|png格式,590px*325px</span>) <input type="file" name="store_img_file[]" />
+		<input type="hidden" name="store_image_url[]" value="{$image.store_image_url}" />
+		<img src="{$image.store_image_url}" height="45" />
+	</p>
+	<!-- {foreach from=$image.goods_arr item=goods name=fe_goods} -->
+	<div style="background: #f1f1f1;{if !$smarty.foreach.fe_goods.first}margin-top: 3px{/if}">
+		<p>
+			<b>商品名称：</b><input type="text" name="ad_gname[]" value="{$goods.ad_gname}">&nbsp;&nbsp; <b>价格：</b>&yen; <input type="text" name="ad_gprice[]" value="{$goods.ad_gprice}" style="width: 50px" />&nbsp;&nbsp;例:
+			50.00
+		</p>
+		<p>
+			<b>商品链接：</b><input type="text" name="goods_link_url[]" value="{$goods.goods_link_url}" style="width: 280px;" />
+		</p>
+		<p>
+			<strong>上传图片：</strong>(<span style="color: green">gif|jpg|jpeg|png格式,110px*165px</span>) <input type="file" name="ad_image_file[]" />
+			<input type="hidden" name="ad_image_url[]" value="{$goods.ad_image_url}" />
+			<img src="{$goods.ad_image_url}" height="45" />
+		</p>
+	</div>
+	<!--{/foreach} -->	
+	<p>
+		<input type="button" value="删除图片" onclick="drop_image(this)" style="width: 66px;" />
+	</p>
+</div>
+
+<!-- {/foreach} -->
+<!-- {else} -->
+<div class="field_item">
+	<p>
+		<b>档口名称：</b><input type="text" name="ad_sname[]" value="{$image.ad_sname}">&nbsp;&nbsp; <b>档口地址：</b><input type="text" name="ad_saddr[]" value="{$image.ad_saddr}" />
+	</p>
+	<p>
+		<b>档口链接：</b><input type="text" name="store_link_url[]" value="{$image.store_link_url}" style="width: 280px;" />
+	</p>
+	<p>
+		<strong>档口大图：</strong>(<span style="color: red">gif|jpg|jpeg|png格式,590px*325px</span>) <input type="file" name="store_img_file[]" />
+	</p>
+	<div style="background: #f1f1f1">
+		<p>
+			<b>商品名称：</b><input type="text" name="ad_gname[]" value="{$image.ad_gname}">&nbsp;&nbsp; <b>价格：</b>&yen; <input type="text" name="ad_gprice[]" value="{$image.ad_gprice}" style="width: 50px" />&nbsp;&nbsp;例:
+			50.00
+		</p>
+		<p>
+			<b>商品链接：</b><input type="text" name="goods_link_url[]" value="{$image.goods_link_url}" style="width: 280px;" />
+		</p>
+		<p>
+			<strong>上传图片：</strong>(<span style="color: green">gif|jpg|jpeg|png格式,110px*165px</span>) <input type="file" name="ad_image_file[]" />
+		</p>
+	</div>
+	<div style="background: #f1f1f1; margin-top: 3px">
+		<p>
+			<b>商品名称：</b><input type="text" name="ad_gname[]" value="{$image.ad_gname}">&nbsp;&nbsp; <b>价格：</b>&yen; <input type="text" name="ad_gprice[]" value="{$image.ad_gprice}" style="width: 50px" />&nbsp;&nbsp;例:
+			50.00
+		</p>
+		<p>
+			<b>商品链接：</b><input type="text" name="goods_link_url[]" value="{$image.goods_link_url}" style="width: 280px;" />
+		</p>
+		<p>
+			<strong>上传图片：</strong>(<span style="color: green">gif|jpg|jpeg|png格式,110px*165px</span>) <input type="file" name="ad_image_file[]" />
+		</p>
+	</div>
+	<div style="background: #f1f1f1; margin-top: 3px">
+		<p>
+			<b>商品名称：</b><input type="text" name="ad_gname[]" value="{$image.ad_gname}">&nbsp;&nbsp; <b>价格：</b>&yen; <input type="text" name="ad_gprice[]" value="{$image.ad_gprice}" style="width: 50px" />&nbsp;&nbsp;例:
+			50.00
+		</p>
+		<p>
+			<b>商品链接：</b><input type="text" name="goods_link_url[]" value="{$image.goods_link_url}" style="width: 280px;" />
+		</p>
+		<p>
+			<strong>上传图片：</strong>(<span style="color: green">gif|jpg|jpeg|png格式,110px*165px</span>) <input type="file" name="ad_image_file[]" />
+		</p>
+	</div>
+	<p>
+		<input type="button" value="删除图片" onclick="drop_image(this)" style="width: 66px;" />
+	</p>
+</div>
+<!-- {/if} -->
+<input type="button" id="add_image" value="新增图片" />

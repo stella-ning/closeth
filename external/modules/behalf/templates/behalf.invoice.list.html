@@ -1,0 +1,114 @@
+{include file=header.whole.html}
+<script type="text/javascript">
+	$(function(){
+
+
+		<!--{if $invoice_list}-->
+		var dt = $("#goods_list_table").DataTable({
+			"ordering":true,
+			"paging":true,
+			"info":true,
+			"searching":true,
+			"columnDefs":[
+				{"orderable":false,"targets":0},
+				{"orderable":false,"targets":[1]},
+
+			],
+			"order":[
+				[0,null]
+			],
+			//dom:"Bfrtip",
+			dom:"<'container-fluid' <'row' <'col-xs-2' l><'col-xs-7' B><'col-cs-3' f> > <t> <'row' <'col-xs-4' i><'col-xs-8 text-right' p>  >  >",
+			"buttons":[
+				'excel',{
+					text:'打印表格',
+					className:'btn btn-default',
+					action:function(e,dt,node,config){
+						print_table(dt.data());
+					}
+
+				},'colvis',{
+					text:'标签打印',
+					className:'btn btn-info',
+					action:function(e,dt,node,config){
+						tag_printer(dt.data());
+					}
+				},
+				{
+					text:'预览10页',
+					className:'btn btn-default',
+					action:function(e,dt,node,config){
+						tag_preview(dt.data());
+					}
+				}
+
+			],
+			"language":{
+				"url":"{lib file='/DataTables/zn.json'}",
+				"buttons":{
+					"copy":"复制表格",
+					"excel":"导出EXCEL",
+					"print":"打印表格",
+					"colvis":"隐/显列"
+				}
+			},
+			"pagingType":'full_numbers'
+		});
+
+		dt.on('order.dt search.dt',
+				function() {
+					dt.column(0, {
+						search: 'applied',
+						order: 'applied'
+					}).nodes().each(function(cell, i) {
+						cell.innerHTML = i + 1;
+					});
+				}).draw();
+		<!--{/if}-->
+	})
+</script>
+<div class="container-fluid">
+
+
+	  <!--{if $invoice_list}-->
+	  <div class="panel panel-default">
+		
+			<table id="goods_list_table" class="table table-condensed table-striped table-bordered table-hover" width="100%">
+		  	<thead>
+		  		<tr>
+		  		    <th class="text-center col-xs-1" width="30">NO</th>
+		  			<th class="text-center col-xs-1">订单编码</th>
+		  			<th class="text-center col-xs-2">快递名称</th>
+
+		  			<th class="text-center col-xs-1">添加时间</th>
+		  			<th class="text-center col-xs-1">过期时间</th>
+		  			<th class="text-center col-xs-1">状态</th>
+		  			<th class="text-center col-xs-1">单号</th>
+					<th class="text-center col-xs-1">绑定</th>
+
+		  		</tr>
+		  	</thead>
+		  	<tbody>
+		  	<!--{foreach from=$invoice_list item=invoice name=fe_goods}-->
+		  		<tr>
+		  		    <td class="text-center col-xs-1" width="30"></td>
+		  			<td class="text-center col-xs-1">{$invoice.order_id}</td>
+		  			<td class=" col-xs-2"><!--{if $invoice.name eq 'zto'}-->中通<!--{elseif $invoice.name eq 'yto'}-->圆通<!--{/if}--></td>
+		  			<td class="text-center col-xs-1">{$invoice.add_time|date}</td>
+		  			<td class="text-center col-xs-1">{$invoice.expires|date}</td>
+		  			<td class="text-center col-xs-1"><!--{if $invoice.status == 1}-->已使用<!--{else}-->已取消<!--{/if}--></td>
+		  			<td class=" col-xs-1">{$invoice.invoice}</td>
+					<td class="text-center col-xs-1"><!--{if $invoice.bind == 1}-->是<!--{else}-->否<!--{/if}--></td>
+		  		</tr>
+		  	<!--{/foreach}-->
+		  	</tbody>
+		  </table>
+	   
+	  </div>
+	  <!--{else}-->
+	  <div class="alert alert-warning"><span class="glyphicon glyphicon-heart"></span> 亲！没有找到相关的数据，请继续挖掘吧……</div>
+	  <!--{/if}-->
+	  
+
+</div>
+{include file=footer.whole.html}

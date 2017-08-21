@@ -1,0 +1,263 @@
+{include file=header.whole.html}
+<script type="text/javascript" src="{res file=js/region.js}" charset="utf-8"></script>
+<script type="text/javascript">
+// $(function(){
+
+// 	 $('#my_form').bootstrapValidator({
+// 		  feedbackIcons: {
+// 	            valid: 'glyphicon glyphicon-ok',
+// 	            invalid: 'glyphicon glyphicon-remove',
+// 	            validating: 'glyphicon glyphicon-refresh'
+// 	        },
+// 		  fields:{
+// 			 /*  "deliveries[]":{
+// 				  validators:{
+// 					  notEmpty:{}
+// 				  }
+// 			  } */
+
+// 		  }
+// 	  }).on('success.form.bv', function(e) {
+// 		   // Prevent form submission
+//           e.preventDefault();
+
+//           // Get the form instance
+//           var $form = $(e.target);
+
+//           // Get the BootstrapValidator instance
+//           var bv = $form.data('bootstrapValidator');
+
+//           // Use Ajax to submit form data
+//           $.post($form.attr('action'), $form.serialize(), function(result) {
+//               //var json = $.parseJSON(result);
+//               bootbox.alert(result.msg);
+
+//           }, 'json');
+
+//           //$form.data('bootstrapValidator').resetForm(true);
+
+//       });
+
+
+// });
+
+var saveDlId = new Array();
+    function showTab(dl_id)
+    {
+        var flag = false;
+        for (var i = saveDlId.length - 1; i >= 0; i--) {
+          if (saveDlId[i] == dl_id){
+            saveDlId.splice(i,1);
+            flag = true;
+          }
+        }
+
+        if(flag){
+          $('#d_info_'+dl_id).hide();
+        }else{
+          $('#d_info_'+dl_id).show();
+            getShippingInfo(dl_id);
+            saveDlId.push(dl_id);
+        }   
+         
+    }
+
+ 
+
+
+    function editShippingArea(uri,title)
+    {
+
+        $.ajaxSetup({  
+            async : false  
+        }); 
+
+        $.get(uri,function(data,status){
+          jQuery('#modal-shipping_area').modal('show');
+          $("#modal_title").html(title);
+          $("#modal_iframe").html(data);
+        },'text');
+
+
+        // jQuery("#modal-iframe").attr('src',uri);
+        // jQuery('#modal-shipping_area').modal('show').on('shown.bs.modal',function(e){
+        //     //var btn = $(e.relatedTarget);
+        //     var modal = $(this);
+        //     modal.find(".modal-header .modal-title").html(title);
+
+        // });
+    }
+
+
+    // zjh 获取配送区域信息
+    function getShippingInfo(dl_id)
+    {
+        var delivery = dl_id;
+
+        $.ajax({
+            type : 'post',
+            url : 'index.php?module=behalf&act=set_delivery_fee&t='+Math.random(),
+            data : {delivery:delivery,operate:'get'},
+            dataType : 'json',
+            success : function(res){
+                if(res.status == 1){
+
+                   showShippingInfo(res.result);
+                   // alert(res.result.html);
+
+                }else if (res.status == -1){
+
+
+
+                }else{
+                    showErrorMsg(res.msg);
+                }
+            },
+            error : function(XMLHttpRequest, textStatus, errorThrown) {
+                showErrorMsg('网络失败，请刷新页面后重试');
+            }
+        })
+    }
+
+
+
+   // zjh 移除配送区域
+   function removeShippingArea(dl_id,sa_id)
+   {
+       var delivery = dl_id;
+
+       $.ajax({
+           type : 'post',
+           url : 'index.php?module=behalf&act=set_delivery_fee&t='+Math.random(),
+           data : {delivery:delivery,sa_id:sa_id,operate:'remove'},
+           dataType : 'json',
+           success : function(res){
+               if(res.status == 1){
+
+                   // showShippingInfo(res.result);
+                   // alert(res.result.html);
+                   getShippingInfo(res.result);
+                   js_success(res.msg,1);
+
+               }else if (res.status == -1){
+
+                  js_success(res.msg,1);
+
+               }else{
+                   showErrorMsg(res.msg);
+               }
+           },
+           error : function(XMLHttpRequest, textStatus, errorThrown) {
+               showErrorMsg('网络失败，请刷新页面后重试');
+           }
+       })
+   }
+
+   // zjh 改变默认配送区域
+   function changeDefault(dl_id,sa_id,checked)    
+  { 
+
+    if(checked){return;}
+
+    // $.ajaxSetup({  
+    //     async : false  
+    // }); 
+
+    $.post("index.php?module=behalf&act=set_delivery_fee",
+    {
+      sa_id:sa_id,
+      delivery:dl_id,
+      operate:"changeDefault"
+    },
+    function(data,status){
+
+        getShippingInfo(data);
+        //alert(data);
+ 
+    },'text');
+  }
+
+    function showShippingInfo(result)
+    {
+        var html = result.html;
+        var dl_id = result.dl_id;
+         $('#d_info_'+dl_id).html('');  //清空原来内容
+        $('#d_info_'+dl_id).append(html); // 往后追加
+
+    }
+
+    function showErrorMsg(msg){
+
+        alert(msg);
+    }
+
+function js_success(str,mode)
+{
+    if (mode === 1){
+        
+        bootbox.alert(str);
+        //location.reload(true);
+
+    }else if(mode === 0){
+
+        alert(str);
+       
+    }else{
+      jQuery('#modal-shipping_area').modal('hide');
+            // .find("#modal-iframe").attr('src','...');
+    }
+}
+
+
+</script>
+<div>
+	<h3 class="page-header text-info">HI，{$behalf.bh_name}</h3>
+	<div class="alert alert-warning">
+		亲，请设置您发送<b>快递</b>费用！
+	</div>
+    <form method="post" action="{url module=behalf&amp;act=set_delivery_fee}" class="form" id="my_form">
+    <!--{if $deliveries}-->
+
+                            <div class="mb10 border padding10" style="line-height:24px;">
+                              <table class="table table-striped">
+                               <!--{foreach  from=$exist_deliveries item=d key=key}-->
+
+                                  <tr id="d_{$key}" onclick="showTab({$key});" style="cursor: pointer;">
+                                      <td style="width:100%;"><strong>{$d}</strong></td>
+                                      <td style="float:right;">
+                                          <img src="{res file=images/show.svg}"  style="width:15px;height:15px;">
+                                      </td>
+
+                                  </tr>
+                                  <tr><td id="d_info_{$key}" style="width:100%;display:none;"></td></tr>
+
+                                  <!--{/foreach}-->
+                               </table>
+                            </div>
+                           
+                            <!--{else}-->
+                                您还没有可用的快递,<a href="{url app=behalf_member&act=set_delivery}">去设置</a>!
+        <!--{/if}-->
+ 	</form>
+</div>
+
+<!--zjh 弹窗-->
+<div id="modal-shipping_area" class="modal fade">
+    <div class="modal-dialog"  style="width:700px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="modal_title">信息列表</h4>
+            </div>
+            <div class="modal-body" style="height:auto;">
+                <div  id="modal_iframe">
+                    <!-- <iframe class="embed-responsive-item" id="modal-iframe" src="" width="100%" height="100%"></iframe> -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+{include file=footer.whole.html}

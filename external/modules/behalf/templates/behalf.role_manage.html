@@ -1,0 +1,130 @@
+{include file=header.whole.html}
+
+<script type="text/javascript">
+
+  	$(function(){
+	 
+	  	var dt = $("#assign_tags_table").DataTable({
+			"ordering":false,
+		    "paging":true,
+		    "info":true,
+		    "searching":true,
+		    
+		    "lengthMenu": [25,50,100,150,300],   // 一页内可选的数量
+		     // "serverSide": true,
+		     // "lengthChange": false,   // 分页限定一个数据
+		     // "pageLength":1,
+		     "order":[
+		        [0,null]      
+		     ],
+		     //dom:"Bfrtip",
+		     dom:"<'container-fluid' <'row' <'col-xs-2' l><'col-cs-3'><'col-xs-7' B> <'col-cs-3' f>> <t> <'row' <'col-xs-4' i><'col-xs-8 text-right' p>  >  >",
+
+		     "buttons":[
+		       {
+		    	   text:'添加角色',
+		    	   className:'btn btn-default',
+		    	   action:function(e,dt,node,config){
+		    		  submitRoleForm(0);
+		    	   }
+		    	   
+		       },
+		    
+		     ],
+			"language":{
+				"url":"{lib file='/DataTables/zn.json'}",
+				"buttons":{
+					"copy":"复制表格",
+					"excel":"导出EXCEL",
+					"print":"打印表格",
+					"colvis":"隐/显列"
+				}
+			},
+			"pagingType":'full_numbers'
+		});
+
+  });
+
+  	// 提交添加或编辑角色的表单
+  function submitRoleForm(role_id)
+  {
+  	$('#role_form input[name="role_id"]').val(role_id);
+  	if(role_id == 0){
+  		$('#role_form input[name="operate"]').val('add');
+  	}else{
+  		$('#role_form input[name="operate"]').val('edit');
+  	}
+  	
+  	$('#role_form').submit();
+  }
+
+  // 移除角色
+  function removeRole(role_id)
+  {
+
+  	 if(!confirm('将删除角色和它的下属角色，以及相关的员工账号，请谨慎操作！！确定继续吗')) return;
+  	// bootbox.alert('将删除角色和它的下属角色，以及相关的员工账号，请谨慎操作！！');
+  	// $('#role_form input[name="role_id"]').val(role_id);
+  	// $('#role_form').submit();
+
+  	$.post("index.php?module=behalf&act=deal_role",{role_id:role_id,operate:'remove'},function(json){
+		  json = jQuery.parseJSON(json);
+		  console.log(json);
+		  bootbox.alert(json.msg,function(r){
+			  // location.reload(true);
+			  window.location.href = 'index.php?module=behalf&act=role_manage';
+		  });
+		  
+	  });
+  }
+
+</script>
+
+<style type="text/css">	
+	.col-xs-7{margin-left:23%;margin-top:-5px; width:260px;}
+	.col-cs-3{margin-right: 15px;}
+</style>
+
+<div class="container-fluid">
+	<div class="panel panel-default">
+		<div class="panel-body">
+			
+		  </div>
+	  </div>
+
+	  <div class="panel panel-default">
+	  <div class="panel-body">
+			<form method="post" action="index.php?module=behalf&act=deal_role" id="role_form">
+ 				<input type="hidden" name="role_id" value="">
+ 				<input type="hidden" name="operate" value="">
+ 			</form>
+
+		  </div>
+
+			<table id="assign_tags_table" class="table table-condensed table-striped table-bordered table-hover" width="100%">
+		  	<thead>
+		  		<tr>
+		  			<th class="text-center col-xs-1" >角色编号</th>
+		  		    <th class="text-center col-xs-1" >角色名称</th>
+		  			<th class="text-center col-xs-1">角色描述</th>
+		  			<th class="text-center col-xs-1">直属上级</th>
+		  			<th class="text-center col-xs-1">操作</th>
+		  		</tr>
+		  	</thead>
+		  	<tbody>
+		  	<!--{foreach from=$roles item=role name=key}-->
+		  		<tr>
+			  		<td class="text-center col-xs-1">{$role.role_id}</td>
+			  		<td class="text-center col-xs-1">{$role.role_name}</td>
+			  		<td class="text-center col-xs-1">{$role.describtion}</td>
+			  		<td class="text-center col-xs-1">{$role.parent_name}</td>
+			  		<td class="text-center col-xs-1"><input class="btn btn-default btn-sm" type="button"  value="编辑" onclick="submitRoleForm({$role.role_id});" ><input class="btn btn-default btn-sm" type="button"  value="移除" onclick="removeRole({$role.role_id});" ></td>
+			  			
+		  		</tr>
+		  	<!--{/foreach}-->
+		  	</tbody>
+		  </table>
+	  </div>
+</div>
+{include file=footer.whole.html}
+

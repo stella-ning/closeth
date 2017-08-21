@@ -1,0 +1,103 @@
+﻿ <div class="o-box">
+        <div class="o-box-t">
+            确定订单信息
+        </div>
+        <div class="o-box-main">
+            <div class="order-detail-list" id="orderDetail">
+
+
+
+                <table class="tb-order tb-order-detail">
+                    <thead>
+                    <tr>
+                        <th class="detail-col">商品</th>
+                        <th class="price-col">单价</th>
+                        <th class="count-col">数量</th>
+                        <th class="amount-col">小计</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                  <!--{foreach from=$goods_info.items item=goods name=fe_goods}-->
+                    <tr class="tr-tb j-order">
+                        <td>
+                            <dl class="order-item  clearfix">
+                                <dt class="detail-col">
+                                <div class="pic">
+                                    <a href="/item/4967435" target="_blank">
+                                        <img src="{$goods.goods_image}" view-src="{$goods.goods_image}" class="j-img-view" alt="" width="70">
+                                    </a>
+                                </div>
+                                <div class="info">
+                                    <div class="info-title">
+                                        <a href="/item/4967435" target="_blank">{$goods.goods_name|escape}</a>
+                                    </div>
+                                    <!--<div class="info-art-no"></div>-->
+                                    <span class="info-shop">{$goods_info.store_name|escape}</span>
+                                </div>
+                                <div class="sku" style="padding-left:20px;">
+
+                                    <div class="sku-color">{$goods.specification|escape}</div>
+                                </div>
+                                <div class="clear"></div>
+                                </dt>
+                            </dl>
+                        </td>
+                        <td class="price-col">
+                            <em>{$goods.price|price}</em>
+                        </td>
+                        <td class="count-col">
+                            {$goods.quantity}
+                        </td>
+                        <td class="amount-col red">
+                           <em>{$goods.subtotal|price}</em>
+                        </td>
+                    </tr>
+                  <!-- {/foreach} -->
+                    <tr class="tr-tb tr-tf">
+                        <td rowspan="2" style="border-right:1px solid #EBEBEB;border-bottom:none;">
+                           <!-- <div class="consignor">
+                                <div class="consignor-set ">
+                                    <i class="vvicon check-item"></i>
+                                    <i class="vvicon uncheck-item"></i>
+                                    使用我的发货信息
+                                   
+                                </div>
+                                <div class="consignor-info">
+
+                                    你还没有设置发货信息
+
+                                    <a style="margin-left:10px;" href="javascript:;" target="_blank" class="btn btn-default btn-x-small j-set-consignor">设置</a>    
+                                </div>
+                            </div>-->
+                        </td>
+                        <td height="50" colspan="2" class="clearfix">
+                            <span style="line-height: 30px;margin:10px 0 0 20px;display:block;width:60px;" class="fl">运费总计：</span>
+                            <dl class="j-v-select v-select express-box fl dis" style="width:140px;margin:10px 0 0 20px;">
+                                <dt>
+                                    <i></i>
+                                    <span>快递</span>
+                                </dt>
+                                <dd>
+                                    <ul class="j-v-select-ul"></ul>
+                                </dd>
+                            </dl>
+                        </td>
+                        <td class="tc amount-col red">
+                            <a href="/help/issue/daifa2.html" target="_blank"><i class="vvicon"></i></a>
+                            </span><em class="j-exp-fee delivery_price_amount yuan">0.00</em>
+                        </td>
+                    </tr>
+                    <tr class="tr-tb tr-tf">
+                        <td colspan="2" style="border-bottom: none;line-height: 50px;text-align: left;" height="50">
+                            <span style="margin-left:20px;">拿货质检费总计：</span>
+                        </td>
+                        <td class="amount-col red" style="border-bottom:none;">
+                            <a href="/help/issue/daifa2.html" target="_blank"><i class="vvicon"></i></a>
+                            <em class="j-take-fee"><?php echo price_format($this->_var['goods_info']['behalf_fee']); ?></em>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>

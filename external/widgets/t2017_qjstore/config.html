@@ -1,0 +1,88 @@
+<script type="text/javascript">
+var _d = DialogManager.get('config_dialog');
+_d.setWidth(650);
+_d.setPosition({top:0,left:window.width/2});
+$('#_config_widget_form_').submit(function(){
+    stopScroll();
+});
+$('#add_image').click(function(){
+	var field_nums = $(".field_item").size();	
+	var show_color = '';
+	if(field_nums <= 6){
+		show_color = 'green';
+	}
+	else if(field_nums > 6  && field_nums <= 12 ){
+		show_color = 'blue';
+	}
+	else if(field_nums > 12  && field_nums <= 18 ){
+		show_color='#f07';
+	}
+	else if(field_nums > 18  && field_nums <= 24 ){
+		show_color='red';
+	}
+	var html = '<div class="field_item">'+
+	'<p><b>档口名称：</b><input type="text" name="ad_sname[]" value="{$image.ad_sname}">&nbsp;&nbsp;'+
+    '<b>档口地址：</b><input type="text" name="ad_saddr[]" value="{$image.ad_saddr}"> 例：非凡A35-A'+
+    '<b style="margin-left:10px;color:'+ show_color +'">第'+ (parseInt((field_nums-1)/6)+1) +'面板第'+ ((field_nums-1)%6+1) +'个</b></p>'+ 
+    '<p><strong>档口链接:</strong><input type="text" name="ad_link_url[]" value="{$image.ad_link_url}" style="width:280px;"/></p>'+
+    '<p><strong>上传图片:</strong>(<span>gif|jpg|jpeg|png格式,390px*260px</span>)<input type="file" name="ad_image_file[]" /></p>'+     
+    '<p><input  type="button" value="删除图片" onclick="drop_image(this)" style="width:66px;"/></p></div>';
+	if(field_nums <= 24){
+		$(this).before(html);
+	}	
+	else{
+		alert('已达到最大数量!');
+	}
+   
+});
+function drop_image(btnObj)
+{
+    $(btnObj).parents('.field_item').remove();
+}
+</script>
+
+<div class="field_item">	
+	<p><strong>模块名称:</strong><input type="text" name="model_name" value="{$options.model_name}" /></p>
+</div>
+<!-- {if $options.ads} -->
+<!-- {foreach from=$options.ads item=image name=fe_img} -->
+<div class="field_item">
+    <p>
+       <b>档口名称：</b><input type="text" name="ad_sname[]" value="{$image.ad_sname}">&nbsp;&nbsp;
+       <b>档口地址：</b><input type="text" name="ad_saddr[]" value="{$image.ad_saddr}"> 例：非凡A35-A
+       <b style="margin-left:10px;color:green">第<strong style="color:red"> {$smarty.foreach.fe_img.iteration|divid:6|modifier:ceil}</strong>面板第<strong style="color:red"> {$smarty.foreach.fe_img.index|mod:6|add:1}</strong>个</b>
+    </p> 
+    <p>
+    <strong>档口链接:</strong><input type="text" name="ad_link_url[]" value="{$image.ad_link_url}" style="width:280px;"/>
+    </p>  
+    <p>
+         <strong>上传图片:</strong>(<span>gif|jpg|jpeg|png格式,390px*260px</span>)
+        <input type="file" name="ad_image_file[]" />
+        <input type="hidden" name="ad_image_url[]" value="{$image.ad_image_url}" />        
+     </p>     
+    <p>    
+         <img src="{$image.ad_image_url}" height="45" />
+         <input  type="button" value="删除图片" onclick="drop_image(this)" style="width:66px;"/>
+    </p>
+</div>
+<!-- {/foreach} -->
+<!-- {else} -->
+<div class="field_item">
+   <p>
+       <b>档口名称：</b><input type="text" name="ad_sname[]" value="{$image.ad_sname}">&nbsp;&nbsp;
+       <b>档口地址：</b><input type="text" name="ad_saddr[]" value="{$image.ad_saddr}"> 例：非凡A35-A
+       <b style="margin-left:10px;color:green">第1面板第1个</b>
+    </p> 
+    <p>
+    <strong>档口链接:</strong><input type="text" name="ad_link_url[]" value="{$image.ad_link_url}" style="width:280px;"/>
+    </p>  
+    <p>
+         <strong>上传图片:</strong>(<span>gif|jpg|jpeg|png格式,390px*260px</span>)
+         <input type="file" name="ad_image_file[]" />  
+     </p>     
+    <p> 
+         <input  type="button" value="删除图片" onclick="drop_image(this)" style="width:66px;"/>
+    </p>
+</div>
+<!-- {/if} -->
+<input type="button" id="add_image" value="新增图片" />

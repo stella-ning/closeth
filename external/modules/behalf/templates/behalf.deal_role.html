@@ -1,0 +1,297 @@
+{include file=header.whole_noleft.html}
+<script type="text/javascript">
+	
+  $(function(){
+	 	  
+		$("#role_edit_form").bootstrapValidator({
+				  feedbackIcons: {
+			            valid: 'glyphicon glyphicon-ok',
+			            invalid: 'glyphicon glyphicon-remove',
+			            validating: 'glyphicon glyphicon-refresh'
+			        }, 
+				  fields:{
+					  role_name:{
+						  validators:{
+							  notEmpty:{}
+						  }
+					  }
+				  }
+			  }).bootstrapValidator('validate').on('success.form.bv', function(e) {
+				   // Prevent form submission
+		            e.preventDefault();
+
+		            // Get the form instance
+		            var $form = $(e.target);
+
+		            // Get the BootstrapValidator instance
+		            var bv = $form.data('bootstrapValidator');
+
+		            // Use Ajax to submit form data
+		            $.post($form.attr('action'), $form.serialize(), function(result) {
+		            	if(result.code == 0){
+		            		alert(result.msg);
+		            		window.location.href = 'index.php?module=behalf&act=role_manage';
+		            	}else{
+		            		alert(result.msg);
+		            	}
+		            	
+		            	console.log(result.msg);
+		            	// $('#modal-nhd').modal('hide');
+		                //var json = $.parseJSON(result);
+		                //bootbox.alert(result.msg);
+		            }, 'json');
+		           
+		            $form.data('bootstrapValidator').resetForm(false);
+		         
+		        }); 
+
+			  $("input[name='priv[]']").bind("click", function () {
+
+			  		var thisValue = $(this);		  	
+
+			  		$("input[name='priv[]']").each(function(){
+
+			  			if(thisValue.val() == $(this).val())  // zjh value值相等
+			  			{
+			  				if(thisValue.is(':checked')==true){  // 选中所有value值相等的
+
+			  					 $(this).prop("checked", true);
+			
+
+			  				}else{
+			  					$(this).prop("checked", false);
+
+			  				}
+			  				
+			  			}
+
+			  		});
+			  		
+            	});
+
+
+	// 编辑次级权限
+    $('#sub-priv-btn').on('click',function(){
+        var data = $(".form-sub-priv").serializeArray();
+        var $url = $("input[name='url']").val();
+
+        console.log(data);
+        $.ajax({
+        	type : 'post',
+            url:$url,
+            data:data,
+            success:function(res){
+                console.log(res);
+         
+            },
+            error:function(error){
+                console.log('失败');
+                console.log(error);
+            }
+        })
+    });
+
+  });
+
+  function checkAll()
+  {
+  	if($("input[name='check_all']").is(':checked')==true){
+  		$("input[name='priv[]']").prop("checked", true);
+	}else{
+		$("input[name='priv[]']").prop("checked", false);
+	}
+  }
+
+  // 编辑次级权限
+function editSubPriv(info)
+{
+	//清楚表单内所有数据
+    $('.form-sub-priv')[0].reset();
+
+  	var $this = $(info),
+        $url = $this.data('url'),
+        $menu_name = $this.data('name'),
+        $role_id = $this.data('role');
+
+        $("input[name='menu_name']").val($menu_name);
+
+        $.ajaxSetup({  
+        	async : false  
+    	}); 
+
+        $.ajax({
+        	type : 'get',
+            url:$url,
+            data:{menu_name:$menu_name,role_id:$role_id},
+            dataType : 'json',
+            success:function(res){
+           
+                if(res.code == 0){
+                	console.log(res.user_priv);
+                
+                	var html = '';
+                	for(var k in res.menu_priv){ 
+
+                		var checked = '';
+                		if($.inArray(k, res.user_priv) != -1 || res.user_priv.length == 0){
+                			checked = 'checked="checked"';
+                		}
+
+                		html += '<div style="float:left;"><input type="checkbox" name="sub_priv[]" value="'+k+'" '+checked+' size=20 >&nbsp;<label class="control-label" style="display:inline-block; font-weight:normal;"> '+res.menu_priv[k]+'</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>';
+
+                	}
+
+                	$("#sub_priv_checkbox").html(html);
+
+                }
+                
+                // window.location.reload();
+            },
+            error:function(error){
+                console.log('失败');
+                console.log(error);
+            }
+      })
+
+    $("input[name='url']").val("index.php?module=behalf&act=edit_this_menu_sub_priv");
+
+}
+
+
+</script>
+<div class="container-fluid">
+    
+	 <div class="panel panel-default">
+		<div class="panel-body">	
+			<div class="row">
+				<div class="col-xs-2">
+					<a href="index.php?module=behalf&act=role_manage" class="btn btn-primary">返回角色列表</a>
+				</div>
+				<div class="col-xs-10">
+
+					
+				</div>
+			</div>
+		</div>	
+	</div>
+		
+	<div class="panel panel-default">
+		<div class="panel-body">	
+			<form method="post" id="role_edit_form" action="index.php?module=behalf&act=do_deal_role">
+                    <div class="modal-header">
+                        <h4 class="modal-title">添加或编辑角色</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="form-group">
+                                <label class="control-label" style="display:inline-block;">角色名称：</label>
+                                <input type="text" name="role_name" value="{if $role}{$role.role_name}{/if}" >  
+                            </div>
+                        </div>
+
+                        <div class="container-fluid">
+                            <div class="form-group">
+                                <label class="control-label" style="display:inline-block;">角色描述：</label>
+                                <textarea name="describtion">{if $role}{$role.describtion}{/if}</textarea>
+                            </div>
+                        </div>
+
+                        <div class="container-fluid">
+                            <div class="form-group">
+                                <label class="control-label" style="display:inline-block;">所属上级：</label>
+                                
+                                <select name="role_parent" >
+							        <option value="0">{$behalf_name}</option>
+							        {$role_select}
+							    </select>
+
+                            </div>
+                        </div>
+                        <!--{if $func_unbind}-->
+                        <div class="container-fluid">
+                            <div class="form-group">
+                                <label class="control-label" style="display:inline-block;">绑定职能：</label>
+                                	<!--{foreach from=$func_unbind item=value key=name}-->
+                                	<input type="radio" name="function" value="{$value}"  {if $current_bind_func eq $value} checked="checked" {/if}> 
+                                	<label style="font-weight: normal;">{$name}</label>
+                                	<!--{/foreach}-->                                         
+                            </div>
+                        </div>
+                        <!--{/if}-->
+                        <div class="container-fluid">
+                            <div class="form-group">
+                                <label class="control-label" style="display:inline-block;">权限设置：</label>
+                                <input type="checkbox" name="check_all" value="" onclick="checkAll();">
+                                <label style="font-weight: normal;">全选</label>
+                                <table style="margin-left: 15px;">
+                               <!--{foreach  from=$priv_info item=sub_priv key=text}-->
+
+                                  <tr>
+                                  <td><label>{$text} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td>
+ 
+                                  <!--{foreach from=$sub_priv item=priv key=sub_text}-->
+                                  		<td>
+                                  		<input type="checkbox" name="priv[]" value="{$priv.name}" {if $priv.mark eq 1} checked="checked" {/if}>  
+                                  		<label style="font-weight: normal;">{$sub_text}
+
+                                  		<!--{foreach from=$menu_sub_priv item=menu_sub_priv_item key=menu_name}-->
+                                  			<!--{if $menu_name eq $priv.name}-->
+                                  				(<a style="cursor:pointer;" data-url="index.php?module=behalf&act=get_this_menu_sub_priv" data-target="#modal-sub-priv" data-name="{$priv.name}" data-toggle="modal" data-role="{$role.role_id}" onclick="editSubPriv(this);">次级</a>)
+                                  			<!--{/if}-->
+                                  		<!--{/foreach}-->
+
+                                  		&nbsp;&nbsp;&nbsp;</label>
+                                  		</td>
+                                  <!--{/foreach}-->
+                                  </tr>
+                                  <!--{/foreach}-->
+                               </table> 
+
+                            </div>
+                        </div>
+
+                        
+                    </div>
+           			
+           			<input type="hidden" name="role_id" value="{if $role}{$role.role_id}{/if}">  <!--角色id-->
+           			<input type="hidden" name="operate" value="{$operate}"> 
+           			<input type="hidden" name="origin_role_name" value="{if $role}{$role.role_name}{/if}" >  <!--原名称-->
+                    <div class="modal-footer" >
+                    <div style="float: left;">
+                        <input type="submit" class="btn btn-primary" id="role-btn" value="提 交">
+                        <button type="reset" class="btn btn-default" >重 置</button>
+                        </div>
+                    </div>
+                </form>
+		</div>	
+	</div>
+
+</div>
+
+<div id="modal-sub-priv" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" class="form-sub-priv" action="">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">编辑菜单下的功能点权限(次级权限)</h4>
+                    </div>
+                    <div class="modal-body" style="width:65%;margin:0 auto;">
+                        <div class="container-fluid">
+                            <div class="form-group" id="sub_priv_checkbox">
+                             
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="url" value="">  <!--发送地址-->
+                    <input type="hidden" name="role_id" value="{$role.role_id}">  <!--role_id-->
+                    <input type="hidden" name="menu_name" value="">  <!--menu_name-->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="sub-priv-btn" data-dismiss="modal">确 定</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{include file=footer.whole.html}

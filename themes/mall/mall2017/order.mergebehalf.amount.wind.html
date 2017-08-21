@@ -1,0 +1,50 @@
+﻿<script type="text/javascript">
+                $(function(){	
+                 $('#howtoupgradevip').on('click',function(){
+				  layer.tips('下单数达200单，自动升级为vip1每单优惠1元；下单数达1000单，自动升级为vip2每单优惠2元。',this, {
+					  style: ['background-color:#78BA32; color:#fff', '#78BA32'],
+					  maxWidth:225,
+					  time:6,
+					  closeBtn:[0, true]
+					});
+                 });
+                 
+                 $('#delivery_notice_zy').on('mouseover',function(){
+                	 layer.tips('新疆、西藏、甘肃、青海四省份，首重一公斤以内，超过一公斤发韵达，补运费10元！',this, {
+	   					  style: ['background-color:#3368cf; color:#fff', '#3368cf'],
+	   					  maxWidth:235,
+	   					  time: 6,
+	   					  guide:1,
+	   					  closeBtn:[0, true]
+	   				});
+                 });
+                 
+                 layer.tips('新疆、西藏、甘肃、青海四省份，首重一公斤以内，超过一公斤发韵达，补运费10元！','#delivery_notice_zy', {
+  					  style: ['background-color:#3368cf; color:#fff', '#3368cf'],
+  					  maxWidth:235,
+  					  time: 6,
+  					  guide:1,
+  					  closeBtn:[0, true]
+  				});
+				  
+               });
+                </script>               
+<div class="w order-goods-price-bycate mb10 text-right f66" style="line-height:24px;">
+      <p class="pr10">{$lang.goods_price_amount}{$lang.colon}<span id="goods_price_amount" class="fs14 strong f90 inline-block text-left price" style="width:80px;">{$goods_amount|price}</span></p>
+      <p class="pr10">{$lang.goods_service_amount}{$lang.colon}<span id="goods_service_amount" class="fs14 strong f90 inline-block text-left price" style="width:80px;">{$merge_behalf_amount|price}</span></p>
+      <p class="pr10">{$lang.delivery_price_amount}{$lang.colon}<span class="fs14 strong f90 inline-block text-left delivery_price_amount price" style="width:80px;">&yen;</span></p>
+      <p class="pr10">
+                    <!--{if $vip_info.fee.quantity gt 0 }-->
+                    	您有<span class="f60 strong">{$vip_info.gt100.quantity}</span>件商品超过100元，每件加收2元邮费，共计<span class="f60 strong">{$vip_info.gt100.fee|number_format:2}</span>元。
+                    <!--{/if}-->
+                     <span class="f60 strong">VIP提示：</span>您已优惠快递费<span class="f60 strong">{$vip_info.fee|default:0}</span>元、服务费<span class="f60 strong">{$vip_info.service_fee|default:0.00}</span>元。【<a href="javascript:;" id="howtoupgradevip" class="f60">如何提升VIP</a>】</p>
+</div>               
+                <div class="make_sure w mb10">
+                    <p>
+                        <a href="{url app=cart}" class="back">{$lang.backto_cart}</a>
+                        <span class="ml20">{$lang.order_amount}{$lang.colon}</span>
+					   	<strong  id="order_amount" class="price">{$goods_amount|price}</strong>
+                        <a href="javascript:void($('#order_form').submit());" class="btn-step fff center strong fs14 ml20">{$lang.shopping_step_three}</a>
+                    </p>
+                </div>
+                <div class="w price-notice mt10 mb10 pt10 f60 pb10">{$lang.price_notice}</div>

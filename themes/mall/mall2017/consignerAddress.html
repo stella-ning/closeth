@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="css/order3.css">
+    <script src="js/jquery.min.js"></script>
+</head>
+<body>
+<fieldset class="o-address" style="padding: 20px 0 10px;">
+    <div class="item clearfix">
+        <label><span class="required" aria-required="true">*</span>发货人姓名：</label>
+        <input type="text" name="shipperName" id="shipperName">
+        <span class="desc"><span class="red">注：</span>请填写真实姓名，否则部分快递拒绝收件</span>
+    </div>
+    <div class="item clearfix">
+        <label><span class="required" aria-required="true">*</span>手机号码：</label>
+        <input type="mobile" name="shipperMobile" id="shipperMobile" maxlength="11" class="input-mobile" data-msg-mobile="请填写正确的收货人手机号">
+    </div>
+    <div class="item clearfix">
+        <label>固定号码：</label>
+        <input type="text" name="tel0" id="editShipperTel0" class="input-area_no j-tels j-tel-0" placeholder="区号" maxlength="4">
+        <input type="text" name="tel1" id="editShipperTel1" class="input-tel j-tels j-tel-1" placeholder="电话号码" maxlength="8">
+        <input type="hidden" class="j-tel" id="shipperTel" name="shipperTel" value="">
+    </div>
+    <div class="item clearfix mt10">
+        <label>&nbsp;</label>
+        <input type="button" style="width:90px;margin-left:80px;font-size:12px;height: 30px;" class="btn btn-default" value="取消" name="cancel" id="cancelSetConsignor">
+        <input type="submit" style="width:90px;margin-left: 10px;font-size:12px;height: 30px;" class="btn btn-primary" value="提交" name="submit">
+        <input type="hidden" id="editId" name="id" value="">
+    </div>
+    <div class="clear"></div>
+</fieldset>
+</body>
+<script>
+</script>
+</html>

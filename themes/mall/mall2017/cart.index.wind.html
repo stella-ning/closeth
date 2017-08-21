@@ -1,0 +1,311 @@
+{include file="top2017.html"}
+<link type="text/css" href="{res file=css/order3.css}" rel="stylesheet" />
+<!--  个人中心 -->
+<div id="headear">
+    <h1 title="{$lang.w_title}">
+        <a href="http://www.51zwd.com"><img src="{$site_url}/static/app/android/240x90.png" alt="{$lang.w_title}"></a>
+    </h1>
+    <div id="path">
+        <div class="path-font">购物车</div>
+    </div>
+</div>
+<!-- 购物车列表、结算页 -->
+<script type="text/javascript" src="{lib file=cart.js}" charset="utf-8"></script>
+<style type="text/css">
+.mall-nav{ display:none}
+.content{
+    padding-left:10px;
+}
+</style>
+<script type="text/javascript">
+/*--计算总价钱--*/
+function calcu_store_fee(){
+	//
+	<!--{foreach from=$carts item=cart key=store_id}-->
+		if($(".goods-each_{$store_id} .select input:checked").size() > 0)
+		{
+			var store{$store_id}_fee = 0;
+			$.each($(".goods-each_{$store_id} .select input:checked"),function(i,h){
+				store{$store_id}_fee += parseInt($(this).parents('.select').siblings('dd.subtotal').attr('data-price'));
+			});
+			$("#cart{$store_id}_amount").html(price_format(store{$store_id}_fee));
+		}
+		else
+		{
+			$("#cart{$store_id}_amount").html(price_format(0));
+		}
+	<!--{/foreach}-->
+}
+/*--取消商品选择--*/ 
+function cancel_store_select(){
+	<!--{foreach from=$carts item=cart key=store_id}-->
+
+		$.each($(".goods-each_{$store_id} .select input[type='checkbox']"),function(i,h){
+			if(!this.checked)
+				$(".btn-batch_{$store_id} input[name='sellectAll']").attr('checked',this.checked);
+			if($(".goods-each_{$store_id} .select input[type='checkbox']").size() == $(".goods-each_{$store_id} .select input:checked").size())
+				$(".btn-batch_{$store_id} input[name='sellectAll']").attr('checked',this.checked);
+		});
+
+     <!--{/foreach}-->
+}
+
+$(function(){
+	<!--{foreach from=$carts item=cart key=store_id}-->
+    /*---全选一個店鋪的商品----*/ 
+	$(".btn-batch_{$store_id} input[name='sellectAll']").click(function(){
+		$(".goods-each_{$store_id} .select input[name='s"+$(this).val()+"']").attr("checked",this.checked);
+	});
+
+    /*----刪除統一個店鋪的商品---*/ 
+	$(".btn-batch_{$store_id} a").click(function(){
+		var name = this.name;
+		var checked = 0;
+		$(".goods-each_{$store_id} .select input").each(function(){
+			if($(this).attr("checked")){
+				srg = $(this).val().split(":");
+				if(name=="batch_del"){
+
+                    if($(".sellectAll_{$store_id}").is(':checked')){
+
+                        $(".store-each_{$store_id}").remove();
+                    }
+					drop_cart_item(srg[0], srg[1]);
+				} else {
+					batch_move_favorite(srg[0], srg[1], srg[2],checked==0);
+				}
+				checked++;
+			}
+		});
+		if(!checked) {
+			alert('你未选择任何项');
+		}
+	});
+	<!--{/foreach}-->
+
+    //删除全部
+    $('#deleteAllGoods').on('click',function(){
+        var $shopList = $('.goods-each'),
+            $goodsListInput = $shopList.find('.goodsListInput'),
+            $goodsSellectAll = $('.sellectAll'),
+            checked = 0;
+        $goodsListInput.each(function(){
+            if($(this).is(':checked')){
+                srg = $(this).val().split(":");
+                drop_cart_item(srg[0], srg[1]);
+                checked++;
+            }
+        })
+        //判定店铺是不是全选
+        $goodsSellectAll .each(function(){
+            if($(this).is(':checked')){
+                $(this).parents('.store-each').remove();
+            }
+        })
+        
+        if(!checked) {
+            alert('你未选择任何项');
+        } 
+    })
+
+	$("#merge_behalf_order").click(function(){
+		if($(this).attr("checked"))
+		{
+			$('.pay-together-wrapper p').show();
+		}
+		else
+		{
+			$('.pay-together-wrapper p').hide();
+		}
+	});
+	/*----全选---*/
+	$("input[type='checkbox']").click(function(){
+		if($(this).attr('name') == 'sellectAllGoods')
+		{
+			$("input[type='checkbox']").attr('checked',this.checked);
+			if(!this.checked)
+				$('.pay-together-wrapper p').hide();
+		}
+		cancel_selectAll();
+		cancel_store_select();
+		calcu_store_fee();
+		resize_cart_price();
+	});
+
+	$(".btn-amount .btn").click(function(){
+		//singleSubmit($(this).attr('data-store'),'gids',$("#gids").val());
+		var value = $("#gids").val();
+		if(value=='' || value== null)
+		{
+			alert('你未选择任何项');
+			return false;
+		}
+		$('#order_form').attr('action',SITE_URL + '/index.php?app=order&goods=cart&store_id='+ $(this).attr('data-store')).submit();
+	});
+	$('.pay-together-wrapper .pay-together').click(function(){
+		var value = $("#gids").val();
+		if(value=='' || value== null)
+		{
+			alert('你未选择任何项');
+			return false;
+		}
+		$('#order_form').attr('action',SITE_URL + '/index.php?app=order&act=merge_order_pay').submit();
+		//multiSubmit('gids',$("#gids").val());
+	});
+
+});
+</script>
+
+<div id="main" class="w-full">
+<div id="page-cart" class="w cart-index mb20">
+  <!--  <div class="step step1 mt10 clearfix">
+       完成结算，51网将立即为您代发。
+   </div> -->
+
+   <div class="cartbox w mt20 mb10">
+      <div class="amount">
+
+      </div>
+       <div class="title clearfix mb10">
+           <span class="sellect-all">
+                <label class="check-wrap">
+                    <span class="checkbox-inner-wrap">
+                        <input value="" type="checkbox" id="sellectAllGoods" name="sellectAllGoods">
+                        <span class="checkbox-inner"></span>
+                    </span>
+                    <en class="text">全选</en>
+                </label> 
+                <a href="javascript:;" id="deleteAllGoods">批量删除</a>
+           </span>
+           <span class="col-desc">店铺商品</span>
+           <span class="col-d">单价</span>
+           <span class="col-e">数量</span>
+           <span class="col-s">总价</span>
+           <span class="col-c">操作</span>
+       </div>
+      <div class="content">
+         <!--{foreach from=$carts item=cart key=store_id}-->
+         <div class="store-each store-each_{$store_id}">
+            <!-- 店铺名称 -->
+            <div class="store-name">
+                <div class="store-btn">
+                    <span class="btn-batch_{$store_id}">
+                        <label class="check-wrap">
+                            <span class="checkbox-inner-wrap">
+                                <input value="{$store_id}" type="checkbox" name="sellectAll" class="sellectAll_{$store_id} sellectAll"  />
+                                <span class="checkbox-inner"></span>
+                            </span>
+                        </label> 
+                    </span>
+                    {$lang.store}{$lang.colon}
+                    <a target="_blank" style="vertical-align:middle;display:inline-block;width:16px;" href="http://www.taobao.com/webww/ww.php?ver=3&amp;touid=&amp;siteid=cntaobao&amp;status=2&amp;charset=utf-8">
+                        <img border="0" src="{res file=images/online.png}" alt="Wang Wang">
+                    </a>
+                    <a class="shop-name" href="{url app=shop&id=$store_id}">{$cart.store_name|escape}</a>
+                </div>
+            </div>
+
+            <!-- 产品列表 -->
+            <!--{foreach from=$cart.goods item=goods name=fe_goods}-->
+            <dl class="goods-each goods-each_{$store_id} clearfix" id="cart_item_{$goods.rec_id}">
+                <dd class="select">
+                    <label class="check-wrap">
+                        <span class="checkbox-inner-wrap">
+                            <input type="checkbox" class="goodsListInput" name="s{$store_id}" id="s{$store_id}" value="{$store_id}:{$goods.rec_id}:{$goods.goods_id}" />
+                            <span class="checkbox-inner"></span>
+                        </span>
+                    </label> 
+                </dd>
+                <dd class="pic">
+                    <a class="block" href="{url app=goods&id=$goods.goods_id}" target="_blank">
+                        <img src="{$goods.goods_image}" alt="{$goods.goods_name|escape}" />
+                    </a>
+                </dd>
+                <dd class="desc">
+                    <p><a href="{url app=goods&id=$goods.goods_id}" target="_blank">{$goods.goods_name|escape}</a></p>
+                    <span class="f66">{$goods.specification|escape}</span>
+                </dd>
+
+               <dd class="price">{$goods.price|price}</dd>
+                <!-- 商品数量 -->
+                <dd class="quantity clearfix">
+                    
+                    <span class="quantity-minus" onclick="decrease_quantity({$goods.rec_id});">-</span>
+                    <input class="input" id="input_item_{$goods.rec_id}" value="{$goods.quantity}" orig="{$goods.quantity}" changed="{$goods.quantity}" onkeyup="change_quantity({$store_id}, {$goods.rec_id}, {$goods.spec_id}, this);" type="text" />
+                    <span class="quantity-plus" onclick="add_quantity({$goods.rec_id});">+</span>
+                    
+                </dd>
+
+                <dd class="subtotal fs14 strong price" id="item{$goods.rec_id}_subtotal" data-price="{$goods.subtotal}">{$goods.subtotal|price}</dd>
+
+                <dd class="handle">
+                    <a class="move" href="javascript:;" onclick="move_favorite({$store_id}, {$goods.rec_id}, {$goods.goods_id});">{$lang.move_favorite}</a>
+                    <br />
+                    <a class="del" href="javascript:;" onclick="drop_cart_item({$store_id}, {$goods.rec_id});">{$lang.drop}</a>
+                </dd>
+            </dl>
+            <!-- {/foreach} -->
+            <!-- 单个店铺结算 -->
+            <div class="cart-amount auto clearfix">
+                <div class="btn-batch btn-batch_{$store_id}">
+                    <a href="javascript:;" name="batch_del" class="center" title="{$lang.batch_del}">{$lang.batch_del}</a>
+                    <a href="javascript:;" name="batch_collect" class="center" title="{$lang.batch_collect}">{$lang.batch_collect}</a>
+                </div>
+                <div class="btn-amount">
+                    <p>
+                        <span class="ml20">{$lang.goods_amount}{$lang.colon}</span>
+                        <strong class="price fs14 strong"  id="cart{$store_id}_amount">&yen;0.00</strong>
+                        <a href="javascript:;" data-store="{$store_id}" class="inline-block btn fs14 center fff strong">{$lang.next_order_form}</a>
+                    </p>
+                </div>
+            </div>
+         </div>
+         <!--{/foreach}-->
+      </div>
+
+      <!-- //tiq -->
+
+      <div class="merge_behalf_order mt20 clearfix" >
+        <div class="float-left ml5 mt10">
+          <form id="order_form" method="post">
+             <input type="hidden" name="gids" id="gids" value="">
+             <input type="hidden" name="so" value="1">
+          </form>
+        </div>
+        <div class="float-right pay-together-wrapper">
+           <p class="hidden overflowHidden">
+             <span class="">{$lang.merge_goods_amount}{$lang.colon}</span>
+             <strong class="price fs20 strong mr20 f90"  id="cart_merge_amount">&yen;0.00</strong>
+             <a href="javascript:;" class="pay-together" title="{$lang.merge_order_together_pay}">结算</a>
+           </p>
+        </div>
+      </div>
+
+   </div>
+   <div class="interest mt20">
+      <div class="title border fs14 padding5 f66 strong"><span class="arr"></span>{$lang.interest_note}</div>
+      <div class="content border border-t-0 clearfix">
+         <!--{foreach from=$interest item=goods}-->
+         <dl class="float-left">
+           <dt><a href="{url app=goods&id=$goods.goods_id}" target="_blank"><img width="160" height="160" src="{$goods.default_image}" /></a></dt>
+           <dd class="desc"><a href="{url app=goods&id=$goods.goods_id}" target="_blank">{$goods.goods_name|escape|truncate:50}</a></dd>
+           <dd class="price clearfix"><em>{$goods.price}</em><span>{$lang.zjcj}{$goods.sales}{$lang.bi}</span></dd>
+           <dd class="service"></dd>
+         </dl>
+         <!--{/foreach}-->
+      </div>
+   </div>
+</div>
+</div>
+<script type="text/javascript">
+$(function(){
+	<!--{if count($carts) eq 1}-->
+		$("input[type='checkbox']").each(function(){
+			//$(this).attr('checked',true);
+		});
+		calcu_store_fee();
+		$('#gids').val($(".select input[type='checkbox']").val());
+	<!--{/if}-->
+});
+</script>
+{include file="footer2017.html"}

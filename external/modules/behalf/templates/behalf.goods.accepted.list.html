@@ -1,0 +1,240 @@
+{include file=header.whole.html}
+<script type="text/javascript">
+
+	
+   
+  $(function(){
+	  $('#query_time_wrapper').datetimepicker({format:'YYYY-MM-DD HH:mm:ss'});
+	  $('#query_endtime_wrapper').datetimepicker({format:'YYYY-MM-DD HH:mm:ss'});
+	  $('#query_time_wrapper').on('dp.change',function(e){
+		  $('#query_endtime_wrapper').data("DateTimePicker").minDate(e.date);
+	  });
+	  $('#query_endtime_wrapper').on('dp.change',function(e){
+		  $('#query_time_wrapper').data("DateTimePicker").maxDate(e.date);
+	  }); 
+	  $('#query_time_form').bootstrapValidator({
+		  feedbackIcons: {
+	            valid: 'glyphicon glyphicon-ok',
+	            invalid: 'glyphicon glyphicon-remove',
+	            validating: 'glyphicon glyphicon-refresh'
+	        }, 
+		  fields:{
+			  query_time:{
+				  feedbackIcons:'false',
+				  validators:{
+					  notEmpty:{},
+					  date:{
+						message:'请输入有效日期,格式形如：2015-01-01 23:59:59',
+					  	format:"YYYY-MM-DD HH:mm:ss"
+					  }
+				  }
+			  },
+			  query_endtime:{
+				  validators:{
+					  notEmpty:{},
+					  date:{
+						message:'请输入有效日期,格式形如：2015-01-01 23:59:59',
+					  	format:"YYYY-MM-DD HH:mm:ss"
+					  },
+					  /* remote:{
+						url:"index.php?module=behalf&act=check_querytime",
+						data:{'query_time':$('#query_time_wrapper').data("DateTimePicker").date}
+					  },  */
+					  different:{
+						  field:'query_time',
+						  message:'结束时间应该大于开始时间'
+					  } 
+				  }
+			  },
+			  'market[]':{
+				  validators:{
+					  notEmpty:{ message:'至少选择一个市场' }
+				  }
+			  }
+		  }
+	  });
+	  
+	  <!--{if $goods_list}-->
+	  var dt = $("#goods_list_table").DataTable({
+			"ordering":true,
+		    "paging":true,
+		    "info":true,
+		    "searching":true,
+		    "columnDefs":[
+		       {"orderable":false,"targets":0},           
+
+
+
+		      
+		     ],
+		     "order":[
+		        [0,null]      
+		     ],
+		     //dom:"Bfrtip",
+		     dom:"<'container-fluid' <'row' <'col-xs-2' l><'col-xs-7' B><'col-cs-3' f> > <t> <'row' <'col-xs-4' i><'col-xs-8 text-right' p>  >  >",
+		     "buttons":[
+		       'excel',{
+		    	   text:'打印表格',
+		    	   className:'btn btn-default',
+		    	   action:function(e,dt,node,config){
+		    		   print_table(dt.data());
+		    	   }
+		    	   
+		       }
+		    
+		     ],
+			"language":{
+				"url":"{lib file='/DataTables/zn.json'}",
+				"buttons":{
+					"copy":"复制表格",
+					"excel":"导出EXCEL",
+					"print":"打印表格",
+					"colvis":"隐/显列"
+				}
+			},
+			"pagingType":'full_numbers'
+		});
+	  //add table no
+	   dt.on('order.dt search.dt',
+			    function() {
+			        dt.column(0, {
+			            search: 'applied',
+			            order: 'applied'
+			        }).nodes().each(function(cell, i) {
+			            cell.innerHTML = i + 1;
+			        });
+			    }).draw();
+
+	  dt.on('click','tr',function(){
+		 tag_printer([dt.row(this).data()]);
+
+	  });
+	   
+	  <!--{/if}-->
+	  
+	  
+		  
+		  
+		  
+		 // $("#savebtn-nhd").on('click',function(e){ 
+	  		  //alert('f');
+	  		  
+			  $("#form-nhd").bootstrapValidator({
+				  feedbackIcons: {
+			            valid: 'glyphicon glyphicon-ok',
+			            invalid: 'glyphicon glyphicon-remove',
+			            validating: 'glyphicon glyphicon-refresh'
+			        }, 
+				  fields:{
+					  nhd_name:{
+						  validators:{
+							  notEmpty:{}
+						  }
+					  },
+					  nhd_taker:{
+						  validators:{
+							  //notEmpty:{}
+						  }
+					  }
+				  }
+			  }).bootstrapValidator('validate').on('success.form.bv', function(e) {
+				   // Prevent form submission
+		            e.preventDefault();
+
+		            // Get the form instance
+		            var $form = $(e.target);
+
+		            // Get the BootstrapValidator instance
+		            var bv = $form.data('bootstrapValidator');
+
+		            // Use Ajax to submit form data
+		            $.post($form.attr('action'), $form.serialize(), function(result) {
+		            	$('#modal-nhd').modal('hide');
+		                //var json = $.parseJSON(result);
+		                //bootbox.alert(result.msg);
+		            }, 'json');
+		           
+		            $form.data('bootstrapValidator').resetForm(true);
+		         
+		        });
+	  		  
+	  		  
+		 // }).addClass('disabled');
+		 
+		 jQuery("#checkall").on('ifChecked ifUnchecked',function(){			 
+			 var checkall = this.checked ? 'check':'uncheck';
+			 jQuery("input[name='market[]']").iCheck(checkall);
+			/* jQuery("input[name='market[]']").each(function(i){
+				this.checked = checkall;
+			}); */
+		 });
+	
+  });
+
+</script>
+<div class="container-fluid">
+
+
+	  <!--{if $goods_list}-->
+	  <div class="panel panel-default">
+		<div class="panel-body">	
+			<div class="row">
+				<div class="col-xs-10">
+					<label>统计：</label>
+					商品总数量<b class="text-danger"> {$total_count} </b>件.
+				</div>
+				<div class="col-xs-2">
+					
+				</div>
+			</div>	
+			
+		</div>
+		
+			<table id="goods_list_table" class="table table-condensed table-striped table-bordered table-hover" width="100%">
+		  	<thead>
+		  		<tr>
+		  		    <th class="text-center" width="30">NO</th>
+		  			<th class="text-center col-xs-1">商品编码</th>
+		  			<th class="text-center col-xs-1">订单编码</th>
+
+		  			<th class="text-center col-xs-1">所属市场</th>
+		  			<th class="text-center col-xs-1">商品单价</th>
+		  			<th class="text-center col-xs-1">货号</th>
+		  			<th class="text-center col-xs-1">商家编码</th>
+		  			<th class="text-center col-xs-1">颜色尺寸</th>
+
+		  			<th class="text-center">订单商品总数</th>
+
+
+					<th class="text-center hidden-print">库位号 </th>
+		  		</tr>
+		  	</thead>
+		  	<tbody>
+		  	<!--{foreach from=$goods_list item=goods name=fe_goods}-->
+		  		<tr>
+		  		    <td class="text-center" width="30"></td>
+
+		  			<td class="text-center col-xs-1">{$goods.goods_no}</td>
+		  			<td class="text-center col-xs-1"><a href="index.php?module=behalf&act=show_order_detail&order_id={$goods.order_id}" target="_blank">{$goods.order_sn}</a></td>
+		  			<td class="text-center col-xs-1">{$goods.market_name}_{$goods.floor_name}_{$goods.store_address}</td>
+		  			<td class="text-center col-xs-1">{$goods.goods_price}</td>
+		  			<td class="text-center col-xs-1">{$goods.goods_sku|escape}</td>
+		  			<td class="text-center col-xs-1">{$goods.goods_attr_value}</td>
+		  			<td class=" col-xs-1">{$goods.goods_specification}</td>
+
+		  			<td class="text-center">{$goods.total_quantity}</td>
+
+					<td>{$goods.stock_code}</td>
+		  		</tr>
+		  	<!--{/foreach}-->
+		  	</tbody>
+		  </table>
+	   
+	  </div>
+	  <!--{else}-->
+	  <div class="alert alert-warning"><span class="glyphicon glyphicon-heart"></span> 亲！没有找到相关的数据，请继续挖掘吧……</div>
+	  <!--{/if}-->
+	  
+
+</div>
+{include file=footer.whole.html}

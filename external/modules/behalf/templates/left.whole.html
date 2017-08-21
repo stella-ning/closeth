@@ -1,0 +1,293 @@
+<div class="person-info">
+
+	<span class="text-success">
+		<span class="iconfont">&#xe604;</span>
+	</span>
+	欢迎光临，
+	<a class="userName" href="{url module=behalf&amp;act=set_behalf}" >{$user_name}</a>
+	<span class="text-danger">&nbsp;&nbsp;
+		<span class="iconfont">&#xe6b9;</span>
+		<a href="{url app=member}">退出</a>
+	</span>
+</div>
+
+<div class="menuTitle">
+  <span class="iconfont">&#xe626;</span>
+  常用操作
+</div>
+<!-- <div class="subMenu-wrapper">
+    <dl class="subMenu active">
+        <dt class="noneList">
+            欢迎页面
+        </dt>
+    </dl>
+    <dl class="subMenu">
+        <dt>
+            订单管理
+            <span class="iconfont iconArrow">&#xe60e;</span>
+        </dt>
+        <dd class="subMenuList">
+            <ul class="navSidebar">
+                <li>
+                    <a href="">
+                        <span class="iconfont iconArrow">&#xe615;</span>
+                        订单列表
+                    </a>
+                </li>
+                 <li>
+                    <a href="">
+                        <span class="iconfont iconArrow">&#xe615;</span>
+                        订单列表
+                    </a>
+                </li>
+                 <li>
+                    <a href="">
+                        <span class="iconfont iconArrow">&#xe615;</span>
+                        订单列表
+                    </a>
+                </li>
+
+            </ul>
+        </dd>
+    </dl>
+    <dl class="subMenu">
+        <dt>
+            标签管理
+            <span class="iconfont iconArrow">&#xe60e;</span>
+        </dt>
+        <dd class="subMenuList">
+            <ul class="navSidebar">
+                <li>
+                    <a href="">
+                        <span class="iconfont iconArrow">&#xe615;</span>
+                        标签管理
+                    </a>
+                </li>
+                 <li>
+                    <a href="">
+                        <span class="iconfont iconArrow">&#xe615;</span>
+                        标签管理
+                    </a>
+                </li>
+                 <li>
+                    <a href="">
+                        <span class="iconfont iconArrow">&#xe615;</span>
+                        标签管理
+                    </a>
+                </li>
+
+            </ul>
+        </dd>
+    </dl>
+    <dl class="subMenu">
+        <dt>
+            入库管理
+            <span class="iconfont iconArrow">&#xe60e;</span>
+        </dt>
+        <dd class="subMenuList">
+            <ul class="navSidebar">
+                <li>
+                    <a href="">
+                        <span class="iconfont iconArrow">&#xe615;</span>
+                        入库管理
+                    </a>
+                </li>
+                 <li>
+                    <a href="">
+                        <span class="iconfont iconArrow">&#xe615;</span>
+                        入库管理
+                    </a>
+                </li>
+                 <li>
+                    <a href="">
+                        <span class="iconfont iconArrow">&#xe615;</span>
+                       入库管理
+                    </a>
+                </li>
+
+            </ul>
+        </dd>
+    </dl>
+    <dl class="subMenu">
+        <dt>
+            质检管理
+            <span class="iconfont iconArrow">&#xe60e;</span>
+        </dt>
+        <dd class="subMenuList">
+            <ul class="navSidebar">
+                <li>
+                    <a href="">
+                        <span class="iconfont iconArrow">&#xe615;</span>
+                        质检管理
+                    </a>
+                </li>
+                 <li>
+                    <a href="">
+                        <span class="iconfont iconArrow">&#xe615;</span>
+                        质检管理
+                    </a>
+                </li>
+                 <li>
+                    <a href="">
+                        <span class="iconfont iconArrow">&#xe615;</span>
+                        质检管理
+                    </a>
+                </li>
+
+            </ul>
+        </dd>
+    </dl>
+    <dl class="subMenu">
+        <dt>
+            打包管理
+            <span class="iconfont iconArrow">&#xe60e;</span>
+        </dt>
+        <dd class="subMenuList">
+            <ul class="navSidebar">
+                <li>
+                    <a href="">
+                        <span class="iconfont iconArrow">&#xe615;</span>
+                        打包管理
+                    </a>
+                </li>
+                 <li>
+                    <a href="">
+                        <span class="iconfont iconArrow">&#xe615;</span>
+                        打包管理
+                    </a>
+                </li>
+                 <li>
+                    <a href="">
+                        <span class="iconfont iconArrow">&#xe615;</span>
+                        打包管理
+                    </a>
+                </li>
+
+            </ul>
+        </dd>
+    </dl>
+    <dl class="subMenu">
+        <dt>
+            退货管理
+            <span class="iconfont iconArrow">&#xe60e;</span>
+        </dt>
+        <dd class="subMenuList">
+            <ul class="navSidebar">
+                <li>
+                    <a href="">
+                        <span class="iconfont iconArrow">&#xe615;</span>
+                       退货管理
+                    </a>
+                </li>
+                 <li>
+                    <a href="">
+                        <span class="iconfont iconArrow">&#xe615;</span>
+                        退货管理
+                    </a>
+                </li>
+                 <li>
+                    <a href="">
+                        <span class="iconfont iconArrow">&#xe615;</span>
+                        退货管理
+                    </a>
+                </li>
+            </ul>
+        </dd>
+    </dl>
+</div> -->
+ <div class="subMenu-wrapper">
+    <!--{foreach from=$_left_menu item=item name=fe_item}-->
+        <!--{if $item.submenu}-->
+
+        <dl class="subMenu" style="margin:0;" {if $subitem.name eq $_curitem} class="active" {/if} >
+            <dt {if $smarty.foreach.fe_item.first}class="hit "{/if}>
+                <!--{if !$item.name}-->
+                   <span class="iconfont iconArrow">&#xe60e;</span>
+                    {$item.text}
+                <!--{else}-->
+                <!--{if $item.icon}-->
+                    <span class="iconfont iconArrow">&#xe60e;</span>
+                <!--{/if}--> {$item.text}<!--{/if}-->
+            </dt>
+            <dd class="subMenuList">
+                <ul class="nav nav-sidebar navSidebar">
+                <!--{foreach from=$item.submenu item=subitem}-->
+                     <li>
+                        <a href="{$subitem.url}" {if $subitem.target} target="{$subitem.target}" class="on"{/if}>
+                            <span class="iconfont iconArrow">&#xe615;</span>
+                         {$subitem.text}
+
+                         <!--{foreach from=$priv item=priv_item}-->  <!--zjh 2017/8/5-->
+                         <!--{if $priv_item eq $subitem.name}-->
+                         <img src="{res file=images/lock.svg}" style="width:25px;height:25px;">
+                         <!--{/if}-->
+                         <!--{/foreach}-->
+
+                        <!--{if $subitem.name eq $_curitem}-->  <!--{/if}-->
+
+                        <!--{if $subitem.name eq $_curitem}-->  <!--{/if}-->
+                        </a>
+                    </li>
+                <!--{/foreach}-->
+                </ul>
+            </dd>
+        </dl>
+        <!--{/if}-->
+    <!--{/foreach}-->          
+</div> 
+
+
+
+
+
+<script>
+    //获取当前url
+    var winUrl = window.location.href.split('/'),
+        winNothttp = winUrl[3], 
+        nowUrl = winUrl[3].split('&'),
+        finalUrl = nowUrl[0]+'&'+nowUrl[1],
+        firstUrl = nowUrl[0]; 
+        //console.log(finalUrl)
+
+    var $menuListA = $('.subMenu dd.subMenuList ul.navSidebar li a');
+    setTimeout(function(){
+        $menuListA.each(function(i){
+            var $href =  $(this).attr('href');
+            console.log(finalUrl == $href)
+            //判定当前url与a的herf 哪个相同,想让的就出发父级的点击事件
+            if(finalUrl == $href || winNothttp == $href || firstUrl == $href){
+                $(this).parent('li').addClass('on').parents('dd').prev('dt').trigger('click');    
+            }
+        })
+    },50);
+
+    // 侧边导航效果
+    $(function(){
+        $('.subMenu dt').on('click',function(){
+            $(this).parents('dl').toggleClass('active');
+            $(this).next('dd').find('.navSidebar').toggle(500);
+        });
+    })
+    
+</script>
+
+
+
+<!--  <ul class="nav nav-sidebar">
+   <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
+   <li><a href="#">Reports</a></li>
+   <li><a href="#">Analytics</a></li>
+   <li><a href="#">Export</a></li>
+ </ul>
+ <ul class="nav nav-sidebar">
+   <li><a href="">Nav item</a></li>
+   <li><a href="">Nav item again</a></li>
+   <li><a href="">One more nav</a></li>
+   <li><a href="">Another nav item</a></li>
+   <li><a href="">More navigation</a></li>
+ </ul>
+ <ul class="nav nav-sidebar">
+   <li><a href="">Nav item again</a></li>
+   <li><a href="">One more nav</a></li>
+   <li><a href="">Another nav item</a></li>
+ </ul> -->

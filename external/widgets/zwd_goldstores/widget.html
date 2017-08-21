@@ -1,0 +1,73 @@
+﻿<div class="florid-gold-medal-line-container">
+	<div class="glod-medal-title-container">
+		<span class="glod-medal-title"><a
+			href="{$widget_data.slink}"
+			target="_blank">{$widget_data.sname}</a></span>
+	</div>
+</div>
+
+<div class="gold-medal-big-xxx-container">
+	<div class="big-xxxOutside-container">
+	<!-- {foreach from=$widget_data.goods item=goods name=fe_goods} -->
+		<div class="gold-medal-big-xxx-item">
+			<div class="bix-xxx-img">
+				<a
+					href="{$goods.goods_link}"
+					target="_blank" title="{$goods.goods_name}"> <img
+					src="{$goods.goods_image}"
+					alt="{$goods.goods_name}">
+				</a>
+				<div class="florid-hot-image-upload">
+					<div class="image-upload-item">
+						<a
+							href="{url app=item_upload&dest=Taobao&goods_id=$goods.goods_id}"
+							target="_blank" rel="nofollow" title="一键上传,上传淘宝">传淘宝</a>
+					</div>
+					<div class="image-upload-item middle-btn">
+						<a
+							href="{url app=item_upload&dest=Alibaba&goods_id=$goods.goods_id}"
+							target="_blank" rel="nofollow" title="一键上传,上传阿里巴巴">传阿里</a>
+					</div>
+					<div class="image-upload-item">
+						<a
+							href="javascript:;"
+							target="_blank" rel="nofollow" >&nbsp;</a>
+					</div>
+				</div>
+			</div>
+
+			<div class="xxx-icon-container">
+				<div class="xxx-icon-outside-container">
+					<div class="icon-container xxx-new-icon"></div>
+					<div class="icon-container xxx-hot-icon"></div>
+					<div class="icon-container xxx-weekly-icon"></div>
+				</div>
+			</div>
+
+			<div class="xxx-link-container">
+				<div class="xxx-top-link">
+					<a
+						href="{$goods.goods_link}"
+						class="xxx-top">{$goods.goods_name}</a>
+				</div>
+			</div>
+			<div class="xxx-price-container">{$goods.goods_price|price}</div>
+		</div>
+		<!-- {/foreach} -->
+		
+		
+
+		
+		
+
+	</div>
+
+	<div class="big-xxx-btn-container">
+		<a
+			href="{$widget_data.slink}"
+			target="_blank" class="more-btn" data-text="more"> <span>more</span>
+		</a>
+	</div>
+</div>
+
+<div class="clr"></div>

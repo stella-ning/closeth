@@ -1,0 +1,321 @@
+{include file=header.whole.html}
+<script type="text/javascript">
+	//
+	//Pipelining function for DataTables. To be used to the `ajax` option of DataTables
+	//
+	$.fn.dataTable.pipeline = function ( opts ) {
+// Configuration options
+		var conf = $.extend( {
+			pages: 500,     // number of pages to cache
+			url: '',      // script url
+			data: null,   // function or object with parameters to send to the server
+						  // matching how `ajax.data` works in DataTables
+			method: 'GET' // Ajax HTTP method
+		}, opts );
+
+// Private variables for storing the cache
+		var cacheLower = -1;
+		var cacheUpper = null;
+		var cacheLastRequest = null;
+		var cacheLastJson = null;
+
+		return function ( request, drawCallback, settings ) {
+			var ajax          = false;
+			var requestStart  = request.start;
+			var drawStart     = request.start;
+			var requestLength = request.length;
+			var requestEnd    = requestStart + requestLength;
+
+			if ( settings.clearCache ) {
+				// API requested that the cache be cleared
+				ajax = true;
+				settings.clearCache = false;
+			}
+			else if ( cacheLower < 0 || requestStart < cacheLower || requestEnd > cacheUpper ) {
+				// outside cached data - need to make a request
+				ajax = true;
+			}
+			else if ( JSON.stringify( request.order )   !== JSON.stringify( cacheLastRequest.order ) ||
+					JSON.stringify( request.columns ) !== JSON.stringify( cacheLastRequest.columns ) ||
+					JSON.stringify( request.search )  !== JSON.stringify( cacheLastRequest.search )
+			) {
+				// properties changed (ordering, columns, searching)
+				ajax = true;
+			}
+
+			// Store the request for checking next time around
+			cacheLastRequest = $.extend( true, {}, request );
+
+			if ( ajax ) {
+				// Need data from the server
+				if ( requestStart < cacheLower ) {
+					requestStart = requestStart - (requestLength*(conf.pages-1));
+
+					if ( requestStart < 0 ) {
+						requestStart = 0;
+					}
+				}
+
+				cacheLower = requestStart;
+				cacheUpper = requestStart + (requestLength * conf.pages);
+
+				request.start = requestStart;
+				request.length = requestLength*conf.pages;
+
+				// Provide the same `data` options as DataTables.
+				if ( $.isFunction ( conf.data ) ) {
+					// As a function it is executed with the data object as an arg
+					// for manipulation. If an object is returned, it is used as the
+					// data object to submit
+					var d = conf.data( request );
+					if ( d ) {
+						$.extend( request, d );
+					}
+				}
+				else if ( $.isPlainObject( conf.data ) ) {
+					// As an object, the data given extends the default
+					$.extend( request, conf.data );
+				}
+
+				settings.jqXHR = $.ajax( {
+					"type":     conf.method,
+					"url":      conf.url,
+					"data":     request,
+					"dataType": "json",
+					"cache":    false,
+					"success":  function ( json ) {
+						cacheLastJson = $.extend(true, {}, json);
+
+						if ( cacheLower != drawStart ) {
+							json.data.splice( 0, drawStart-cacheLower );
+						}
+						json.data.splice( requestLength, json.data.length );
+
+						drawCallback( json );
+					}
+				} );
+			}
+			else {
+				json = $.extend( true, {}, cacheLastJson );
+				json.draw = request.draw; // Update the echo for each response
+				json.data.splice( 0, requestStart-cacheLower );
+				json.data.splice( requestLength, json.data.length );
+
+				drawCallback(json);
+			}
+		}
+
+	};
+
+	//Register an API method that will empty the pipelined data, forcing an Ajax
+	//fetch on the next draw (i.e. `table.clearPipeline().draw()`)
+	$.fn.dataTable.Api.register( 'clearPipeline()', function () {
+		return this.iterator( 'table', function ( settings ) {
+			settings.clearCache = true;
+		} );
+	} );
+
+
+
+
+    function pre_load_format()
+    {
+    	return "<div class='text-center text-default'><img src='{res file=images/loading.gif}'> 玩命加载中，请稍后……</div>";
+    }
+
+
+
+  $(function(){
+	    // Array to track the ids of the details displayed rows
+	    var detailRows = [];
+
+		var dt = $("#order_list_table").DataTable({
+					"ordering":true,
+				    "paging":true,
+				    "info":true,
+				    "searching":false,
+			dom:"<'container-fluid' <'row' <'col-xs-2' l><'col-xs-7' B><'col-cs-3' f> > <t> <'row' <'col-xs-4' i><'col-xs-8 text-right' p>  >  >",
+			"buttons":[
+				{
+					extend: 'excel',
+					text: '导出订单',
+					title : '分拣列表_仓库',
+
+				},{
+					text:'打印表格',
+					className:'btn btn-default',
+					action:function(e,dt,node,config){
+						print_table(dt.data());
+					}
+
+				}
+
+
+			],
+			'serverSide' :true,
+			"columns": [
+
+				{ "data": "order_sn"},
+				{ "data": "stock_code" },
+				{ "data": "total_quantity" },
+			],
+			"columnDefs":[
+				{"orderable":false,"targets":[0]},
+				{"orderable":false,"targets":[1]},
+				{"orderable":false,"targets":[2]},
+					],
+			"processing": true,
+			"ajax": $.fn.dataTable.pipeline( {
+				url: "index.php?module=behalf&act=order_sort_ajax",
+
+                data : {type : 'accepted' , order_sn : $('input[name=order_sn_s]').val(), tomorrow :
+						$('input[name=tomorrow]').val()} ,
+
+				pages: 2 // number of pages to cache
+			} ),
+			"lengthMenu": [[100, 500, 1000, -1], [100, 500, 1000, "所有"]],
+
+					"language":{
+						"url":"{lib file='/DataTables/zn.json'}"
+
+					},
+			"pagingType":'full_numbers',
+			"deferRender": true,
+
+
+				});
+
+		$('#order_list_table tbody').on( 'click','tr td.details_control',function () {
+
+			var order_id = $(this).siblings().find("input[type=checkbox]").val();
+			var tr = $(this).closest('tr');
+	        var row = dt.row( tr );
+	        var idx = $.inArray( tr.attr('id'), detailRows );
+
+	        if ( tr.hasClass('details') ) {
+	            tr.removeClass( 'details' );
+	            row.child.hide();
+
+	            // Remove from the 'open' array
+	            detailRows.splice( idx, 1 );
+	        }
+	        else {
+	            tr.addClass( 'details' );
+
+	            $.post("index.php?module=behalf&act=show_order_details",{'id':order_id,'ajax':1},function(json){
+	            	row.child(pre_load_format()).show();
+	            	if(json.done)
+	            	{
+	            		row.child(format(json.retval)).show();
+	            	}
+	            },'json');
+
+	            //row.child( format(row.data())).show();
+
+	            // Add to the 'open' array
+	            if ( idx === -1 ) {
+	                detailRows.push( tr.attr('id') );
+	            }
+	        }
+
+	    } );
+
+	    // On each draw, loop over the `detailRows` array and show any child rows
+	    dt.on( 'draw', function () {
+	        $.each( detailRows, function ( i, id ) {
+	            $('#'+id+' td.details_control').trigger( 'click' );
+	        } );
+	    } );
+
+
+  });
+
+
+
+</script>
+<div class="container-fluid">
+	<div style="height:10px;"></div>
+	<div class="">
+	 	<ul class="nav nav-tabs">
+				<!--{if $query.tomorrow == 2}-->
+	            <li role="presentation" class="active"><a href="javascript:;">已备齐</a></li>
+			<li role="presentation"><a href="index.php?module=behalf&act=order_sort_list&type=accepted&tomorrow=3">
+				未备齐</a></li>
+				<!--{/if}-->
+			<!--{if $query.tomorrow == 3}-->
+			<li role="presentation"><a href="index.php?module=behalf&act=order_sort_list&type=accepted&tomorrow=2">
+				已备齐</a></li>
+			<li role="presentation" class="active"><a href="javascript:;">
+				未备齐</a></li>
+			<!--{/if}-->
+
+	     </ul>
+     </div>
+    <!--搜索面板-->
+    <div class="order-list" style="margin-top:10px;">
+	    <div class="panel panel-default" style="margin-bottom:0px;">
+	    	<div class="panel-body">
+	    		<form class="form-inline" >
+	    			<div class="form-group">
+	    				<label for="inp_order_sn">{$lang.order_sn1}</label>
+	    				<input type="text" id="inp_order_sn" class="form-control input-sm" name="order_sn_s" value="{$query.order_sn}">
+	    			</div>
+
+
+
+
+	    			<div class="form-group">
+	    				<label for="inp_invoice_no">{$lang.invoice}</label>
+	    				<input type="text" id="inp_invoice_no" class="form-control input-sm" name="invoice_no_s" value="{$query.invoice_no|escape}">
+	    			</div>
+
+
+	    			<input type="hidden" name="module" value="behalf" />
+	                <input type="hidden" name="act" value="order_list_behalf" />
+	                <input type="hidden" name="type" value="{$query.type}" />
+					<input type="hidden" name="tomorrow" value="{$query.tomorrow}"/>
+	                <div class="form-group">
+	                	<input type="submit" class="btn btn-default btn-sm" id="query_order" value="{$lang.search}" />
+	                </div>
+	                <!--{if $query.buyer_name or $query.add_time_from or $query.add_time_to or $query.order_sn or $query_goods_name or $query_goods_seller_bm or $query_oos or $query.invoice_no or $query_dl}-->
+                    	<div class="form-group">
+                    		<a class="btn btn-info btn-sm" href="{url module=behalf&act=order_list_behalf&type=$query.type}">{$lang.cancel_query}</a>
+                    	</div>
+                <!--{/if}-->
+	    		</form>
+	    	</div>
+	    </div>
+    </div>
+    <!-- 订单列表 -->
+	<table id="order_list_table" class="table table-striped table-bordered table-hover" celllspacing="0" border="0" width="100%">
+		<thead>
+			<tr>
+
+				<th class="col-xs-1 text-center">订单号</th>
+				<th class="col-xs-1 text-center">库位号</th>
+				<th class="col-xs-1 text-center">备货订单件数</th>
+
+			</tr>
+		</thead>
+		<tfoot>
+
+				<th class="col-xs-1 text-center"></th>
+				<th class="col-xs-1 text-center"></th>
+				<th class="col-xs-1 text-center"></th>
+
+		</tfoot>
+
+	
+	
+	</table>
+
+
+
+</div>
+<script type="text/javascript">
+	$(function(){		
+		$('#add_time_from_wrapper').datetimepicker({format:'YYYY-MM-DD HH:mm:ss'});
+		$('#add_time_to_wrapper').datetimepicker({format:'YYYY-MM-DD HH:mm:ss'});
+	});
+</script>
+{include file=footer.whole.html}

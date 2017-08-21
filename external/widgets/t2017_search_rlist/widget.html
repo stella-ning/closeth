@@ -1,0 +1,36 @@
+<!--{if !$widget_data.ads}-->
+<div class="padding10 center">请配置-搜款页右侧列表</div>
+<!--{else}-->
+<div class="bd">
+	<ul>
+		<li style="display: block;">
+			<dl class="side-list clearfix  showed">
+			<!--{foreach from=$widget_data.ads item=ad name=fee_ad}-->			
+				<dd class="clearfix ishide">
+					<a href="{$ad.goods_link_url}" title="{$ad.goods_name|escape}" target="_blank" class="j-vda">
+						<div class="pic">
+							<img src="{$ad.ad_image_url}" class="lazy">
+						</div>
+					</a>
+					<div class="priceall">
+						<div class="price">
+							<span class="yuan">¥</span>{$ad.goods_price|number_format:2}
+						</div>
+						<div class="pos">
+							<a target="_blank" href="{$ad.store_link_url}" title="{$ad.store_name}"> <img src="static/images/gold.png" width="19"> {$ad.store_name}
+							</a>
+						</div>
+					</div>
+				</dd>
+			<!--{/foreach}-->	
+			</dl>
+		</li>
+		<li>2</li>
+	</ul>
+</div>
+<!--{/if}-->
+
+
+
+
+

@@ -1,0 +1,96 @@
+{include file=header.whole_nolefttop.html}
+<script type="text/javascript">
+	$(function(){
+		
+		
+		
+	    $("#cancelbtn").on('click',function(){
+	    	window.parent.js_success(0);
+	    });
+
+	    $("#cancel_apply").on('click',function(){
+
+	    	var order_id = $('input[name="order_id"]').val();
+
+	    	$.get("index.php?module=behalf&act=cancel_apply_fee&order_id="+order_id,function(json){
+			  json = jQuery.parseJSON(json);
+			  console.log(json);
+				window.parent.js_success(9);
+			  bootbox.alert(json.msg,function(r){
+				  // location.reload(true);
+
+				  // window.parent.location.href = 'index.php?module=behalf&act=order_list';
+			  });
+			  
+		  	});
+
+	    });
+		
+		
+	});
+</script>
+
+<div class="container-fluid">
+	<form class="form-horizontal" onsubmit="return false;">
+		<div class="form-group">
+			<label class="col-xs-2 text-right control-label">{$lang.apply_fee_reason}</label>
+			<div class="col-xs-9">
+				<input type="text" value="{$refund.refund_reason|escape}" class="form-control">
+			</div>
+		</div>
+		
+		<!--{if $refund.goods_ids_flag eq 0}-->
+		
+		<div class="form-group">
+			<label class="col-xs-2 text-right control-label">{$lang.refund_amount}</label>
+			<div class="col-xs-9">
+				<input type="text" value="{$refund.apply_amount|price}" class="form-control">
+			</div>
+		</div>
+		<!--{else}-->
+			<!--{foreach from=$goods_amount_array key=goods_id item=goods_amount}-->
+				<div class="form-group">
+					<label class="col-xs-2 text-right control-label">{$lang.refund_amount}</label>
+					<div class="col-xs-9">
+						<input type="text" value="{$goods_amount|price}" class="form-control">
+						 <span class="text-warning">商品编码: {$goods_id}</span>
+					</div>
+				</div>
+
+			<!--{/foreach}-->
+
+		<!--{/if}-->
+
+		<div class="form-group">
+			<label class="col-xs-2 text-right control-label">{$lang.apply_intro}</label>
+			<div class="col-xs-9">
+				<textarea name="refund_intro" class="form-control disabled">{$refund.refund_intro|escape}</textarea>
+			</div>
+	     </div>
+		
+		 <div class="form-group">
+			<label class="col-xs-2 text-right control-label"></label>
+			<div class="col-xs-9">
+				<input type="hidden" name="order_id" value="{$refund.order_id}">
+				<button class="btn btn-success" id="cancelbtn">关 闭</button>
+				<button class="btn btn-success" id="cancel_apply">取消补差</button>
+			</div>
+	     </div>
+	</form>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+{include file=footer.whole.html}

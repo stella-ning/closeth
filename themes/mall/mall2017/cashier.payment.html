@@ -1,0 +1,165 @@
+{include file='top2017.html'}
+
+<!--  个人中心 -->
+
+<div id="headear" class="header_mid">
+    <h1 title="我要做网店_网络服装批发市场_vvic搜款网_17一起做网店_四季星座_网上服装批发_网店之家_广州杭州网店服装货源">
+       <a rel="nofollow" href="#" class="logo" title="51做网店"></a>
+    </h1>
+    <div id="path">
+        <div class="path-font">支付</div>
+    </div>
+
+</div>
+<!--  个人中心 -->
+<!--    支付     -->
+<div class="pay3 w">
+
+    <div class="list-content">
+
+        <div class="top">
+            应付金额：
+            <span class="red">
+                <span class="price">
+                    {$order.order_amount|price}
+                </span>
+            </span>
+            <!--<div class="text">请在提交订单后 48 小时内完成支付。</div>-->
+
+        </div>
+
+        <div class="orders-list">
+
+
+            <div class="citem">
+                <h2>{$lang.order_sn}： <span class="num">{$order.order_sn}</span></h2>
+                <p>商品将发送给 {$orderextm.consignee|escape}，物流方式为 {$orderextm.dl_name|escape}</p>
+            </div>
+
+
+        </div>
+
+        <div class="pay-types">
+
+            <h2>支付方式</h2>
+
+            <table class="pay-list">
+				<!--{foreach from=$money item=val key=key}--><dl class="defrays">
+                <tbody><tr id="payo" class="citem pay-balance j-pay-type  {if $val.money < $order.order_amount} disabled {else} selected{/if}" data-code="balance" onclick="spay(1);">
+                    <td width="20"></td>
+                    <td width="34">
+                        <i class="vvicon radio checked"></i>
+                        <i class="vvicon radio unchecked"></i>
+                    </td>
+                    <td width="26">
+                        <img align="absmiddle" src="http://src.vvic.com/statics/v2/css/img/bank/balance.png" height="16" alt="">
+                    </td>
+					<form action="index.php?app=my_money&act=payment&order_id={$order.order_id}" method="POST" id="zft_pay">
+                    <td class="pay-balance-amount">
+                        账户余额
+                        ：<span class="yuan">¥</span><em>{$val.money}</em> {if $val.money < $order.order_amount}<span style="font-size:12px;margin-left:15px;">余额不足</span>{/if}
+						<!--检测动态密码-->
+						<!--{if $val.mibao_id eq 0}--><br />
+						{$lang.payment_zhifu}<input name="zf_pass" type="password" id="zf_pass">
+						<a href="index.php?app=my_money&act=newpassword" target="_blank"><font color="#FF3300">{$lang.payment_zhaohuizhifumima}</font></a>
+						<font color="#999999">({$lang.payment_zhifu_desc}<a href="index.php?app=my_money&act=newpassword" class="aaa" target="_blank">{$lang.setup}</a>)</font>
+						<!--{else}-->
+						{$lang.payment_dongtai}
+						<font color="#FF3300"><B>
+						<?php echo $shuzi1.$zimu1;?>&nbsp;<input type="text" id="user_shuzi1" name="user_shuzi1"  size="3" maxlength="3"/>
+						<?php echo $shuzi2.$zimu2;?>&nbsp;<input type="text" id="user_shuzi2" name="user_shuzi2"  size="3" maxlength="3"/>
+						<?php echo $shuzi3.$zimu3;?>&nbsp;<input type="text" id="user_shuzi3" name="user_shuzi3"  size="3" maxlength="3"/>
+						</B></font>
+						<BR><font color="#999999">{$lang.payment_dongtai_desc}</font>
+						<input name="user_zimuz1" id="user_zimuz1" type="hidden" value="<?php echo $user_zimuz1;?>" />
+						<input name="user_zimuz2" id="user_zimuz2" type="hidden" value="<?php echo $user_zimuz2;?>" />
+						<input name="user_zimuz3" id="user_zimuz3" type="hidden" value="<?php echo $user_zimuz3;?>" />
+						<!--{/if}-->
+						<input name="post_money" type="hidden" value="{$order.order_amount}" />
+                    </td>
+					</form>
+                </tr>
+
+                <tr id="payt" class="citem pay-alipay j-pay-type {if $val.money > $order.order_amount} disabled {else} selected{/if}" data-code="alipay" onclick="spay(2);">
+                    <td width="20"></td>
+                    <td width="34">
+                        <i class="vvicon radio checked"></i>
+                        <i class="vvicon radio unchecked"></i>
+                    </td>
+                    <td width="26">
+                        <img align="absmiddle" src="http://src.vvic.com/statics/v2/css/img/bank/alipay.png" height="16" alt="">
+                    </td>
+                    <td>
+                        支付宝
+
+                    </td>
+                </tr>
+				<!--{/foreach}-->
+
+               <!-- <tr class="j-pay-form" style="display: none;">
+                    <td colspan="4">
+                        <div class="form-main pay">
+                            <div class="f-wrap">
+                                <div class="f-wrap-tab">
+                                    <dl class="text-box clearfix">
+                                        <dt><span class="red">*</span> 绑定手机：</dt>
+                                        <dd class="mr10">
+
+                                            18312553111
+
+                                        </dd>
+
+                                        <dd class="middle">
+                                            <a class="j-modify-mobile" href="/user/account/setting.html" style="display: none;" target="_blank">修改</a>
+                                        </dd>
+
+                                    </dl>
+
+                                    <dl class="text-box">
+                                        <dt>验证码：</dt>
+                                        <dd>
+                                            <input maxlength="4" type="text" id="secCode" name="secCode" placeholder="请输入验证码">
+                                        </dd>
+                                        <dd class="code-img ml10">
+                                            <img width="80" class="j-code-img" id="secCodeImg" height="30" alt="验证码" src="/apic/verifyCode/generate">
+                                        </dd>
+                                        <dd class="code-btn ml10" style="cursor: pointer;">换一张</dd>
+                                    </dl>
+                                    <dl class="text-box j-sms clearfix">
+                                        <dt><span class="red">*</span> 短信验证码：</dt>
+                                        <dd class="mr10">
+                                            <input type="text" name="smsCode" id="smsCode" maxlength="6">
+                                        </dd>
+                                        <dd>
+                                            <span style="width: 100px;" class="btn btn-default j-btn-sms" id="getSms">获取短信验证码</span>
+                                        </dd>
+                                        <dd class="err"></dd>
+                                    </dl>
+
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>-->
+                </tbody></table>
+            <a id="paya" href="{if $val.money > $order.order_amount} javascript:$('#zft_pay').submit(); {else} {url app=my_money&act=direct_alipay&order_id=$order.order_id}{/if}" class="btn btn-primary btn-x-big j-btn-pay" style="width: 160px;" vda="action|pay_submit|zf">立即支付</a>
+
+        </div>
+    </div>
+
+</div>
+<script>
+	function spay(id){
+		if(id == 1){
+			$("#payo").attr("class", "citem pay-alipay j-pay-type selected");
+			$("#payt").attr("class", "citem pay-alipay j-pay-type disabled");
+			$("#paya").attr("href", "javascript:$('#zft_pay').submit();");
+		}else{
+			$("#payt").attr("class", "citem pay-alipay j-pay-type selected");
+			$("#payo").attr("class", "citem pay-alipay j-pay-type disabled");
+			$("#paya").attr("href", "index.php?app=my_money&act=direct_alipay&order_id={$order.order_id}");
+		}
+	}
+</script>
+<!--    支付     -->
+{include file='footer2017.html'}

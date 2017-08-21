@@ -1,0 +1,2 @@
+ ALTER TABLE `ecm_store` CHANGE `mk_name` `see_price` VARCHAR( 100 ) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '优惠价格'; 
+ ALTER TABLE `ecm_store` ADD `dangkou_address` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '档口地址';

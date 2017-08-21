@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <base href="{$site_url}/"/>
+    <meta charset="UTF-8">
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=1200px">
+    <meta name="renderer" content="webkit">
+    {$page_seo}
+
+    <meta name="author" content="www.51zwd.com"/>
+    <meta name="generator" content="www.51zwd.com"/>
+    <meta name="copyright" content="www.51zwd.com. All Rights Reserved"/>
+    <link rel="shortcut icon" href="{$site_url}/favicon.ico"/>
+    <link rel="bookmark" href="{$site_url}/favicon.ico"/>
+    <link type="text/css" href="{res file=css/reset.css}" rel="stylesheet"/>
+    <link type="text/css" href="{res file=css/base.css}" rel="stylesheet"/>
+    <link type="text/css" href="{res file=css/index.css}" rel="stylesheet"/>
+    <link type="text/css" href="{res file=css/page.css}" rel="stylesheet"/>
+    <link type="text/css" href="{res file=css/shopp.css}" rel="stylesheet"/>
+    <link href="{lib file=jBox/jbox.css}" rel="stylesheet" type="text/css"/>
+	<link href="{res file=shop.css}" rel="stylesheet" type="text/css" />
+	<link href="{res file=gshop.css}" rel="stylesheet" type="text/css" />
+
+    <script type="text/javascript" src="index.php?act=jslang"></script>
+    <script type="text/javascript" src="{lib file=jquery.js}" charset="utf-8"></script>
+    <script type="text/javascript" src="{lib file=jBox/jquery.jBox.src.js}" charset="utf-8"></script>
+    <script type="text/javascript" src="{lib file=ecmall.js}" charset="utf-8"></script>
+    <script type="text/javascript" src="{lib file=cart.js}" charset="utf-8"></script>
+    <script type="text/javascript" src="{lib file=jquery.plugins/jquery.lazyload.js}"></script>
+    <script type="text/javascript" src="{lib file=jquery.plugins/jquery.SuperSlide.js}" charset="utf-8"></script>
+	
+
+    <script type="text/javascript">
+        //<!CDATA[
+        var SITE_URL = "{$site_url}";
+        var REAL_SITE_URL = "{$real_site_url}";
+        var PRICE_FORMAT = '{$price_format}';
+        $(function () {
+            $("#goTopBtn").click(function () {
+                var sc = $(window).scrollTop();
+                $('body,html').animate({scrollTop: 0}, 200);
+            });
+
+            var span = $("#child_nav");
+            span.hover(function () {
+                $("#float_layer:not(:animated)").show();
+            }, function () {
+                $("#float_layer").hide();
+            });
+
+            $(".top-search .search-type").hover(function () {
+                $(this).addClass("hover");
+            }, function () {
+                $(this).removeClass("hover");
+            });
+            $(".top-search .search-type li:eq(1)").click(function () {
+                var act0 = $(".top-search .search-type li:eq(0)").attr("act");
+                var text0 = $(".top-search .search-type li:eq(0)").html();
+                $("#form-search-act").attr("value", $(this).attr("act"));
+                $(".top-search .search-type li:eq(0)").attr("act", $(this).attr("act"));
+                $(".top-search .search-type li:eq(0)").html($(this).html());
+                $(".top-search .search-type li:eq(1)").attr("act", act0);
+                $(".top-search .search-type li:eq(1)").html(text0);
+            });
+            $(".top-search li").click(function () {
+                if ($("input[name='act']").val() == 'store')
+                    $("input[name='keyword']").attr('placeholder', '请输入档口名或档口地址');
+                else
+                    $("input[name='keyword']").attr('placeholder', '可直接输入商家编码，如 国大324-B_P30_3531#');
+                /*
+                 $(".top-search li").each(function(){
+                 $(this).removeClass("current");
+                 });
+                 $(this).addClass("current");
+                 $(".top-search-box input[name='act']").val(this.id);
+                 */
+                if ($.trim($(".top-search-box input[name='keyword']").val()) == "") {
+                    $(".top-search-box input[name='keyword']").attr("class", "");
+                    $(".top-search-box input[name='keyword']").addClass(this.id + "_bj kw_bj keyword");
+                }
+            });
+            $(".top-search-box input[name='keyword']").focus(function () {
+                $(this).attr("class", "keyword");
+            }).blur(function () {
+                if ($.trim($(this).val()) == "") {
+                    $(this).attr("class", $(this).parent().find("input[name='act']").val() + "_bj kw_bj keyword");
+                }
+            });
+            $("#goods51_description img").lazyload();
+            $("img").lazyload();
+
+            $(window).scroll(function () {
+                height = $(window).scrollTop();
+                if (height > 550) {
+                    $('.header_fixed').fadeIn();
+                } else {
+                    $('.header_fixed').fadeOut();
+                }
+                ;
+            })
+//            $("#dan_g").hover(function () {
+//                $("#qua_n").show().addClass("opper");
+//                $('#dan_g').addClass("oppedr");
+//            }, function () {
+//                $("#qua_n").hide().removeClass("opper");
+//                $('#dan_g').removeClass("oppedr");
+//            })
+//            $("#qua_n").hover(function () {
+//                $("#qua_n").toggle().addClass("opper");
+//                $('#dan_g').addClass("oppedr");
+//            }, function () {
+//                $("#qua_n").hide().removeClass("opper");
+//                $('#dan_g').removeClass("oppedr");
+//            })
+        })
+        //]]>
+    </script>
+
+    {$_head_tags}
+    <!--<editmode></editmode>-->
+</head>
+<body id="contents" class="media_screen_1200">
+<!-- 右侧导航 -->
+<div class="mgj_rightbar J_sidebar" style="right: 0px;">
+    <div id="mgj_rightbar_top_blank" class="mgj_rightbar_960"></div>
+    <div class="mgj_rightbar_blank_div"></div>
+    <div class="sidebar-item mgj-my-cart" style="left: 0px;">
+        <a target="_blank" href="index.php?app=cart" rel="nofollow">
+            <i class="s-icon"></i>
+            <div class="s-txt">购物车</div>
+            <div class="num"></div>
+        </a>
+    </div>
+    <div class="sidebar-item mgj-my-coupon">
+
+        <a target="_blank" rel="nofollow" href="http://wpa.qq.com/msgrd?v=3&uin=800029051&site=51zwd&menu=yes">
+            <i class="s-icon"></i>
+            <div class="s-txt">客服</div>
+            <div class="num"></div>
+        </a>
+    </div>
+    <div class="sidebar-item mgj-my-wallet">
+        <a target="_blank" rel="nofollow" href="http://wpa.qq.com/msgrd?v=3&uin=800029051&site=51zwd&menu=yes">
+            <i class="s-icon"></i>
+            <div class="s-txt">反馈</div>
+        </a>
+    </div>
+    <div id='goTopBtn' class="sideBottom">
+        <a rel="nofollow" href="javascript:;">
+            <i class="s-icon"></i>
+        </a>
+    </div>
+</div>
+<!--右侧导航end-->
+
+<!-- 左侧楼层 -->
+<div id="menus">
+    <ul>
+        <li><a href="#item1" class="current" style="border:none;">1F</a></li>
+        <li><a href="#item2">2F</a></li>
+        <li><a href="#item3">3F</a></li>
+        <li><a href="#item4">4F</a></li>
+        <li><a href="#item5">5F</a></li>
+        <li><a href="#item6">6F</a></li>
+        <li><a href="#item7">7F</a></li>
+    </ul>
+</div>
+<!-- 左侧楼层end -->
+
+<!-- 滚动向下显示 -->
+<div class="header3_wrap header_fixed">
+    <div class="header_inner">
+        <div class="header3 clearfix">
+            <a rel="nofollow" href="http://www.51zwd.com" class="logo" title="51做网店"></a>
+            <div class="search radius6">
+                <form name="searchform" method="get" action="{url app=search}">
+                    <input name='ecmsfrom' type='hidden' value='9'>
+                    <input type="hidden" name="show" value="title,newstext">
+                    <input type="hidden" name="app" value="search"/>
+                    <select id="choose">
+                        <option value="index">搜商品</option>
+                        <option value="store">搜店铺</option>
+                    </select>
+                    <input type="hidden" name="act" value="index"/>
+                    <input class="inp_srh" name="keyword" value="{$smarty.get.keyword}" placeholder="搜索内容">
+                    <input class="btn_srh" type="submit" name="submit" value="搜索">
+                </form>
+            </div>
+
+            <div class="search_qq">
+                客服QQ：800 029 051
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- 顶部导航 -->
+<div id="header" class="site-top-nav J_sitenav clearfix">
+    <div class="wrap">
+        <dl class="header-left">
+            <!--{if !$visitor.user_id}-->
+            <div class="ppap fl" style="line-height:30px;padding-right:10px;">
+                <span style="padding-right:8px;"><a href="{url app=member&act=login&ret_url=$ret_url}" target="_blank">请登录</a> </span>
+                <span><a href="{url app=member&act=register&ret_url=$ret_url}" target="_blank">免费注册</a></span>
+            </div>
+
+            <!--{/if}-->
+            <dd>
+                <a href="{url app=app_down}" class="site-app">手机App</a>
+                <ul style="z-index:199">
+                    <li><img src="{$site_url}/static/app/android/cli_150px.png"></li>
+                </ul>
+            </dd>
+        </dl>
+        <dl class="header-right">
+            <!--{if $visitor.user_id}-->
+            <dd>
+                <a class="site-reg" href="{url app=member}">{$visitor.user_name|escape}<b></b></a>
+                <ul>
+                    <li><a href="{url app=member&act=profile}">个人设置</a></li>
+                    <li><a href="{url app=member&act=logout}">退出</a></li>
+                </ul>
+            </dd>
+            <!--{/if}-->
+            <dd><a href="{url app=cart}" target="_blank">购物车({$cart_goods_quantity})</a></dd>
+            <dd><a href="{url app=apply}">申请入驻</a></dd>
+            <dd><a href="{url app=default&amp;act=submit_newgoods}">新款提交</a></dd>
+            <dd>
+                <a href="javascript:void(0);">收藏夹<b></b></a>
+                <ul>
+                    <li><a href="{url app=my_favorite}">宝贝</a></li>
+                    <li><a href="{url app=my_favorite&type=store}">店铺</a></li>
+                    <li><a href="{url app=my_favorite&type=behalf}">代发</a></li>
+                </ul>
+            </dd>
+            <dd><a href="{url app=my_favorite}">数据包</a></dd>
+            <dd>
+                <a href="{url app=article&code=help}">帮助中心</a>
+            </dd>
+            <dd>
+                <a href="javascript:void(0);">关注我们<b></b></a>
+                <ul>
+                    <li><a href="http://weibo.com/wangpi">新浪微博</a></li>
+                    <li><a href="http://t.qq.com/woyaozuowangdian">腾讯微博</a></li>
+                    <li><a href="data/system/ma01.jpg">官方微博</a></li>
+                </ul>
+            </dd>
+            <dd><a href="{url app=help}" style="border-right:0;">网站客服</a></dd>
+        </dl>
+    </div>
+</div>
+
+<!--店内搜索-->
+<div class="headera_shop">
+
+    <div class="headedr_inner">
+        <div class="w clearfix">
+
+            <a rel="nofollow" href="http://www.51zwd.com" title="51网51zwd" class="logo fl">
+                <img src="{$site_url}/static/app/android/240x90.png" alt="">
+            </a>
+
+            <div class="stall-head fl" style="line-height: 40px;">
+                <div class="stall-head-name"><a href="{url app=shop&id=$store.store_id}">{$store.store_name|escape}</a>
+                </div>
+            </div>
+
+            <div class="search">
+                <form id="search_tab_content_self" action="index.php?app=shop&act=search" class="search_tab_content selected">
+                    <div class="search_query_wrap">
+                        <div class="tab-wraper">
+                            <div id="tav" class="tab icon-tag">
+                                <ul class="triggers">
+                                    <li id="dan_g" class="trigger selected">本档口</li>
+                                    <!--<li id="qua_n" class="trigger last">全站</li>-->
+                                </ul>
+                                <i class="arrow jib"></i>
+                            </div>
+                        </div>
+                        <input type="hidden" name="app" value="shop" />
+                        <input type="hidden" name="act" value="search" />
+                        <input type="hidden" name="id" value="{$store.store_id}" />
+                        <input type="text" class="search_query" name="keyword" value="" placeholder="关键词、货号">
+                    </div>
+
+                    <button type="submit" class="btn_search">
+                        <i class="ico ico_search vvicon"></i>
+                        搜 索
+                    </button>
+
+                    <a class="btn_cart" href="{url app=cart}" target="_blank">
+                        购物车
+                        <i class="vvicon"> > </i>
+                        <span class="num j-cart-amount" style="display: none;"></span>
+                    </a>
+                </form>
+                <form id="search_tab_content_full" class="search_tab_content">
+
+                    <div class="search_query_wrap">
+
+                        <div class="tab-wraper">
+                            <div class="tab icon-tag">
+                                <ul class="triggers">
+                                    <li id="quan" class="trigger selected">
+                                        全 站
+                                        <i></i>
+                                    </li>
+                                    <li id="dang" class="trigger last">本档口</li>
+                                </ul>
+                                <i class="arrow jib"></i>
+                            </div>
+                        </div>
+
+                        <input type="text" class="search_query" value="" placeholder="关键词、货号">
+
+                    </div>
+                    <button type="submit" class="btn_search">
+                        <i class="ico ico_search vvicon"></i>
+                        搜 索
+                    </button>
+                    <a class="btn_cart" href="{url app=cart}" target="_blank">
+                        购物车
+                        <i class="vvicon"></i>
+                        <span class="num j-cart-amount" style="display: none;"></span>
+                    </a>
+
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+

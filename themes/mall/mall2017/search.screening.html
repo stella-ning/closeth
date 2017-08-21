@@ -1,0 +1,373 @@
+<!-- 实拍区/推荐代发区筛选条件 -->
+<div class="shop-wrap" style="width:950px;margin:0px;">
+<div class="conWrap">
+<div class="tab_content">
+<div class="screen">
+	<div class="nav-category">
+		<!-- 已经选择的状态 -->
+				<div class="selected-attr title">
+                    <!--{if $filters}-->
+                    <strong>{$lang.your_selected}{$lang.colon}</strong>
+                    <!--{foreach from=$filters item=filter}-->
+                      <!--if $filter.key neq "service_detail" and $filter.key neq "service_model" and $filter.key neq "service_send" and $filter.key neq "service_cash" and $filter.key neq "service_pattern"-->
+						<a href="javascript:;" id="{$filter.key}">
+							<b>{$filter.name}{$lang.colon}</b>{$filter.value}
+							<span class="iconfont">&#xe624;</span>
+						</a>
+                          <!--/if-->
+                    <!--{/foreach}-->
+                    <!--{else}-->
+                    <strong>{$lang.by_conditions}</strong>
+                    <!--{/if}-->
+                 </div>
+		<!--筛选条件-->
+		<div class="nc-key">
+			分类
+		</div>
+		<div class="nc-value">
+			<div class="nc-current fl nc-all" ectype="ul_search_category">
+				<span><a id="0" href="javascript:">全部</a></span>
+				<!--{foreach from=$categories item=gcategory}-->
+				<span><a href="javascript:void(0);" id="{$gcategory.cate_id}" {if $gcategory.target eq 1} style="color:red;"{/if} title="{$gcategory.cate_name|escape}">{$gcategory.cate_name|escape|truncate:14}</a></span>
+				<!--{/foreach}-->
+			</div>
+	</div>
+	</div>
+	<div id="cateNav1" class="nav-category clearfix show-more">
+			<div class="nc-key">市场</div>
+			<div class="nc-value" style="width:815px;" ectype="ul_market">
+					<div class="types" style="height:28px;">
+						<a href="javascript:" class=" h-opt j-category-item" title="全部">全部</a>
+						<!--{foreach from=$markets item=market name=market_fee}-->
+						<a href="javascript:void(0);" class=" h-opt j-category-item" title="{$market.mk_name}" id="{$market.mk_id}" {if $market.target eq 1} style="color:red;"{/if} >{$market.mk_name}</a>
+						 <!--{/foreach}-->
+					</div>
+					<div class="more">
+							<span>更多</span>
+							<i></i>
+					</div>
+			</div>
+	</div>
+	<div id="cateNav6" class="nav-category clearfix show-more">
+			<div class="nc-key">筛选</div>
+			<div class="nc-value">
+				<ul class="conditions">
+					<li class="c-item">
+							<div class="trigger"><i></i>
+									<span class="value">颜色</span>
+									<span class="colors-value value"></span>
+							</div>
+							<div class="line"></div>
+							<div class="overlay">
+									<div class="o-item" ectype="ul_color">
+											<a id="all_color_id" class="o-item-all h-item" href="javascript:" >{$lang.all}</a>
+											<span class="colors">																			    
+											   <a href="javascript:;" class="h-item color-item ">{$lang.c_black}</a>
+											   <a href="javascript:;" class="h-item color-item ">{$lang.c_white}</a>
+											   <a href="javascript:;" class="h-item color-item ">{$lang.c_gray}</a>
+											   <a href="javascript:;" class="h-item color-item ">{$lang.c_red}</a>
+											   <a href="javascript:;" class="h-item color-item ">{$lang.c_orange}</a>
+											   <a href="javascript:;" class="h-item color-item ">{$lang.c_yellow}</a>
+											   <a href="javascript:;" class="h-item color-item ">{$lang.c_green}</a>
+											   <a href="javascript:;" class="h-item color-item ">{$lang.c_blue}</a>
+											   <a href="javascript:;" class="h-item color-item ">{$lang.c_cyan}</a>
+											   <a href="javascript:;" class="h-item color-item ">{$lang.c_purple}</a>
+											   <a href="javascript:;" class="h-item color-item ">{$lang.c_pink}</a>
+											   <a href="javascript:;" class="h-item color-item ">{$lang.c_apricot}</a>
+											   <a href="javascript:;" class="h-item color-item ">{$lang.c_khaki}</a>																	
+											</span>
+									</div>
+							</div>
+					</li>
+					<li class="c-item">
+							<div class="trigger"><i></i>
+									<span class="value">服务</span>
+									<span class="service-value value"></span>
+							</div>
+							<div class="line"></div>
+							<div class="overlay">
+									<div class="o-item o-item-btns service">
+											<ul class="checks" ectype="ul_service_type"> 
+													<li>
+															<span><a href="javascript:void(0);" title="{$lang.service_cash}" ectype="{if $filters.service_cash}0{else}1{/if}"
+								  id="service_cash" class="{if $filters.service_cash}service_cash_on on{else}service_cash{/if}" style="{if $filters.service_cash}color:#900;{/if}">{$lang.service_cash}</a></span>
+													</li>
+													<li>
+															<span><a href="javascript:void(0);" title="{$lang.service_detail}" ectype="{if $filters.service_detail}0{else}1{/if}"
+							  id="service_detail" class="{if $filters.service_detail}service_detail_on on{else}service_detail{/if}" style="{if $filters.service_detail}color:#900;{/if}">{$lang.service_detail}</a></span>
+													</li>
+													<li>
+															<span><a href="javascript:void(0);" title="{$lang.service_pattern}" ectype="{if $filters.service_pattern}0{else}1{/if}" 
+  id="service_pattern" class="" style="{if $filters.service_pattern}color:#900;{/if}">{$lang.service_pattern}</a></span>
+													</li>
+													<li>
+															<span><a href="javascript:void(0);" title="{$lang.service_send}" ectype="{if $filters.service_send}0{else}1{/if}"
+								  id="service_send" class="{if $filters.service_send}service_send_on on{else}service_send{/if}" style="{if $filters.service_send}color:#900;{/if}">{$lang.service_send}</a></span>
+													</li>
+											</ul>
+											<!--<div class="btns">
+													<div class="btn j-service-cancel">取消</div>
+													<div class="btn btn-fill j-service-ok">确定</div>
+											</div>-->
+									</div>
+							</div>
+					</li>
+					<li class="c-item c-item-style">
+							<div class="trigger"><i></i>
+									<span class="value">风格</span>
+							</div>
+							<div class="line"></div>
+							<div class="overlay">
+									<div class="o-item o-item-btns styles">
+											<ul class="checks">
+													<li class="">
+															<span>通勤</span>
+													</li>
+													<li class="">
+															<span>韩版</span>
+													</li>
+													<li class="">
+															<span>简约</span>
+													</li>
+													<li class="">
+															<span>其他</span>
+													</li>
+													<li class="">
+															<span>百搭</span>
+													</li>
+											</ul>
+											<div class="btns">
+													<div class="btn j-style-cancel">取消</div>
+													<div class="btn btn-fill j-style-ok">确定</div>
+											</div>
+									</div>
+							</div>
+					</li>
+					<li class="c-item">
+						<div class="trigger"><i></i>
+								<span class="value">时间</span>
+								<span class="service-value value"></span>
+						</div>
+						<div class="line"></div>
+						<div class="overlay">
+							<div class="o-item o-item-btns service">
+								<div class="checks" ectype="ul_time"> 
+										
+									<a href="javascript:;" id="1" class="nstyle">{$lang.oneday_time}</a>
+							
+									<a href="javascript:;" id="7" class="nstyle">{$lang.oneweek_time}</a>
+							
+									<a href="javascript:;" id="30" class="nstyle">{$lang.onemonth_time}</a>
+									<a href="javascript:;" id="90" class="nstyle">{$lang.threemonth_time}</a>
+							
+									<a href="javascript:;" id="180" class="nstyle">{$lang.sixmonth_time}</a>
+							
+									<a href="javascript:;" id="100" class="nstyle">{$lang.oneyear_time}</a>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="c-item c-item-style">
+							<div class="trigger"><i></i>
+									<span class="value">尺寸</span>
+							</div>
+							<div class="line"></div>
+							<div class="overlay">
+									<div class="o-item o-item-btns styles" style="width:260px" ectype="ul_size">
+											<dl class="checks">
+													<dt>衣服</dt>
+													<dd class="">
+															<a href="javascript:">均码</a>
+													</dd>
+													<dd class="">
+															<a href="javascript:">S</a>
+													</dd>
+													<dd class="">
+															<a href="javascript:">M</a>
+													</dd>
+													<dd class="">
+															<a href="javascript:">L</a>
+													</dd>
+													<dd class="">
+															<a href="javascript:">XL</a>
+													</dd>
+													<dd class="">
+															<a href="javascript:">XXL</a>
+													</dd>
+													<dd class="">
+															<a href="javascript:">XXXL</a>
+													</dd>
+											</dl>
+											<dl class="checks">
+													<dt>裤子</dt>
+													<dd class="">
+															<a href="javascript:">26</a>
+													</dd>
+													<dd class="">
+															<a href="javascript:">27</a>
+													</dd>
+													<dd class="">
+															<a href="javascript:">28</a>
+													</dd>
+													<dd class="">
+															<a href="javascript:">29</a>
+													</dd>
+													<dd class="">
+															<a href="javascript:">30</a>
+													</dd>
+													<dd class="">
+															<a href="javascript:">31</a>
+													</dd>
+													<dd class="">
+															<a href="javascript:">32</a>
+													</dd>
+											</dl>
+											<dl class="checks">
+													<dt>鞋子</dt>
+													<dd class="">
+															<a href="javascript:">35</a>
+													</dd>
+													<dd class="">
+															<a href="javascript:">36</a>
+													</dd>
+													<dd class="">
+															<a href="javascript:">37</a>
+													</dd>
+													<dd class="">
+															<a href="javascript:">38</a>
+													</dd>
+													<dd class="">
+															<a href="javascript:">39</a>
+													</dd>
+													<dd class="">
+															<a href="javascript:">40</a>
+													</dd>
+													<dd class="">
+															<a href="javascript:">41</a>
+													</dd>
+											</dl>
+									</div>
+							</div>
+					</li>
+				</ul>
+			</div>
+	</div>
+
+</div>
+<div class="goods-sort">
+	<div class="pro-sort">
+		<div class="s-b-left">
+		  <form>
+			<ul class="btn-order">
+				<!--{foreach from=$orders item=order key=k name=fe_order}-->
+				<!--{if !$k}-->
+				<a class="h-item curr h-opt" id="{$k}" href="javascript:;"><span>{$order}</span></a>
+				<!--{else}-->
+				<a class="clk h-item  h-opt" ectype="{$k}" id="{$k}" href="javascript:;"><span>{$order}</span></a>
+				<!--{/if}-->
+				<!--{/foreach}-->
+				<li class="item price filter-price">
+					<input type="text" name="start_price" placeholder="¥ 最低价" class="fl price-box ml price_start" value="">
+					<div class="fl line">-</div>
+					<input type="text" name="end_price" placeholder="¥ 最高价" class="fl price-box price_end" value="">
+					<div class="btn j-price_start_end ui-btn-s-primary" style="width:46px;">确定</div>
+				</li>
+			</ul>
+			</form>
+		</div>
+	</div>
+</div>
+</div>
+</div>
+</div>
+<script type="text/javascript" src="{lib file=search_goods.js}"></script>
+<script type="text/javascript">
+        var order = '{$smarty.get.order}';
+        var css = '';
+        <!--{if $smarty.get.order eq 'false'}-->
+        order_arr = order.split(' ');
+        switch (order_arr[1]){
+                case 'desc' :
+                        css = 'order-down btn-order-cur';
+                break;
+                case 'asc' :
+                        css = 'order-up btn-order-cur';
+                break;
+                default :
+                        css = 'order-down-gray';
+        }
+        $('.btn-order a[ectype='+order_arr[0]+']').attr('class','btn-order-click '+css);
+        <!--{/if}-->
+        <!--{if $smarty.get.order}-->  
+        order_arr = order.split(' ');
+        $('.btn-order a[ectype='+order_arr[0]+']').siblings('a').removeClass('curr').end().addClass('curr');
+        <!--{/if}-->
+        $(".btn-order a").click(function(){
+        	   
+                if(this.id==''){
+                        dropParam('order');// default order
+                        return false;
+                }
+                else
+                {
+                        dd = " desc";
+                        if(order != '') {
+                                order_arr = order.split(' ');
+                                if(order_arr[0]==this.id && order_arr[1]=="desc")
+                                        dd = " asc";
+                                else dd = " desc";
+                        }
+                        replaceParam('order', this.id+dd);
+                        return false;
+                }
+        });
+	<!--{if $smarty.get.price}-->
+	var filter_price = '{$smarty.get.price}';
+	filter_price = filter_price.split('-');
+	$('input[name="start_price"]').val(number_format(filter_price[0],0));
+	$('input[name="end_price"]').val(number_format(filter_price[1],0));
+	<!--{/if}-->	
+	jQuery(".hasMoreTab").slide({ mainCell:".conWrap", targetCell:".more a", effect:"fold",trigger:"click"});
+	jQuery(".hp-tab-newprd").slide({ titCell:".j-sw-nav li",mainCell:".j-sw-c",effect:"left",easing:"easeInOutSine",delayTime:800,autoPlay:"true"});
+	$(function(){
+		var iconHook = $('.icon-hook'),
+				tipsWrapper =$('.tips-wrapper'),
+				iconHookList = iconHook.find('div'),
+				iconHookLen = iconHookList.length,
+				tipsWrapperList = tipsWrapper.find('.service-tips');
+				iconHookList.hover(function(){
+					var $this = $(this);
+					var $index = $this.index();
+					tipsWrapperList.css('display','none');
+					tipsWrapperList.eq($index).css('display','block');
+				},function(){
+					tipsWrapperList.css('display','none');
+				});
+		var more = $('.more'),
+				moreSpan = more.find('span'),
+				types = $('.types');
+				more.toggle(function(){
+					types.css('height','auto');
+					moreSpan.text("收起");
+				},function(){
+					types.css('height','28px');
+					moreSpan.text("更多");
+				});
+		var cItem = $('.c-item'),
+				trigger = $('.c-item .trigger'),
+				overlay = $('.overlay'),
+				checks = overlay.find('.checks'),
+				checksLi = checks.find('li');
+				cItem.hover(function(){
+					var $this = $(this);
+					$this.children(trigger).show();
+				  checksLi.toggle(function(){
+						$(this).addClass("selected");
+					},function(){
+						$(this).removeClass("selected");
+					})
+				},function(){
+					trigger.siblings(overlay).hide();
+				});
+	});
+</script>

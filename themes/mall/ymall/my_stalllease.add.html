@@ -1,0 +1,88 @@
+<style type="text/css">
+.content1 p span.form-t{display:inline-block;width:60px;text-align:right;color:#444;font-weight:normal;font-size:12px}
+</style>
+<script type="text/javascript">
+$(function(){
+	$('#end_time').datepicker({dateFormat: 'yy-mm-dd'});
+	
+    $('#confirm_cancel').click(function(){
+        DialogManager.close('pub_lease');
+    });
+    
+    $("#stall_lease_form").validate({
+        errorPlacement: function(error, element){
+            var error_td = element.siblings('label');
+            error_td.append(error);
+        },
+        success: function(label){
+            label.hide();
+        },
+        submitHandler:function(form)
+        {   
+        	form.submit();
+        },
+        onkeyup: false,
+        rules: {
+        	end_time:{
+        		required:true
+        	},
+            mobile:{
+            	required: true,                
+                number: true
+            }
+        },
+        messages: { 
+        	end_time:{
+        		required: '{$lang.input_required}'
+        	},
+            mobile:{
+            	required: '{$lang.input_required}',
+                number: '{$lang.num_for_mobile}'
+            }
+        }
+    });
+   
+  
+});
+</script>
+<ul class="tab">
+    <li class="active">{$lang.stall_lease_note}</li>
+</ul>
+<div class="content1">
+<div id="warning"></div>
+<form id="stall_lease_form" action="index.php?app=my_stalllease&act=add&ajax" method="post" target="iframe_post">
+    <p>
+       <span class="form-t">{$lang.stall_info}</span>: {$store_info.mk_name}&nbsp;{$store_info.address}
+    </p>
+    <p>
+    	<span class="form-t">{$lang.stall_type}:</span>
+    	<input type="radio" name="stall_type" value="招租" style="vertical-align:middle" checked/>&nbsp;招租&nbsp;
+    	<input type="radio" name="stall_type" value="求租" style="vertical-align:middle" />&nbsp;求租
+    </p>
+    <p>
+    	<span class="form-t">{$lang.stall_size}:</span> 
+    	<input type="radio" name="stall_size" value="整档" style="vertical-align:middle" checked/>&nbsp;整档&nbsp;
+    	<input type="radio" name="stall_size" value="半档" style="vertical-align:middle" />&nbsp;半档&nbsp;
+    	<input type="radio" name="stall_size" value="1/3档" style="vertical-align:middle" />&nbsp;1/3档&nbsp;
+    	<input type="radio" name="stall_size" value="1/4档" style="vertical-align:middle" />&nbsp;1/4档
+    </p>
+    <p>
+    	<span class="form-t">{$lang.end_time}:</span>
+    	<input type="text" class="text1 width2" name="end_time" id="end_time" value="" style="width:160px"/><label></label>
+    </p>
+    <p>
+    	<span class="form-t">{$lang.mobile}:</span>
+    	<input type="text" class="text1 width2" name="mobile" value="" style="width:160px"/><label></label>
+    </p> 
+    <p>
+     <span class="form-t">{$lang.detail}:</span>
+     <textarea name="detail" style="width:340px;height:120px;font-size:12px;""></textarea>
+    </p>
+   
+    <div class="btn">
+        <input type="submit" id="confirm_yes" class="btn1" value="{$lang.confirm}" />
+        <input type="button" id="confirm_cancel" class="btn2" value="{$lang.cancel}" />
+    </div>
+</form>
+</div>
+

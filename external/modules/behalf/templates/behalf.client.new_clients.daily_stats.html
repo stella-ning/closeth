@@ -1,0 +1,89 @@
+{include file=header.whole.html}
+
+<script type="text/javascript">
+
+  $(function(){
+	  $('#query_time_wrapper').datetimepicker({format:'YYYY-MM-DD'});
+	  
+	  $("#query_submit").on('click',function(e){
+		  //e.preventDefault();
+		  var qv = $("#query_time_inp").val();
+		  if( qv == null || qv == '' ){ bootbox.alert('查询日期不能为空！'); return false;}
+		  $("#query_time_form").submit();/* .bootstrapValidator('validate').on('success.form.bv', function(e) {
+			   // Prevent form submission
+	            e.preventDefault();
+
+	            // Get the form instance
+	            var $form = $(e.target);
+
+	            // Get the BootstrapValidator instance
+	            var bv = $form.data('bootstrapValidator');
+
+	            // Use Ajax to submit form data
+	            $.post($form.attr('action'), $form.serialize(), function(result) {
+	            	$('#modal-nhd').modal('hide');
+	                //var json = $.parseJSON(result);
+	                //bootbox.alert(result.msg);
+	            }, 'json');
+	           
+	            $form.data('bootstrapValidator').resetForm(true);
+	         
+	        }); */
+	  });
+	  
+	  
+			
+  });
+	  
+	 
+
+
+</script>
+<div class="page-header">
+	<h3 class="text-info">每日下单客户统计</h3>
+</div>
+
+<div class="">
+	<form id="query_time_form" class="form-vertical" method="post">
+		<div class="form-group">
+		  <div class="row">
+		  	
+		  	<div class="col-xs-3">
+   				<div class='input-group date' id='query_time_wrapper'>
+                    <input type="text" class="form-control" name="query_time" id="query_time_inp" value="{$stats_time}">
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-time"></span>
+                    </span>
+                </div>
+            </div> 
+            <div class="col-xs-4">
+	            	<input type="button" class="btn btn-info" id="query_submit" value="开始统计" />				           		
+	            </div>
+            </div>
+       </div>		       
+      
+       <input type="hidden" name="module" value="behalf" />
+       <input type="hidden" name="act" value="new_clients_stats" />
+       
+	</form>
+</div>
+<div style="height:20px;"></div>
+<div class="panel panel-info">
+	<div class="panel-heading">
+		<b>统计结果</b>
+	</div>
+	<div class="panel-body">
+	    您在 {$stats_time} 当日共有 <b class="text-info">{$total_clients}</b> 位客户下单；其中，新客户 <b class="text-danger">{$new_clients}</b> 位。<br>
+	    
+	   您在 {$stats_time} 以前共有 <b class="text-info">{$before_clients}</b> 位客户。<br>
+	   
+	 
+	
+	</div>
+</div>
+		   
+        
+                
+        
+      
+{include file=footer.whole.html}

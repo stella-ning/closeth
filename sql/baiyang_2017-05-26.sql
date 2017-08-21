@@ -1,0 +1,1 @@
+insert into ecm_recommend values (50 , '店铺页左侧' ,255);

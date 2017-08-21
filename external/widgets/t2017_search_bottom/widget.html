@@ -1,0 +1,43 @@
+<!--{if !$widget_data.ads}-->
+<div class="padding10 center">请配置-搜款页底部</div>
+<!--{else}-->
+<div class="douban1">
+	<div class="hd">
+		<h2>人气商品</h2>
+		<a class="next"></a>
+		<a class="prev"></a>
+		<ul>
+		<!--{foreach from=$widget_data.counts item=co}-->
+			<li></li>
+		<!--{/foreach}-->
+		</ul>
+	</div>
+	<div class="bd">
+		<ul>
+		<!--{foreach from=$widget_data.ads item=ad name=fee_ad}-->
+			<li>
+				<a href="{$ad.goods_link_url}" target="_blank">
+					<img class="DataLazyLoad" data-ks-lazyload="{$ad.ad_image_url}"  src="{$ad.ad_image_url}" />
+				</a>
+				<div class="price">
+					<span class="yuan">¥</span> {$ad.goods_price|number_format:2}
+				</div>
+				<div class="pos">
+					<a href="{$ad.store_link_url}">{$ad.store_name}</a>					
+				</div>
+			</li>
+		<!--{/foreach}-->	
+		</ul>
+	</div>
+</div>
+<script type="text/javascript">
+$(function(){
+	jQuery(".douban1").slide({ mainCell:".bd ul", effect:"left", delayTime:800,vis:5,scroll:5,pnLoop:false,trigger:"click",easing:"easeOutCubic" });
+	 });
+</script>
+<!--{/if}-->
+
+
+
+
+

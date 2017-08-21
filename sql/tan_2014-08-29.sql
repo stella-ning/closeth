@@ -1,0 +1,1 @@
+ALTER TABLE `ecm_behalf_delivery` ADD `dl_fee` SMALLINT( 3 ) UNSIGNED NOT NULL DEFAULT '0' COMMENT '¿ìµÝ·ÑÓÃ';

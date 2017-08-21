@@ -1,0 +1,268 @@
+{include file=header.whole.html}
+<script type="text/javascript">
+ 
+  $(function(){
+	    
+	   $('#add_employee_form').bootstrapValidator({
+			  feedbackIcons: {
+		            valid: 'glyphicon glyphicon-ok',
+		            invalid: 'glyphicon glyphicon-remove',
+		            validating: 'glyphicon glyphicon-refresh'
+		       }, 
+			  fields:{
+				  user_name:{
+					  validators:{
+						  notEmpty:{ message:'会员账号不能为空' }
+					  }
+				  }
+		       
+			  }
+		 });  
+
+	   $('#edit-btn').on('click',function(){
+        var data = $(".form-taker").serializeArray();
+        var $url = $("input[name='url']").val();
+
+        $.ajax({
+            url:$url,
+            data:data,
+            success:function(res){
+
+                console.log(res);
+                //var $res = Number(res);
+                window.location.reload();
+            },
+            error:function(error){
+                console.log('失败');
+                console.log(error);
+            }
+        })
+    });
+
+
+	   var dt = $("#employee_form").DataTable({
+			"ordering":false,
+		    "paging":true,
+		    "info":true,
+		    "searching":true,
+		    
+		    "lengthMenu": [25,50,100,150,300],   // 一页内可选的数量
+
+		     "order":[
+		        [0,null]      
+		     ],
+		     dom:"<'container-fluid' <'row' <'col-xs-2' l><'col-cs-3'><'col-cs-3' f>> <t> <'row' <'col-xs-4' i><'col-xs-8 text-right' p>  >  >",
+
+			"language":{
+				"url":"{lib file='/DataTables/zn.json'}",
+				"buttons":{
+					"copy":"复制表格",
+					"excel":"导出EXCEL",
+					"print":"打印表格",
+					"colvis":"隐/显列"
+				}
+			},
+			"pagingType":'full_numbers'
+		});
+  });
+
+  //编辑拿货员信息
+  function editBind(info){
+  	// console.log($(info));return;
+  	var $this = $(info),
+        $url = $this.data('url'),
+        $taker_name = $this.data('name'),
+        $real_name = $this.data('real'),
+        $tel = $this.data('tel'),
+        $role_id = $this.data('role');
+
+    $("input[name='employee_name']").val($taker_name);
+    $("input[name='real_name']").val($real_name);
+    $("input[name='tel']").val($tel);
+    $("input[name='url']").val($url);
+
+    $("select[name='role_id'] option").each(function(){
+    	// alert($role_id);
+	   if($(this).val() == $role_id){
+	    	$(this).prop("selected", true);
+	    	// alert($role_id);
+   		}else{
+   			$(this).prop("selected", false);
+   		}
+  	});
+
+    	console.log($taker_name);
+        console.log($url);
+  }
+
+  function set_employee(id,operate,role_id)
+  {
+	  if(operate == 'add')
+	  {
+	  	  var role_id = $('select[name="role_list"]').find("option:selected").val();
+
+		  $.get("index.php?module=behalf&act=deal_employee&employee_id="+ id +"&operate=add&role_id="+role_id,function(json){
+			  json = jQuery.parseJSON(json);
+			  console.log(json);
+			  bootbox.alert(json.msg,function(r){
+				  // location.reload(true);
+				  window.location.href = 'index.php?module=behalf&act=employee_account';
+			  });
+			  
+		  });
+	  }
+	  if(operate == 'remove')
+	  {
+		  $.get("index.php?module=behalf&act=deal_employee&employee_id="+ id +"&operate=remove&role_id="+role_id,function(json){
+			  json = jQuery.parseJSON(json);
+			  console.log(json);
+			  bootbox.alert(json.msg,function(r){
+				  // location.reload(true);
+				  window.location.href = 'index.php?module=behalf&act=employee_account';
+			  });
+			  
+		  });
+	  }
+	  
+  }
+
+</script>
+<style type="text/css">
+	.col-xs-7{margin-left:23%;margin-top:-5px; width:260px;}
+	.col-cs-3{margin-right: 15px;}
+</style>
+<div class="container-fluid">
+    <div style="height:10px;"></div>
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<div class="">
+				<h4 class="blue09c">管理员工账号</h4>
+			</div>
+			<div class="">
+				<form id="add_employee_form" class="form-inline" method="post">
+	   				<div class='form-group'>
+	   				   <div class="">
+		   					<label class="text-right">会员账号</label>
+		   					<input type="text" class="form-control" name="user_name" style="width:256px;">
+	                    </div>
+	                </div>
+	                
+			       <div class="form-group">
+			       	  <div class="">
+			       	     <div class="">
+			       	     	<input type="submit" class="btn btn-info" value="搜 索">
+			       	     </div>
+			       	  </div>
+		            	
+		            </div>
+				</form>
+			</div>
+		  </div>
+	  </div>
+	  <!--{if $show_member}-->
+	  <div class="alert alert-{$info_type}">
+	  		<!--{if $member_info}-->
+	  			<strong>{$member_info.user_name}</strong> 真实姓名：{$member_info.real_name|default:无}，生日：{$member_info.birthday|default:无}，
+	  			Tel：{$member_info.phone_mob|default:无}，QQ：{$member_info.im_qq|default:无}，旺旺：{$member_info.im_aliww|default:无}。
+	  			<select name="role_list" >
+					 <option value="0">请绑定角色</option>
+					{$role_select}
+				</select>
+	  			<a href="javascript:set_employee({$member_info.user_id},'add',0);" class="btn btn-success btn-sm">设为员工账号</a>
+	  		<!--{else}-->
+	  			{$infos}
+	  		<!--{/if}-->
+	  </div>
+	  <!--{/if}-->
+	  <div class="alert alert-warning alert-dismissible" role="alert">
+    	<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    	<ol>
+    		<li>搜索会员账号！还没有？<a href="index.php?app=member&act=register" target="_blank">注册51账号</a></li>
+    		<li>在搜索结果中，设置为员工账号!</li>
+    	</ol>
+      </div>
+       <div class="panel panel-default" style="padding-top:10px;">
+
+	  <table class="table table-striped table-bordered" width="100%" id="employee_form" >
+	  	<thead>
+	  		<tr>
+	  			<th class="text-center ">序号</th>
+	  			<th class="text-center ">员工账号</th>
+	  			<th class="text-center ">真实姓名</th>
+	  			<th class="text-center ">生日</th>
+	  			<th class="text-center ">电话</th>
+	  			<th class="text-center ">QQ</th>
+	  			<th class="text-center ">旺旺</th>
+	  			<th class="text-center ">所属角色</th>
+	  			<th class="text-center ">操作</th>
+	  		</tr>
+	  	</thead>
+	  	<tbody>
+	  	<!--{foreach from=$members item=mem name=fe_mem}-->
+	  		<tr>
+	  			<td class="text-center ">{$smarty.foreach.fe_mem.iteration}</td>
+	  			<td class="text-center ">{$mem.user_name|escape}</td>
+	  			<td class="text-center ">{$mem.real_name|escape}</td>
+	  			<td class="text-center ">{$mem.birthday|escape}</td>
+	  			<td class="text-center ">{$mem.phone_mob|escape}</td>
+	  			<td class="text-center ">{$mem.im_qq|escape}</td>
+	  			<td class="text-center ">{$mem.im_aliww|escape}</td>
+	  			<td class="text-center ">{$mem.role_name|escape}</td>
+	  			<td class="text-center">
+	  			  <a href="javascript:set_employee({$mem.user_id},'remove',{$mem.role_id});" class="btn btn-xs">解除</a>
+	  			  <a data-toggle="modal" data-target="#modal-edit" data-url="index.php?module=behalf&act=deal_employee&employee_id={$mem.user_id}" data-name="{$mem.user_name}" data-real="{$mem.real_name}" data-tel="{$mem.phone_mob}" data-role="{$mem.role_id}" class="btn btn-xs" onclick="editBind(this)">编辑</a>
+	  			</td>
+	  		</tr>
+	  	<!--{/foreach}-->
+	  	</tbody>
+	  </table>
+	  </div>
+</div>
+
+<div id="modal-edit" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" class="form-taker" action="">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">编辑员工账号</h4>
+                    </div>
+                    <div class="modal-body" style="width:65%;margin:0 auto;">
+                        <div class="container-fluid">
+                            <div class="form-group">
+                                <label class="control-label" style="display:inline-block;">员工账号：</label>
+                                <input type="text" name="employee_name" value="" readonly="readonly">  
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label" style="display:inline-block;">真实姓名：</label>
+                                <input type="text" name="real_name" value="" >  
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label" style="display:inline-block;">电话号码：</label>
+                                <input type="text" name="tel" value="" >  
+                            </div>
+
+                            <div class="form-group">
+	                            <label class="control-label" style="display:inline-block;">绑定角色：</label>
+	                            <select name="role_id" >
+						 		<option value="0">请选择</option>
+									{$role_select}
+								</select>
+							</div>
+
+                        </div>
+                    </div>
+                    <input type="hidden" name="url" value="">
+                    <input type="hidden" name="operate" value="edit">
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="edit-btn" data-dismiss="modal">确 定</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{include file=footer.whole.html}

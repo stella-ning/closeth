@@ -1,0 +1,989 @@
+{include file=header.whole.html}
+
+<script type="text/javascript">
+
+	var jjname="{$behalf.owner_name}";
+	var jjtel="{$behalf.bh_tel}";
+	var jjadr="{$behalf.region_name}{$behalf.bh_address}";
+
+	var LODOP=getLodop(document.getElementById('LODOP_OB'),document.getElementById('LODOP_EM'));
+
+	$.fn.dataTable.pipeline = function ( opts ) {
+	 // Configuration options
+	 console.log(opts);
+	 var conf = $.extend( {
+	     pages: 5,     // number of pages to cache
+	     url: '',      // script url
+	     data: null,   // function or object with parameters to send to the server
+	                   // matching how `ajax.data` works in DataTables
+	     method: 'GET' // Ajax HTTP method
+	 }, opts );
+
+	 // Private variables for storing the cache
+	 var cacheLower = -1;
+	 var cacheUpper = null;
+	 var cacheLastRequest = null;
+	 var cacheLastJson = null;
+
+	 return function ( request, drawCallback, settings ) {
+	     var ajax          = false;
+	     var requestStart  = request.start;
+	     var drawStart     = request.start;
+	     var requestLength = request.length;
+	     var requestEnd    = requestStart + requestLength;
+	      
+	     if ( settings.clearCache ) {
+	         // API requested that the cache be cleared
+	         ajax = true;
+	         settings.clearCache = false;
+	     }
+	     else if ( cacheLower < 0 || requestStart < cacheLower || requestEnd > cacheUpper ) {
+	         // outside cached data - need to make a request
+	         ajax = true;
+	     }
+	     else if ( JSON.stringify( request.order )   !== JSON.stringify( cacheLastRequest.order ) ||
+	               JSON.stringify( request.columns ) !== JSON.stringify( cacheLastRequest.columns ) ||
+	               JSON.stringify( request.search )  !== JSON.stringify( cacheLastRequest.search )
+	     ) {
+	         // properties changed (ordering, columns, searching)
+	         ajax = true;
+	     }
+	      
+	     // Store the request for checking next time around
+	     cacheLastRequest = $.extend( true, {}, request );
+
+	     if ( ajax ) {
+	         // Need data from the server
+	         if ( requestStart < cacheLower ) {
+	             requestStart = requestStart - (requestLength*(conf.pages-1));
+
+	             if ( requestStart < 0 ) {
+	                 requestStart = 0;
+	             }
+	         }
+	          
+	         cacheLower = requestStart;
+	         cacheUpper = requestStart + (requestLength * conf.pages);
+
+	         request.start = requestStart;
+	         request.length = requestLength*conf.pages;
+
+	         // Provide the same `data` options as DataTables.
+	         if ( $.isFunction ( conf.data ) ) {
+	             // As a function it is executed with the data object as an arg
+	             // for manipulation. If an object is returned, it is used as the
+	             // data object to submit
+	             var d = conf.data( request );
+	             if ( d ) {
+	                 $.extend( request, d );
+	             }
+	         }
+	         else if ( $.isPlainObject( conf.data ) ) {
+	             // As an object, the data given extends the default
+	             $.extend( request, conf.data );
+	         }
+
+	         settings.jqXHR = $.ajax( {
+	             "type":     conf.method,
+	             "url":      conf.url,
+	             "data":     request,
+	             "dataType": "json",
+	             "cache":    false,
+	             "success":  function ( json ) {
+	                 cacheLastJson = $.extend(true, {}, json);
+
+	                 if ( cacheLower != drawStart ) {
+	                     json.data.splice( 0, drawStart-cacheLower );
+	                 }
+	                 json.data.splice( requestLength, json.data.length );
+	                  
+	                 drawCallback( json );
+	             }
+	         } );
+	     }
+	     else {
+	         json = $.extend( true, {}, cacheLastJson );
+	         json.draw = request.draw; // Update the echo for each response
+	         json.data.splice( 0, requestStart-cacheLower );
+	         json.data.splice( requestLength, json.data.length );
+
+	         drawCallback(json);
+	     }
+	 }
+	};
+
+	//Register an API method that will empty the pipelined data, forcing an Ajax
+	//fetch on the next draw (i.e. `table.clearPipeline().draw()`)
+	$.fn.dataTable.Api.register( 'clearPipeline()', function () {
+	 return this.iterator( 'table', function ( settings ) {
+	     settings.clearCache = true;
+	 } );
+	} );
+
+   var dt;
+  	$(function(){
+	  // $('#query_time_wrapper').datetimepicker({format:'YYYY-MM-DD'});
+	  // $('#query_time_wrapper').on('dp.change',function(e){
+		  
+		 //  var setDate = Date.parse(e.date);
+		 //  var objDate = new Date(setDate);
+
+		 //  var y = objDate.getFullYear(); //年
+		 //  var m = objDate.getMonth() + 1;//月
+		 //  var d = objDate.getDate();//日
+		 //  var dateStr = y+"-"+m+"-"+d;
+		 //  $("input[name='query_time']").val(dateStr);
+		 //  $('#query_time_form').submit();
+	  // });
+
+	  $('#query_time_wrapper').datetimepicker({format:'YYYY-MM-DD HH:mm:ss'});
+	  $('#query_endtime_wrapper').datetimepicker({format:'YYYY-MM-DD HH:mm:ss'});
+	  $('#query_time_wrapper').on('dp.change',function(e){
+		  $('#query_endtime_wrapper').data("DateTimePicker").minDate(e.date);
+		  
+		  if(!$("#query_time_form").data('bootstrapValidator').isValid()) {  
+        		$("#query_time_form").data('bootstrapValidator').resetForm();  
+    		}  
+
+		  $('#query_time_form').bootstrapValidator('disableSubmitButtons', false);
+	  });
+	  $('#query_endtime_wrapper').on('dp.change',function(e){
+		  $('#query_time_wrapper').data("DateTimePicker").maxDate(e.date);
+
+		   if(!$("#query_time_form").data('bootstrapValidator').isValid()) {  
+        		$("#query_time_form").data('bootstrapValidator').resetForm();  
+    		}  
+
+		  $('#query_time_form').bootstrapValidator('disableSubmitButtons', false);
+	  }); 
+	  $('#query_time_form').bootstrapValidator({
+		  feedbackIcons: {
+	            valid: 'glyphicon glyphicon-ok',
+	            invalid: 'glyphicon glyphicon-remove',
+	            validating: 'glyphicon glyphicon-refresh'
+	        }, 
+		  fields:{
+			  query_time:{
+				  feedbackIcons:'false',
+				  validators:{
+					  notEmpty:{},
+					  date:{
+						message:'请输入有效日期,格式形如：2015-01-01 23:59:59',
+					  	format:"YYYY-MM-DD HH:mm:ss"
+					  }
+				  }
+			  },
+			  query_endtime:{
+				  validators:{
+					  notEmpty:{},
+					  date:{
+						message:'请输入有效日期,格式形如：2015-01-01 23:59:59',
+					  	format:"YYYY-MM-DD HH:mm:ss"
+					  },
+					  /* remote:{
+						url:"index.php?module=behalf&act=check_querytime",
+						data:{'query_time':$('#query_time_wrapper').data("DateTimePicker").date}
+					  },  */
+					  different:{
+						  field:'query_time',
+						  message:'结束时间应该大于开始时间'
+					 } 
+				  }
+			 },
+			
+		  }
+	  });
+
+	  $('#single_print_form').bootstrapValidator({
+		  feedbackIcons: {
+	            valid: 'glyphicon glyphicon-ok',
+	            invalid: 'glyphicon glyphicon-remove',
+	            validating: 'glyphicon glyphicon-refresh'
+	        }, 
+		  fields:{
+
+			  goods_no:{
+				  validators:{
+					  notEmpty:{},
+					  regexp:{
+						  regexp:/^\d{14,20}$/,
+						  message:'请输入14位-20位数字的商品编码'
+					  },
+					   remote:{
+						  url:"index.php?module=behalf&act=check_goodsno"
+					  } 
+				  }
+			  }
+			  
+		  }
+	  }).on('success.field.bv', function(e,data) {
+
+		 if(data.field == 'goods_no')
+		 {
+			 
+			  // Prevent form submission
+	          e.preventDefault();
+			 
+	          // Get the form instance
+	          var $form = $(e.target);
+
+	          // Get the BootstrapValidator instance
+	          var bv = $form.data('bootstrapValidator');
+			  var postData = {'goods_no':$form[0].value};
+	          // Use Ajax to submit form data
+	       
+	            $.post($form.attr('action'), postData, function(result) {
+
+	              console.log(result);
+	
+	              tag_printer(result);
+	              $('#goods_no').val('').focus();
+	              
+	          }, 'json'); 
+	          //console.log(postData);
+	          $form.bootstrapValidator('resetForm', true);      
+			  
+		 }
+		  
+          
+       
+      });
+	 
+	  dt = $("#tuihuo_table").DataTable({
+			// "ordering":true,
+		    "paging":true,
+		 //    "info":true,
+		 //    "searching":false,
+		 	// 'stateSave': true,
+		    "processing": true,
+	        "serverSide": true,
+		    "columnDefs":[
+		     	{    
+              		"targets": [ 0 ], //隐藏0列  
+          			"visible": false    
+        		} 
+		    //    {"orderable":false,"targets":0},           
+		    //    {"orderable":true,"targets":[1]}, 
+		    //    {"orderable":false,"targets":[2]},  
+		    //    {"orderable":false,"targets":[3]},  
+		    //    {"orderable":false,"targets":[4]},  
+		    //    {"orderable":false,"targets":[5]},                 
+		      
+		     ],
+		    
+		     "columns":[
+		     	{ "data": "goods_id"},
+		     	{ "data": "create_time"},
+	            { "data": "order_sn" },
+	            { "data": "goods_no" },
+	            { "data": "goods_sku" },
+	            { "data": "color" },
+	            { "data": "size" },
+	            { "data": "stock_no" },
+	            {"render":function(data,type,row){
+	       					console.log(this);
+						if(row.customer_info == ''){
+							// return '<div style="text-align:center;"><input class="btn" type="button"  value="待处理" onclick="" ></div>';
+							return '<div style="text-align:center;"><a data-toggle="modal" data-target="#modal-info" data-url="index.php?module=behalf&act=del_customer_info" data-id="'+row.goods_id+'" data-no="'+row.goods_no+'" class="btn" onclick="addCustomer(this);">待处理</a></div>';
+						}else{
+							return '<a style="cursor:pointer;" data-toggle="modal" data-target="#modal-info" data-url="index.php?module=behalf&act=del_customer_info" data-id="'+row.goods_id+'" data-no="'+row.goods_no+'" onclick="editCustomer(this);">'+row.customer_info+'</a>';
+						}
+
+					}
+				},
+	            // { "data": "customer_info" },
+	            {"render":function(data,type,row){
+						
+						if(row.dl_no == ''){
+							var able = '';
+							if(row.customer_info == ''){
+								able = 'disabled="true" style="pointer-events: none;"';
+							}
+							return '<div style="text-align:center;"><a data-toggle="modal" data-target="#modal-delivery" data-url="index.php?module=behalf&act=del_customer_info" data-no="'+row.goods_no+'" class="btn" data-id="'+row.goods_id+'" onclick="editDelivery(this);" '+able+' >待处理</a></div>';
+						}else if(row.dl_no == 'hidden'){
+							return '';
+						}else{
+							return '<a style="cursor:pointer;" data-toggle="modal" data-target="#modal-delivery" data-url="index.php?module=behalf&act=del_customer_info" data-no="'+row.goods_no+'" data-id="'+row.goods_id+'" onclick="editDelivery(this);">'+row.dl_no+'</a>';
+						}
+
+					}
+				},
+				{"render":function(data,type,row){						
+					
+					return '<div style="text-align:center;"><a data-toggle="modal" data-target="#modal-print" data-url="index.php?module=behalf&act=get_print_goods_back" data-no="'+row.goods_no+'" class="btn" data-id="'+row.goods_id+'" data-sn="'+row.order_sn+'" onclick="getPrintInfo(this);" >打印</a></div>';
+						
+					}
+				},
+	            // { "data": "dl_no" },
+
+		     ],
+		     "lengthMenu": [25,30,50,100,150],   // 一页内可选的数量
+		     // "serverSide": true,
+		     // "lengthChange": false,   // 分页限定一个数据
+		     // "pageLength":1,
+		     "order":[
+		        [0,null]      
+		     ],
+		     "ajax": $.fn.dataTable.pipeline( {
+	            url: "index.php?module=behalf&act=get_pipe_goods_back",
+	            pages: 5 // number of pages to cache
+	        } ),
+		     //dom:"Bfrtip",
+		     dom:"<'container-fluid' <'row' <'col-xs-2' l><'col-cs-3'> <'col-cs-3' f>> <t> <'row' <'col-xs-4' i><'col-xs-8 text-right' p>  >  >",
+
+		    "buttons":[
+		    	'excel',
+		    	{
+		    	   text:'打印筛选的标签',
+		    	   className:'btn btn-default',
+		    	   action:function(){
+		    		   var taker = $("#batch_manage_table_filter input[type='search']").val();
+		    		   takerPrint(taker);
+		    	   }   
+		       }
+		    ],
+
+			"language":{
+        		"sProcessing": "处理中...",
+       			"sLengthMenu": "显示 _MENU_ 项结果",
+		        "sZeroRecords": "没有匹配结果",
+		        "sInfo": "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+		        "sInfoEmpty": "显示第 0 至 0 项结果，共 0 项",
+		        "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+		        "sInfoPostFix": "",
+		        "sSearch": "搜索订单号:",
+		        "sUrl": "",
+		        "sEmptyTable": "表中数据为空",
+		        "sLoadingRecords": "载入中...",
+		        "sInfoThousands": ",",
+		        "oPaginate": {
+		            "sFirst": "首页",
+		            "sPrevious": "上页",
+		            "sNext": "下页",
+		            "sLast": "末页"
+		        },
+		        "oAria": {
+		            "sSortAscending": ": 以升序排列此列",
+		            "sSortDescending": ": 以降序排列此列"
+		        },
+
+				"buttons":{
+					"copy":"复制表格",
+					"excel":"导出EXCEL",
+					"print":"打印表格",
+					"colvis":"隐/显列"
+				}
+			},
+			"pagingType":'full_numbers'
+		});  
+	
+	// 客户信息
+	$('#customer-btn').on('click',function(){
+        var data = $(".form-info").serializeArray();
+        var $url = $("input[name='url']").val();
+
+        var goods_id = $("input[name='goods_id']").val();
+        var goods_no = $("input[name='goods_no']").val();
+
+        console.log(data);
+        $.ajax({
+        	type : 'post',
+            url:$url,
+            data:data,
+            success:function(res){
+                console.log(res);
+                //var $res = Number(res);
+                // window.location.reload();
+
+                // dt.clearPipeline().draw();
+                $("#tuihuo_table").DataTable().clearPipeline().draw(false);  // 刷新当前页面，不要用dt
+                // $("#tuihuo_table").DataTable().ajax.reload( null, false );
+                 // dt.ajax.reload();
+                // refreshInfo($url,goods_id,goods_no,1);
+                // dt.ajax.reload();
+                 // dt.draw(false);
+            },
+            error:function(error){
+                console.log('失败');
+                console.log(error);
+            }
+        })
+    });
+
+	// 快递信息
+    $('#delivery-btn').on('click',function(){
+        var data = $(".form-dl").serializeArray();
+        var $url = $("input[name='url']").val();
+
+        var goods_id = $("input[name='goods_id']").val();
+        var goods_no = $("input[name='goods_no']").val();
+
+        console.log(data);
+        $.ajax({
+        	type : 'post',
+            url:$url,
+            data:data,
+            success:function(res){
+                console.log(res);
+                //var $res = Number(res);
+                // window.location.reload();
+                // dt.clearPipeline().draw();
+                $("#tuihuo_table").DataTable().clearPipeline().draw(false);
+                // $("#tuihuo_table").DataTable().ajax.reload( null, false );
+                 // dt.ajax.reload();
+                 // refreshInfo($url,goods_id,goods_no,2);
+              
+                // $("#tuihuo_table").dataTable().fnDraw(false);
+            },
+            error:function(error){
+                console.log('失败');
+                console.log(error);
+            }
+        })
+    });
+
+    // 打印信息
+    $('#print-btn').on('click',function(){
+        var data = $(".form-print").serializeArray();
+        var $url = $("input[name='url']").val();
+
+        console.log(data);
+        $.ajax({
+        	type : 'post',
+            url:$url,
+            data:data,
+            dataType : 'json',
+            success:function(res){
+                console.log(res);
+                // alert(res.data.invoice_no);
+               print_goods_back(res.data);
+       
+            },
+            error:function(error){
+                console.log('失败');
+                console.log(error);
+            }
+        })
+    });
+
+
+	// 绑定单选按钮
+    $('input[name="agree"]').parents('.form-group').find("ins").on('click',function(){
+    	
+        if($("input[name='agree']:checked").val() == '1'){
+
+        	$("input[name='agree'][value='1']").prop('checked', 'checked');
+        	$("input[name='agree'][value='1']").parent().attr('class', 'iradio_minimal checked');
+			$("input[name='agree'][value='2']").parent().attr('class', 'iradio_minimal');
+			$("textarea[name='reason']").attr('disabled','disabled');
+			$("input[name='customer_name']").attr('disabled',false);
+        	$("input[name='address']").attr('disabled',false);
+        	$("input[name='tel']").attr('disabled',false);
+        	$("input[name='region']").attr('disabled',false);
+
+        }else{
+
+        	$("input[name='agree'][value='2']").prop('checked', 'checked');
+        	$("input[name='agree'][value='1']").parent().attr('class', 'iradio_minimal');
+			$("input[name='agree'][value='2']").parent().attr('class', 'iradio_minimal checked');
+        	$("input[name='customer_name']").attr('disabled','disabled');
+        	$("input[name='address']").attr('disabled','disabled');
+        	$("input[name='tel']").attr('disabled','disabled');
+        	$("textarea[name='reason']").attr('disabled',false);
+        	$("input[name='region']").attr('disabled','disabled');
+        }
+    });
+
+    // 绑定分页按钮
+    // $('#tuihuo_table_paginate').on('mousedown',function(){
+    // 	// alert(1);
+    // 	dt.clearPipeline().draw();
+
+    // })
+
+  });
+
+
+
+	//添加客户信息
+  function addCustomer(info){
+  
+  	var $this = $(info),
+        $url = $this.data('url'),
+        $goods_id = $this.data('id'),
+        $goods_no = $this.data('no');
+
+    //清楚表单内所有数据
+    $('.form-info')[0].reset();
+
+    $("input[name='url']").val($url);
+    $("input[name='goods_id']").val($goods_id);
+    $("input[name='goods_no']").val($goods_no);
+    $("input[name='operate']").val('add');
+
+	// $("input[name='agree'][value='1']").attr('checked', 'checked');
+	$("input[name='agree'][value='1']").prop('checked', 'checked');
+	$("input[name='agree'][value='1']").parent().attr('class', 'iradio_minimal checked');
+	$("input[name='agree'][value='2']").parent().attr('class', 'iradio_minimal');
+	$("textarea[name='reason']").attr('disabled','disabled');
+	$("input[name='customer_name']").attr('disabled',false);
+	$("input[name='address']").attr('disabled',false);
+	$("input[name='tel']").attr('disabled',false);
+	$("input[name='region']").attr('disabled',false);
+ 	// alert($("input[name='agree']:checked").val()); 	
+   
+  }
+
+  // 打印
+  function getPrintInfo(info){
+  
+  	var $this = $(info),
+        $url = $this.data('url'),
+        $goods_id = $this.data('id'),
+        $goods_no = $this.data('no'),
+        $order_sn = $this.data('sn');
+
+    //清楚表单内所有数据
+    $('.form-info')[0].reset();
+
+    $("input[name='url']").val($url);
+    $("input[name='goods_id']").val($goods_id);
+    $("input[name='order_sn']").val($order_sn);
+
+	$("input[name='print_style'][value='order']").prop('checked', 'checked');
+	$("input[name='print_style'][value='order']").parent().attr('class', 'iradio_minimal checked');
+	$("input[name='print_style'][value='goods']").parent().attr('class', 'iradio_minimal');
+   
+  }
+
+  //编辑客户信息
+  function editCustomer(info){
+  
+  	//清楚表单内所有数据
+    $('.form-info')[0].reset();
+
+  	var $this = $(info),
+        $url = $this.data('url'),
+        $goods_id = $this.data('id'),
+        $goods_no = $this.data('no');
+
+        $.ajaxSetup({  
+        	async : false  
+    	}); 
+
+        $.ajax({
+        	type : 'post',
+            url:$url,
+            data:{goods_id:$goods_id,operate:'get',agree:1},
+            dataType : 'json',
+            success:function(res){
+                console.log(res.data);
+                $("input[name='customer_name']").val(res.data.customer_name);
+    			$("input[name='address']").val(res.data.address);
+    			$("input[name='tel']").val(res.data.tel);
+    			$("textarea[name='reason']").val(res.data.reason);
+                // window.location.reload();
+
+                if(res.data.agree == '1'){
+
+                	$("input[name='agree'][value='1']").prop('checked', 'checked');
+		        	$("input[name='agree'][value='1']").parent().attr('class', 'iradio_minimal checked');
+					$("input[name='agree'][value='2']").parent().attr('class', 'iradio_minimal');
+					$("textarea[name='reason']").attr('disabled','disabled');
+					$("input[name='customer_name']").attr('disabled',false);
+		        	$("input[name='address']").attr('disabled',false);
+		        	$("input[name='tel']").attr('disabled',false);
+		        	$("input[name='region']").attr('disabled',false);
+
+		        }else{
+		        	$("input[name='agree'][value='2']").prop('checked', 'checked');
+		        	$("input[name='agree'][value='1']").parent().attr('class', 'iradio_minimal');
+					$("input[name='agree'][value='2']").parent().attr('class', 'iradio_minimal checked');
+		        	$("input[name='customer_name']").attr('disabled','disabled');
+		        	$("input[name='address']").attr('disabled','disabled');
+		        	$("input[name='tel']").attr('disabled','disabled');
+		        	$("textarea[name='reason']").attr('disabled',false);
+		        	$("input[name='region']").attr('disabled','disabled');
+		        }
+            },
+            error:function(error){
+                console.log('失败');
+                console.log(error);
+            }
+      })
+
+    $("input[name='url']").val($url);
+    $("input[name='goods_id']").val($goods_id);
+     $("input[name='goods_no']").val($goods_no);
+    $("input[name='operate']").val('edit');
+
+	// $("input[name='agree'][value='1']").attr('checked', 'checked');
+	// $("input[name='agree'][value='1']").prop('checked', 'checked');
+	// $("input[name='agree'][value='1']").parent().attr('class', 'iradio_minimal checked');
+	// $("input[name='agree'][value='2']").parent().attr('class', 'iradio_minimal');
+	// $("textarea[name='reason']").attr('disabled','disabled');
+	// $("input[name='customer_name']").attr('disabled',false);
+	// $("input[name='address']").attr('disabled',false);
+	// $("input[name='tel']").attr('disabled',false);
+ 	// alert($("input[name='agree']:checked").val()); 	
+   
+  }
+
+
+// 编辑快递信息
+function editDelivery(info)
+{
+	//清楚表单内所有数据
+    $('.form-dl')[0].reset();
+
+  	var $this = $(info),
+        $url = $this.data('url'),
+        $goods_id = $this.data('id'),
+        $goods_no = $this.data('no');
+
+        $.ajaxSetup({  
+        	async : false  
+    	}); 
+
+        $.ajax({
+        	type : 'post',
+            url:$url,
+            data:{goods_id:$goods_id,operate:'get',dl_no:''},
+            dataType : 'json',
+            success:function(res){
+                console.log(res.data);
+                if(res.code == 0){
+                	$("input[name='dl_no']").attr('disabled',false);
+                	$("input[name='dl_no']").val(res.data.dl_no);
+                }else if(res.code == -1){
+                	$("input[name='dl_no']").attr('disabled','disabled');
+                	alert("请先处理是否同意！");      	
+
+                }
+                
+                // window.location.reload();
+            },
+            error:function(error){
+                console.log('失败');
+                console.log(error);
+            }
+      })
+
+    $("input[name='url']").val($url);
+    $("input[name='goods_id']").val($goods_id);
+    $("input[name='goods_no']").val($goods_no);
+    $("input[name='operate']").val('edit');
+
+
+}
+
+
+ // 局部刷新客户信息和快递内容
+ // type 1:为客户信息,同时更新快递号，2：单纯只更新为快递号
+  function refreshInfo(url,goods_id,goods_no,type)
+  {
+        $.ajaxSetup({  
+        	async : false  
+    	}); 
+
+        $.ajax({
+        	type : 'post',
+            url:url,
+            data:{goods_id:goods_id,operate:'get',agree:1},
+            dataType : 'json',
+            success:function(res){
+                console.log(res.data);
+
+                if(type == 1){
+
+                	if(res.data.agree == 1){
+                		var info = '<b>姓名: </b>'+res.data.customer_name+'，<b>地址: </b>'+res.data.address+'，<b>电话: </b>'+res.data.tel;
+
+	                	var content = '<a style="cursor:pointer;" data-toggle="modal" data-target="#modal-info" data-url="index.php?module=behalf&act=del_customer_info" data-id="'+goods_id+'" data-no="'+goods_no+'" onclick="editCustomer(this);">'+info+'</a>';
+
+	                	if(res.data.dl_no != ''){
+
+	                		var dl_content = '<a style="cursor:pointer;" data-toggle="modal" data-target="#modal-delivery" data-url="index.php?module=behalf&act=del_customer_info" data-no="'+goods_no+'" data-id="'+goods_id+'" onclick="editDelivery(this);"><b>快递号: </b>'+res.data.dl_no+'</a>';
+	                	}else{
+
+	                		var dl_content = '<div style="text-align:center;"><a data-toggle="modal" data-target="#modal-delivery" data-url="index.php?module=behalf&act=del_customer_info" data-no="'+goods_no+'" class="btn" data-id="'+goods_id+'" onclick="editDelivery(this);" >待处理</a></div>';
+	                	}          	
+
+	                }else if(res.data.agree == 2){
+
+	                	var content = '<a style="cursor:pointer;" data-toggle="modal" data-target="#modal-info" data-url="index.php?module=behalf&act=del_customer_info" data-id="'+goods_id+'" data-no="'+goods_no+'" onclick="editCustomer(this);"><b>不同意: </b>'+res.data.reason+'</a>';
+
+	                	var dl_content = '';
+
+	                }
+	                $("#tuihuo_table tbody").find('tr').each(function (index,domEle){
+	  					if($(this).find('td').eq(2).html() == goods_no){
+	  						$(this).find('td').eq(7).html(content); 
+	  						$(this).find('td').eq(8).html(dl_content); 
+	  					}
+	  				});
+
+                }else if (type == 2){
+
+                	if (res.data.dl_no != ''){
+
+	        			var content = '<a style="cursor:pointer;" data-toggle="modal" data-target="#modal-delivery" data-url="index.php?module=behalf&act=del_customer_info" data-no="'+goods_no+'" data-id="'+goods_id+'" onclick="editDelivery(this);"><b>快递号: </b>'+res.data.dl_no+'</a>';
+                		
+                	}else{
+
+						var content = '<div style="text-align:center;"><a data-toggle="modal" data-target="#modal-delivery" data-url="index.php?module=behalf&act=del_customer_info" data-no="'+goods_no+'" class="btn" data-id="'+goods_id+'" onclick="editDelivery(this);" >待处理</a></div>';
+                	}
+
+                	$("#tuihuo_table tbody").find('tr').each(function (index,domEle){
+	  					if($(this).find('td').eq(2).html() == goods_no){
+	  						$(this).find('td').eq(8).html(content); 
+	  					}
+	  				});
+                
+                }
+                
+
+                console.log(content);
+       //          $("input[name='customer_name']").val(res.data.customer_name);
+    			// $("input[name='address']").val(res.data.address);
+    			// $("input[name='tel']").val(res.data.tel);
+    			// $("textarea[name='reason']").val(res.data.reason);
+                // window.location.reload();
+            },
+            error:function(error){
+                console.log('失败');
+                console.log(error);
+            }
+      })
+
+  	// var goods_no = "17205012470001";
+  	// alert(1);
+  	// $("#tuihuo_table tbody").find('tr').each(function (index,domEle){
+  	// 	alert($(this).find('td').eq(3).html());
+  	// });
+  	// alert($("#tuihuo_table tbody").find('tr').eq(0).find('td').eq(3).html() == goods_no);
+  }
+
+
+  function getValue() 
+  {
+    // var oTable = dt;
+    // var oSettings = oTable.settings();
+    // dt.page().draw( false);
+     // dt.clearPipeline().page(2).draw();
+    console.log(dt.page());
+    dt.ajax.reload( null, false );
+
+    // // 获取页码值
+    // alert(oSettings._iDisplayStart);
+    // //获取页面分割长度
+    // alert(oSettings._iDisplayLength);
+}
+
+</script>
+<style type="text/css">
+	.col-xs-7{margin-left:23%;margin-top:-5px; width:260px;}
+	.col-cs-3{margin-right: 15px;}
+
+
+	input::-webkit-input-placeholder { /* WebKit browsers */ 
+		font-size:12px;
+		color: #d0d0d0;
+	} 
+	input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */ 
+		font-size:12px;
+		color:  #d0d0d0;
+	} 
+	input::-moz-placeholder { /* Mozilla Firefox 19+ */ 
+		font-size:12px;
+		color:  #d0d0d0;
+	} 
+	input:-ms-input-placeholder { /* Internet Explorer 10+ */ 
+		font-size:12px;
+		color:  #d0d0d0;
+	}
+
+	input{
+		font-size: 14px;
+	}
+</style>
+
+<div class="container-fluid">
+	<div class="panel panel-default">
+	<!-- <button onclick="getValue();">点击</button> -->
+	</div>
+
+	  <div class="panel panel-default">
+		<div class="panel-body">	
+			 <div class="row">    	
+    		
+	    		<div class="col-xs-2">
+	    			<div class="input-group input-group-sm">
+		    			<label class="input-group-addon">当前模板</label>
+		    			<select id="template_select" name="template" class="form-control selectpicker">
+		    				<option value="zto">中通快递</option>
+							<option value="yto">圆通快递</option>
+		    			</select>
+	    			</div>
+    		</div>
+
+    	<div class="col-xs-3">
+    		<div id="printer_equipment" class="input-group input-group-sm"></div>
+    	</div>
+    	
+    </div>
+		</div>
+		
+			<table id="tuihuo_table" class="table table-condensed table-striped table-bordered table-hover" width="100%">
+		  	<thead>
+		  		<tr>
+		  			<th class="text-center">商品warehouse的id</th>
+		  		    <th class="text-center">申请日期</th>
+		  			<th class="text-center ">订单号</th>
+		  			<th class="text-center ">商品标签号</th>
+		  			<th class="text-center ">货号</th>
+		  			<th class="text-center ">颜色</th>
+		  			<th class="text-center ">尺码</th>
+		  			<th class="text-center ">库位</th>
+		  			<th class="text-center ">是否同意</th>
+		  			<th class="text-center ">状态</th>
+		  			<th class="text-center ">打印</th>
+		  		</tr>
+		  	</thead>
+		  	
+		  </table>
+	  </div>
+</div>
+
+<div id="modal-info" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" class="form-info" action="">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">添加退货客户信息</h4>
+                    </div>
+                    <div class="modal-body" style="width:65%;margin:0 auto;">
+
+                    	<div class="container-fluid">
+                            <div class="form-group">
+                            	<input name="agree" type="radio" value="1"  />
+                                <label class="control-label" style="display:inline-block;">同意</label>
+                            </div>
+                        </div>
+
+                        <div class="container-fluid">
+                            <div class="form-group">
+                                <label class="control-label" style="display:inline-block;">联系人：</label>
+                                <input type="text" name="customer_name" value="" >  
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label" style="display:inline-block;">所在区域：</label>
+                                <input type="text" name="region" value="" placeholder="如：广东省广州市天河区">  
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label" style="display:inline-block;">详细地址：</label>
+                                <input type="text" name="address" value="" >  
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label" style="display:inline-block;">电话：</label>
+                                <input type="text" name="tel" value="" >  
+                            </div>
+
+                        </div>
+
+                        <div class="container-fluid">
+                            <div class="form-group">
+                            	<input name="agree" type="radio" value="2" />
+                                <label class="control-label" style="display:inline-block;">不同意</label>
+                            </div>
+                        </div>
+
+                        <div class="container-fluid">
+                            <div class="form-group">
+                                <label class="control-label" style="display:inline-block;">原因：</label>
+                                <textarea name="reason"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="url" value="">  <!--发送地址-->
+                    <input type="hidden" name="goods_id" value="">  <!--warehouse id-->
+                    <input type="hidden" name="goods_no" value="">  <!--商品编码-->
+                    <input type="hidden" name="operate" value="">  <!--操作方式-->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="customer-btn" data-dismiss="modal">确 定</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-delivery" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" class="form-dl" action="">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">输入快递号</h4>
+                    </div>
+                    <div class="modal-body" style="width:65%;margin:0 auto;">
+                        <div class="container-fluid">
+                            <div class="form-group">
+                                <label class="control-label" style="display:inline-block;">快递号：</label>
+                                <input type="text" name="dl_no" value="" >  
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="url" value="">  <!--发送地址-->
+                    <input type="hidden" name="goods_id" value="">  <!--warehouse id-->
+                    <input type="hidden" name="goods_no" value="">  <!--商品编码-->
+                    <input type="hidden" name="operate" value="">  <!--操作方式-->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="delivery-btn" data-dismiss="modal">确 定</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-print" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" class="form-print" action="">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">选择打印类型</h4>
+                    </div>
+                    <div class="container-fluid">
+                        <div class="form-group">
+                        	<input name="print_style" type="radio" value="order"  />
+                            <label class="control-label" style="display:inline-block;">打印整个订单（快递单）</label>
+                        </div>
+                    </div>
+                    <div class="container-fluid">
+                        <div class="form-group">
+                        	<input name="print_style" type="radio" value="goods"  />
+                            <label class="control-label" style="display:inline-block;">单独打印商品（快递单）</label>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="url" value="">  <!--发送地址-->
+                    <input type="hidden" name="goods_id" value="">  <!--warehouse id-->
+                    <input type="hidden" name="order_sn" value="">  <!--订单号-->
+ 
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="print-btn" data-dismiss="modal">确 定</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+   <script type="text/javascript" src="{res file=js/md_print.js}"></script>
+{include file=footer.whole.html}

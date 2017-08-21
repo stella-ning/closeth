@@ -1,0 +1,43 @@
+<div class="clear" style="height:10px;"></div>
+<div id="floor{$widget_data.model_id}" class="home_floor clearfix {$widget_data.class_name}">
+    <div class="floor_title relative mb10 clearfix" style="height:40px;line-height:54px;border-bottom:2px solid #d7d7d7;">
+        <ul>
+           <!--{foreach from=$widget_data.cate item=cate name=fe_cate}-->
+             <li><a class="f66 fs14 yahei"  href="{$cate.url}" target="_blank" title="{$cate.txt}"><span>{$cate.txt}</span></a></li>        
+           <!--{/foreach}-->
+         </ul>     
+         <h2 class="fs20 f66 strong yahei" style="height:40px;line-height:40px;">{$widget_data.model_name}</h2>
+   </div>
+    <div class="floor_con_new clearfix">        
+        <div class="floor_content clearfix">
+            <ul class="goods clearfix" style="width:1230px;">
+              <!--{foreach from=$widget_data.goods_list item=goods name=fe_goods}-->
+                <li class="floor_index_li float-left pt10 pb10 overflowHidden yahei relative" style="margin-right:22px;{if $smarty.foreach.fe_goods.iteration % 5 eq 0}mrgin-right:0;margin-left:1px;{else}mrgin-right:22px;{/if}" >
+                    <div class="img relative" style="width:220px;height:220px;display:table-cell;vertical-align:middle;text-align:center;z-index:4;">
+                       <a class="block" href="{url app=goods&id=$goods.goods_id}" title="{$goods.goods_name|escape}" target="_blank">
+                        <img  class="index-floor-goods-img DataLazyLaod" style="max-width:220px;max-height:220px;z-index:5;" alt="{$goods.goods_name|escape}" data-ks-lazyload="{$goods.default_image}" src="data/system/empty.gif"/></a>
+                       <a class="hidden store yellow-transparent absolute" href="{url app=shop&id=$goods.store_id}" target="_blank" title="{$goods.store_name|escape}" style="top:176px;left:0px;padding:1px 5px;width:220px;height:22px;line-height:22px;">{$goods.store_name|escape} | {$goods.mk_name|default:-}</a>
+                    </div>                    
+                    <a href="{url app=goods&id=$goods.goods_id}" title="{$goods.goods_name|escape}" target="_blank" class="name block mt5 overflowHidden" style="width:200px;height:20px;line-height:18px;">{$goods.goods_name|escape|truncate:60}</a>
+                    <a class="store-name hidden mt5 aaa" href="{url app=shop&id=$goods.store_id}" target="_blank">{$goods.store_name|escape}</a>                    
+                    <div class="clearfix mt5 overflowHidden" style="height:20px;line-height:18px;">
+                      <span class="float-left fs14"><span class="f44 mr5">¥</span><span class="f44 strong">{$goods.price}</span></span>
+                     
+                    </div> 
+                </li>
+                <!--{/foreach}-->
+            </ul>
+        </div>       
+    </div>
+</div>
+<script>
+   $("#floor{$widget_data.model_id} .floor_con_new ul.goods").randomize();
+  /*  $.each($("#floor{$widget_data.model_id} .floor_con_new ul.goods li"),function(index,value){
+		  if((index+1)%5 == 0){ 
+			  $(this).css('margin-right','0px'); 
+		   }
+		  else{ 
+			  $(this).css('margin-right','22px'); 
+		  }
+	  }); */
+</script>

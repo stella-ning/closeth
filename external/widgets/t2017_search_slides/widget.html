@@ -1,0 +1,81 @@
+<!--{if !$widget_data.ads}-->
+<div class="padding10 center">请配置-搜款页右侧幻灯</div>
+<!--{else}-->
+<div class="slide-pagination top-hd search-side">
+	<a href="javascript:void(0)" class="silder-btn prev" id="hdprev"> <i class="icon"></i>
+	</a> <a href="javascript:void(0)" class="silder-btn next" id="hdnext"> <i class="icon"></i>
+	</a>
+</div>
+<div class="bd" id="bd{$widget_data.model_id}">
+	<ul>
+	<!--{foreach from=$widget_data.ads item=ad name=fee_ad}-->
+		<li {if $smarty.foreach.fee_ad.first }style="display: block;"{/if}>
+			<dl class="side-list clearfix  showed">
+				<dd class="clearfix ishide">
+					<a href="{$ad.goods_link_url}" title="{$ad.goods_name|escape}" target="_blank" class="j-vda">
+						<div class="pic">
+							<img class="DataLazyLoad lazy" data-ks-lazyload="{$ad.ad_image_url}" src="{$ad.ad_image_url}">
+						</div>
+					</a>					
+				</dd>
+			</dl>
+		</li>
+	<!--{/foreach}-->	
+	</ul>
+</div>
+<script type="text/javascript">
+$(function(){
+	   var bd=$('#bd{$widget_data.model_id}');
+	   var bd_li = bd.find('li');
+	   var bdlength = $("#bdlength");
+	   var bd_li_length = bd_li.length;
+	   var hdprev=$('#hdprev');
+	   var hdnum=$('#hdnum');
+	   var hdnext = $('#hdnext');
+	   var j=0;
+	   var timer=null;
+	  //  bdlength.get(0).innerHTML = bd_li_length;
+	  bdlength.text(bd_li_length);
+	   for(var i=0;i<bd_li_length; i++){
+	     bd_li[i].index = i;
+	   }
+	   hdprev.click(function(){
+	     j--;
+	     if(j==-1){
+	       j=1
+	     }
+	    //  hdnum.get(0).innerHTML=j+1;
+	    hdnum.text(j+1);
+	     chang(j);
+	   });
+	   hdnext.click(function(){
+	     j++;
+	     if(j==2){j=0};
+	    //  hdnum.get(0).innerHTML=j+1;
+	     hdnum.text(j+1);
+	     chang(j);
+	   });
+	   function autoplay(){
+	     j++;
+	     if(j>bd_li_length-1){
+	       j = 0;
+	     }
+	     chang(j);
+	   }
+	   function chang(j){
+	    //  hdnum.get(0).innerHTML=j+1;
+	     hdnum.text(j+1);
+	     bd_li.css({"display":"none","zIndex":0,"-webkit-transition": 0.5+"s"});
+	     bd_li.stop(true);
+	     bd_li.eq(j).css({"display":"block","zIndex":5,"-webkit-transition":0.5+"s"});
+	   }
+	   timer = setInterval(autoplay,4000);
+	   bd.hover(function(){clearInterval(timer)},function(){timer = setInterval(autoplay,4000);});
+	 });
+</script>
+<!--{/if}-->
+
+
+
+
+

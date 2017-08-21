@@ -1,0 +1,237 @@
+{include file=header.whole.html}
+<link rel="stylesheet" type="text/css" href="{res file=css/jquery.multiselect.css}" />
+<link rel="stylesheet" type="text/css" href="{res file=css/jquery-ui.css}" />
+<script type="text/javascript" src="{res file=js/jquery-ui.min.js}"></script>
+<script type="text/javascript" src="{res file=js/jquery.multiselect.js}"></script>
+
+<script type="text/javascript">
+
+  	$(function(){
+
+  		$("select[title='takers']").multiselect(
+		     {
+		      header: true,
+		      height: 175,
+		      minWidth: 150,
+		      classes: '',
+		      checkAllText: '全选',
+		      uncheckAllText: '取消全选',
+		      noneSelectedText: '选择拿货员',
+		      showCheckAll: true,
+		      showUncheckAll: true,
+		      selectedText: '# 个拿货员',
+		      selectedList: 0,
+		      closeIcon: 'ui-icon-circle-close',
+		      show: null,
+		      hide: null,
+		      autoOpen: false,
+		      multiple: true,
+		      position: {},
+		      appendTo: null,
+		      menuWidth:null,
+		      selectedListSeparator: ', ',
+		      disableInputsOnToggle: true,
+		      groupColumns: false
+		    }
+  		);    // 调用下拉多选
+
+  		$("#markets").multiselect(
+		     {
+		      header: true,
+		      height: 175,
+		      minWidth: 150,
+		      classes: '',
+		      checkAllText: '全选',
+		      uncheckAllText: '取消全选',
+		      noneSelectedText: '选择市场',
+		      showCheckAll: true,
+		      showUncheckAll: true,
+		      selectedText: '# 个市场',
+		      selectedList: 0,
+		      closeIcon: 'ui-icon-circle-close',
+		      show: null,
+		      hide: null,
+		      autoOpen: false,
+		      multiple: true,
+		      position: {},
+		      appendTo: null,
+		      menuWidth:null,
+		      selectedListSeparator: ', ',
+		      disableInputsOnToggle: true,
+		      groupColumns: false
+		    }
+  		);    // 调用下拉多选
+	 
+	  	var dt = $("#assign_tags_table").DataTable({
+			"ordering":false,
+		    "paging":true,
+		    "info":true,
+		    "searching":true,
+		    
+		    "lengthMenu": [25,50,100,150,300],   // 一页内可选的数量
+		     // "serverSide": true,
+		     // "lengthChange": false,   // 分页限定一个数据
+		     // "pageLength":1,
+		     "order":[
+		        [0,null]      
+		     ],
+		     //dom:"Bfrtip",
+		     dom:"<'container-fluid' <'row' <'col-xs-2' l>> <t> <'row' <'col-xs-4' i><'col-xs-8 text-right' p>  >  >",
+
+		 	// 上面的dom相当于以下的效果：
+		 	// <div class="container-fluid">
+			// 	<div class="row">
+			// 		<div class="col-xs-2">[l]分页数量控件</div>
+			// 		<div class="col-xs-7">[B]按钮控件</div>
+			// 		<div class="col-cs-3">[f]搜索控件</div>
+			// 	</div>
+	
+			// 	<table>表格</table>
+			
+			// 	<div class="row">
+			// 		<div class="col-xs-4">[i]表格信息控件</div>
+			// 		<div class="col-xs-8 text-right">[p]分页控件</div>
+			// 	</div>
+			// </div>
+
+		     "buttons":[
+		       'excel',{
+		    	   text:'打印表格',
+		    	   className:'btn btn-default',
+		    	   action:function(e,dt,node,config){
+		    		   print_table(dt.data());
+		    	   }
+		    	   
+		       },
+		          /* {
+		    	  	 text:'预览10页',
+		    	   	 className:'btn btn-default',
+		    	   	 action:function(e,dt,node,config){
+							tag_preview(dt.data());
+		    	   	 }
+		    	   }*/
+		    
+		     ],
+			"language":{
+				"url":"{lib file='/DataTables/zn.json'}",
+				"buttons":{
+					"copy":"复制表格",
+					"excel":"导出EXCEL",
+					"print":"打印表格",
+					"colvis":"隐/显列"
+				}
+			},
+			"pagingType":'full_numbers'
+		});
+
+  });
+
+</script>
+
+<style type="text/css">	
+	.btn-primary{padding: 5px 10px;}
+</style>
+
+<div class="container-fluid">
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<form action="index.php?module=behalf&act=assign_tags" method="post">
+			<label>设置中午时间点(整点)：</label>
+				<select name="noon" >
+					<option value="11" {if $noon eq 11} selected = "selected" {/if}>11点</option>
+					<option value="12" {if $noon eq 12} selected = "selected" {/if}>12点</option>
+					<option value="13" {if $noon eq 13} selected = "selected" {/if}>13点</option>
+					<option value="14" {if $noon eq 14} selected = "selected" {/if}>14点</option>
+				</select>
+				<label style="margin-left:30px;">设置批次件数：</label>
+				<input type="text" name="batch_num" value="{$batch_has_num}" size="1" />
+				<input type="hidden" name="is_set" value="1"  />
+				<input class="btn btn-primary"  type="submit" value="设置"  style="margin-left:20px; padding:2px 5px;"/>
+			<label style="float: right;">当前日期：{$date}</label>
+			</form>
+		  </div>
+	  </div>
+
+	  <div class="panel panel-default">
+		<div class="panel-body">	
+			<div class="row">
+				<form action="index.php?module=behalf&act=assign_tags" method="post" style="margin-left: 10px;">
+					<label>市场：</label>
+					<select name="markets[]" multiple="multiple" size="5" style="width:100px;" id="markets">
+						<!--{foreach from=$need_assign_markets item=market_info name=behalf_market}-->
+							<!--{if $market_info.goods_num neq 0}-->
+								<option value="{$market_info.mk_id}"> {$market_info.mk_name}</option>
+							<!--{/if}-->
+						<!--{/foreach}-->
+					</select>
+					<label style="margin-left:30px;">拿货员：</label>
+					<select name="taker" style="height: 26px;">
+						<!--{foreach from=$takers item=taker name=taker_no}-->
+							<option value="{$taker.user_id}"> {$taker.real_name}</option>
+						<!--{/foreach}-->
+					</select>
+					<input class="btn btn-primary"  type="submit" value="合并分配"  style="margin-left:20px; padding:2px 5px;"/>
+					<input type="hidden" name="assign_token" value="{$assign_token}">
+				</form>
+				<div class="col-xs-2">
+					
+				</div>
+			</div>	
+			
+		</div>
+			<!-- 装table数据的form -->
+			<form action="index.php?module=behalf&act=assign_tags" method="post" id="hideForm">
+				<input type="hidden" name="market_id" >
+				<input type="hidden" name="takers" >
+				<input type="hidden" name="assign_token" value="{$assign_token}">
+			</form>
+
+			<table id="assign_tags_table" class="table table-condensed table-striped table-bordered table-hover" width="100%">
+		  	<thead>
+		  		<tr>
+		  		    <th class="text-center col-xs-1" >市场</th>
+		  			<th class="text-center col-xs-1">数量</th>
+		  			<th class="text-center col-xs-1">分配拿货员</th>
+		  			<th class="text-center col-xs-1">批次件数</th>
+		  			<th class="text-center col-xs-2">分配</th>
+		  		</tr>
+		  	</thead>
+		  	<tbody>
+		  	<!--{foreach from=$need_assign_markets item=market_info name=behalf_market}-->
+		  		<tr>
+			  		<!-- <form action="index.php?module=behalf&act=assign_tags" method="post"> -->
+			  			<td class="text-center col-xs-1">{$market_info.mk_name}</td>
+			  			<td class="text-center col-xs-1">{$market_info.goods_num}</td>
+			  			<td class="text-center col-xs-1">
+			  				<select class="assign_select" title="takers" multiple="multiple" name="market_{$market_info.mk_id}_takers[]" size="5" style="width:100px;">
+			  				<!--{foreach from=$takers item=taker name=taker_no}-->
+								<option value="{$taker.user_id}"> {$taker.real_name}</option>
+							<!--{/foreach}-->
+							</select>
+			  			</td>
+			  			<td class="text-center col-xs-1">{$batch_has_num}</td>
+			  			<td class="text-center col-xs-1">
+			  				<input class="market_id" type="hidden" name="market_id" value="{$market_info.mk_id}" >
+			  				<input class="btn btn-primary formSub"  type="button" name="btn" value="分 配" {if $market_info.goods_num eq 0 } disabled="disabled" {/if} />
+			  			</td>
+			  		<!-- </form> -->
+		  		</tr>
+		  	<!--{/foreach}-->
+		  	</tbody>
+		  </table>
+	  </div>
+</div>
+{include file=footer.whole.html}
+
+<script>
+	$('#assign_tags_table .formSub').on('click',function(){
+		var $assign_select = $(this).parents('tr').find('.assign_select').val(),
+			$market_id = $(this).prev('.market_id').val();
+			console.log($assign_select);
+		$('#hideForm input[name=market_id]').val($market_id);
+		$('#hideForm input[name=takers]').val($assign_select);
+
+		$('#hideForm').submit();
+	})
+
+</script>

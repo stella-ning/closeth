@@ -1,0 +1,484 @@
+{include file=header.whole.html}
+<script type="text/javascript">
+
+$.fn.dataTable.pipeline = function ( opts ) {
+ // Configuration options
+ var conf = $.extend( {
+     pages: 5,     // number of pages to cache
+     url: '',      // script url
+     data: null,   // function or object with parameters to send to the server
+                   // matching how `ajax.data` works in DataTables
+     method: 'GET' // Ajax HTTP method
+ }, opts );
+
+ // Private variables for storing the cache
+ var cacheLower = -1;
+ var cacheUpper = null;
+ var cacheLastRequest = null;
+ var cacheLastJson = null;
+
+ return function ( request, drawCallback, settings ) {
+     var ajax          = false;
+     var requestStart  = request.start;
+     var drawStart     = request.start;
+     var requestLength = request.length;
+     var requestEnd    = requestStart + requestLength;
+      
+     if ( settings.clearCache ) {
+         // API requested that the cache be cleared
+         ajax = true;
+         settings.clearCache = false;
+     }
+     else if ( cacheLower < 0 || requestStart < cacheLower || requestEnd > cacheUpper ) {
+         // outside cached data - need to make a request
+         ajax = true;
+     }
+     else if ( JSON.stringify( request.order )   !== JSON.stringify( cacheLastRequest.order ) ||
+               JSON.stringify( request.columns ) !== JSON.stringify( cacheLastRequest.columns ) ||
+               JSON.stringify( request.search )  !== JSON.stringify( cacheLastRequest.search )
+     ) {
+         // properties changed (ordering, columns, searching)
+         ajax = true;
+     }
+      
+     // Store the request for checking next time around
+     cacheLastRequest = $.extend( true, {}, request );
+
+     if ( ajax ) {
+         // Need data from the server
+         if ( requestStart < cacheLower ) {
+             requestStart = requestStart - (requestLength*(conf.pages-1));
+
+             if ( requestStart < 0 ) {
+                 requestStart = 0;
+             }
+         }
+          
+         cacheLower = requestStart;
+         cacheUpper = requestStart + (requestLength * conf.pages);
+
+         request.start = requestStart;
+         request.length = requestLength*conf.pages;
+
+         // Provide the same `data` options as DataTables.
+         if ( $.isFunction ( conf.data ) ) {
+             // As a function it is executed with the data object as an arg
+             // for manipulation. If an object is returned, it is used as the
+             // data object to submit
+             var d = conf.data( request );
+             if ( d ) {
+                 $.extend( request, d );
+             }
+         }
+         else if ( $.isPlainObject( conf.data ) ) {
+             // As an object, the data given extends the default
+             $.extend( request, conf.data );
+         }
+
+         settings.jqXHR = $.ajax( {
+             "type":     conf.method,
+             "url":      conf.url,
+             "data":     request,
+             "dataType": "json",
+             "cache":    false,
+             "success":  function ( json ) {
+                 cacheLastJson = $.extend(true, {}, json);
+
+                 if ( cacheLower != drawStart ) {
+                     json.data.splice( 0, drawStart-cacheLower );
+                 }
+                 json.data.splice( requestLength, json.data.length );
+                  
+                 drawCallback( json );
+             }
+         } );
+     }
+     else {
+         json = $.extend( true, {}, cacheLastJson );
+         json.draw = request.draw; // Update the echo for each response
+         json.data.splice( 0, requestStart-cacheLower );
+         json.data.splice( requestLength, json.data.length );
+
+         drawCallback(json);
+     }
+ }
+};
+
+//Register an API method that will empty the pipelined data, forcing an Ajax
+//fetch on the next draw (i.e. `table.clearPipeline().draw()`)
+$.fn.dataTable.Api.register( 'clearPipeline()', function () {
+ return this.iterator( 'table', function ( settings ) {
+     settings.clearCache = true;
+ } );
+} );
+
+  $(function(){
+
+	 var dt = $('#goods_list_tb').DataTable( {
+	        "processing": true,
+	        "serverSide": true,
+	        "columns": [
+	                    {"data":"s_id"},
+	                    { "data": "batch_id" },
+	                    { "data": "markets" },
+               			 { "data": "num" },
+	                    { "data": "real_name" },
+	                    /*{ "data": "is_apply_th" },*/
+	                ],
+	        "ajax": $.fn.dataTable.pipeline( {
+	            url: "index.php?module=behalf&act=th_batch_list_info",
+	            pages: 5 // number of pages to cache
+	        } ),
+	        "columnDefs":[
+	                      
+	                     /* {
+	                    	  "render": function(data, type, row) {
+	                              return '<img src="'+data+'" width="50" height="50"/>';
+	                          },
+	                          "targets": [2]
+	                      },*/
+	                      {
+	                    	  "render": function(data, type, row) {
+	                              return data;
+	                          },
+	                          "targets": [0]
+	                      },
+                {
+                    "render": function(data, type, row) {
+                        return data;
+                    },
+                    "targets": [1]
+                },
+                {
+                    "render": function(data, type, row) {
+                        return data;
+                    },
+                    "targets": [2]
+                },
+                {
+                    "render": function(data, type, row) {
+                        return data;
+                    },
+                    "targets": [3]
+                },
+                {
+                    "render": function(data, type, row) {
+                        return '<div class="allotTd"><input class="btn btn-info" type="button" value="'+data+'" onclick="allotPopup(this)"></div>';
+                    },
+                    "targets": [4]
+                },
+                /*{
+                    "render": function(data, type, row) {
+                        return data;
+                    },
+                    "targets": [5]
+                },*/
+                {
+                    "orderable":true,
+                    "targets":0
+                },
+               /* {
+                    "visible":false,
+                    "targets":0
+                },*/
+	                      /*{
+	                    	  "render": function(data, type, row) {
+	                    		  if(data > 0)
+	                              	return '&yen;'+data;
+	                              else return '';
+	                          },
+	                          "targets": [7]
+	                      },
+	                      {
+	                    	  "render": function(data, type, row) {
+	                    		  return '';
+	                          },
+	                          "targets": [8]
+	                      },
+	                      {
+	                    	  "orderable":false,
+	                    	  "targets":0
+	                      },
+	                      {
+	                    	  "visible":false,
+	                    	  "targets":0
+	                      },
+	                      {
+	                    	  "orderable":false,
+	                    	  "targets":[2]
+	                      },
+	                      {
+	                    	  "orderable":false,
+	                    	  "targets":[8]
+	                      }*/
+	                      ],
+	        "createdRow":function(row,data,index){
+	        	$('td',row).eq(1).addClass('text-center').end()
+	        	.eq(5).addClass('text-center').end()
+	        	.eq(6).addClass('text-center');
+	        },
+	        "language":{
+	        	"sProcessing": "处理中...",
+	            "sLengthMenu": "显示 _MENU_ 项结果",
+	            "sZeroRecords": "没有匹配结果",
+	            "sInfo": "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+	            "sInfoEmpty": "显示第 0 至 0 项结果，共 0 项",
+	            "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+	            "sInfoPostFix": "",
+	            "sSearch": "商品编码搜索:",
+	            "sUrl": "",
+	            "sEmptyTable": "表中数据为空",
+	            "sLoadingRecords": "载入中...",
+	            "sInfoThousands": ",",
+	            "oPaginate": {
+	                "sFirst": "首页",
+	                "sPrevious": "上页",
+	                "sNext": "下页",
+	                "sLast": "末页"
+	            },
+	            "oAria": {
+	                "sSortAscending": ": 以升序排列此列",
+	                "sSortDescending": ": 以降序排列此列"
+	            }
+			},
+			"pagingType":'full_numbers'
+	    } );
+
+  });
+
+
+
+
+</script>
+
+<div class="container-fluid">
+
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<div class="container-fluid">
+				<div class="row">
+
+				       <div class="form-group">
+			            	<div clss="input-group-btn">
+					            <button type="button" class="btn btn-primary" id="query_submit" data-toggle="modal" data-target="#modal-addBatch">添加批次</button>
+					        </div>
+			           </div>
+
+				</div>
+			  </div>
+			</div>
+	  	</div>
+
+
+	  <table id="goods_list_tb" class="table table-striped table-bordered" width="100%">
+	  	<thead>
+	  		<tr>
+	  			<th class="text-center ">序号</th>
+	  			<th class="text-center ">退货批次号</th>
+	  			<th class="text-center ">市场</th>
+	  			<th class="text-center ">数量</th>
+	  			<th class="text-center ">分配拿货员</th>
+				<!--<th class="text-center ">分配拿货员</th>-->
+
+	  		</tr>
+	  	</thead>
+
+
+	  </table>
+</div>
+
+<!-- 添加批次弹窗 -->
+<div id="modal-addBatch" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" class="form-addBatch" >
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <label class="addBtn"><span class="iconfont">&#xe622;</span>增加一项</label>
+                </div>
+                <div class="modal-body" >
+                    <div class="container-fluid">
+                    	<table class="table table-striped table-bordered dataTable no-footer">
+                    		<thead>
+                    			<tr role="row">
+	                    			<th class="text-center">批次名</th>
+	                    			<th class="text-center">标签名称</th>
+	                    		</tr>
+                    		</thead>
+
+                    		<tr role="row">
+                    			<td class="text-center">
+                    				<time></time>
+                    				<input type="hidden" id="time" name="batch_id">
+									<input type="hidden" name="module" value="behalf" />
+									<input type="hidden" name="act" value="th_batch_list" />
+                    			</td>
+                    			<td class="text-center inputGroup">
+                    				<div class="form-group inputList">
+			                            <input type="text" name="good_nos[]" value="" class="form-control" required placeholder="请输入标签名称">
+			                            <span class="iconfont deleteBatch" onclick="deleteBatch(this,'.inputList')">&#xe67d;</span>
+			                        </div>
+
+                    			</td>
+                    		</tr>
+                    	</table>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="addBatchBtn" >确 定</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- 分配那货员弹窗 -->
+<div id="modal-allotTd" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" class="form-allotTd" action="index.php?module=behalf&act=dist_taker_batch">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4>选择分配人员</h4>
+                </div>
+                <div class="modal-body" >
+                    <div class="container-fluid">
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="allotTdBtn" >确 定</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+{include file=footer.whole.html}
+<script type="text/template" id="inputTemplate">
+	<div class="form-group inputList" >
+	     <input type="text" name="good_nos[]" value="" class="form-control" required placeholder="请输入标签名称">
+	    <span class="iconfont deleteBatch" onclick="deleteBatch(this,'.inputList')">&#xe67d;</span>
+	</div>
+</script>
+
+
+<script>
+	/*---添加批次弹窗--*/
+	//获取当前时间
+	var $addBatchModal = $('#modal-addBatch'),
+	    $timeTab = $('#modal-addBatch time'),
+		$timeIpt = $('#modal-addBatch #time'),
+		day = new Date(),
+		Y = day.getFullYear(),
+		M = day.getMonth()+1,
+		D = day.getDate(),
+		H = day.getHours(),
+		S = day.getSeconds(),
+		nowTime = Y+(M<10?'0'+M:M)+(D<10?'0'+D:D)+(H<10?'0'+H:H)+(S<10?'0'+S:S);
+		$timeTab.text(nowTime);
+		$timeIpt.val(nowTime);
+	//动态增加一项
+	var $inputList = $('#inputTemplate'),//复制的模板
+		$addBtn = $('#modal-addBatch .addBtn'),
+		$inputGroup = $('#modal-addBatch .inputGroup');
+	$addBtn.on('click',function(){
+		$inputGroup.append($inputList.html());
+	});
+	//删除一项
+	function deleteBatch(deleteBth,parentDom){
+		$(deleteBth).parents(parentDom).remove();
+	}
+
+
+	//ajax异步提交
+	/*$('#addBatchBtn').on('click',function(){
+		var $this= $(this),
+			$data = $('.form-addBatch').serializeArray(),
+			$url = $this.parents('.form-addBatch').attr('action');
+		$.ajax({
+			url:$url,
+			data:$data,
+			success:function(){
+                window.location.href="index.php?module=behalf&act=th_batch_list";
+				$('#modal-addBatch').modal('hide')
+				console.log('成功');
+			},
+			error:function(){
+				console.log('失败')
+			}
+		})
+	})*/
+	/*---分配人员--*/
+	var $goodListTb = $('#goods_list_tb'),
+		$allotTd = $goodListTb.find('.allotTd input.btn'),
+		$modalAllotTd = $('#modal-allotTd'),
+		$formAllotTd = $modalAllotTd.find('.form-allotTd'),
+		$allotTdBtn = $modalAllotTd.find('#allotTdBtn');
+
+	function allotPopup(allotBtn){
+		var $this = $(allotBtn),
+		    takers = '<label>选择分配员:</labe><select class="selectpicker" name = "takers"><option value="">请选择</option>',
+		    //获取商品编号
+		    $goodsNo = $this.parents('tr').find('td:nth-child(2)'),
+		    goodsNo = Number($goodsNo.text()),
+		    formAction = $formAllotTd.attr('action');
+		    console.log(formAction)
+		//请求分配人员数据
+		$.ajax({
+			url:'index.php?module=behalf&act=goods_taker_list',
+			type:'post',
+			dataType:'json',
+			success:function(data){
+				//console.log(data);
+				//动态生成分配人员slect
+				$.each(data,function(i){
+					//console.log(data[i].user_name)
+					takers = takers+'<option value="'+data[i].user_id+'" id="'+data[i].user_id+'">'+data[i].real_name+'</option>';
+				})
+				takers = takers + '</select>';
+				$('#modal-allotTd .container-fluid').html(takers);
+				$modalAllotTd.modal('show');
+				var $select = $modalAllotTd.find('.selectpicker'),
+					$selectOption = $select.find('option:selected'),
+				    selectVal = $select.val();
+
+				$select.on('change',function(){
+					selectVal = $select.find('option:selected').val();
+				})
+				//确定分配人员
+				$allotTdBtn.on('click',function(){
+					//console.log(selectVal);
+					if(selectVal == ''){
+						layer.msg('请选择分配人员')
+						return false;
+					}else{
+						$.ajax({
+							url:formAction,
+							type:'post',
+							data:{'good_nos':goodsNo,'th_user_id':selectVal},
+							dataType:'json',
+							success:function(res){
+								//console.log(res);
+								if(res.retval == 1){
+                                    window.location.reload();
+									/*$this.val(res.msg).addClass('label-success');
+									$modalAllotTd.modal('hide');*/
+								}
+							},
+							error:function(){
+								console.log('请求失败')
+							}
+						})
+					}
+				})
+			}
+		})
+	}
+
+
+</script>

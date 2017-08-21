@@ -1,0 +1,110 @@
+{include file=top2017.html}
+<div class="header_mid clearfix">
+	<div class="wrap clearfix">
+			<a rel="nofollow" href="http://www.51zwd.com" class="logo" title="51做网店"></a>
+			<div class="normal-search-content">
+				<div class="top_nav_search" id="nav_search_form"> <!--搜索框 -->
+					<div class="search radius6">
+						<form name="searchform" method="get" action="{url app=search}">
+							<input name="ecmsfrom" type="hidden" value="9">
+							<input type="hidden" name="show" value="title,newstext">
+							<input type="hidden" name="app" value="search" />
+							<div class="select_box">
+							</div>
+							<select id="choose">
+								<!--{if $s_m == 1}-->
+								<option value="store">搜店铺</option>
+								<option value="index">搜商品</option>
+								<!--{else}-->
+								<option value="index">搜商品</option>
+								<option value="store">搜店铺</option>
+								<!--{/if}-->
+							</select>
+							<input type="hidden" name="act" value="<!--{if $s_m == 1}-->store<!--{else}-->index<!--{/if}-->" />
+							<input class="inp_srh" name="keyword" value="<!--{if !in_array($smarty.get.app,array('behalf_choice','behalf_realzone','brand_goods','behalf_goods'))}-->{$smarty.get.keyword}<!--{/if}-->" placeholder="请输入搜索内容">
+							<input class="btn_srh" type="submit" name="submit" value="搜索">
+						</form>
+					</div>
+					<div class="ts_hotwords">
+						<!--{foreach from=$hot_keywords item=keyword}-->
+			    		<a href="{$keyword.1|default:#}" title="{$keyword.0}" rel="nofollow" class="ts_hotword" target="_blank">{$keyword.0}</a>
+			    		<!--{/foreach}-->
+					</div>
+					</div>
+				</div>
+			<div class="mid_fr">
+				<a href="{url app=app_down}" target="_blank"><img src="{$site_url}/static/app/android/app_440x180.png" alt="我要做网店"></a>
+			</div>
+	</div>
+</div>
+
+<div id="body_wrap" class="clearfix">
+	<div class="page_activity">
+		<div class="main_topnav_content">
+				<div class="indexLeftLink fl">
+						<a href="javascript:">广州货源市场</a>
+				</div>
+				<div class="indexRightLink fl">
+					<ul>
+					    <!--{foreach from=$navs.middle item=nav}-->
+			            <li><a href="{$nav.link}"{if $nav.open_new} target="_blank"{/if} {if $nav.fontcolor}style="color:#{$nav.fontcolor}"{/if} {if preg_match('/app='.($smarty.get.app).'&act='.($smarty.get.act).'/i',$nav.link)}class="select" style="color:#f46;"{/if}>{$nav.title|escape}{if $nav.hot==1}<span class="absolute block"></span>{/if}</a></li>
+			            <!--{/foreach}-->
+					</ul>
+				</div>
+		</div>
+	</div>
+	<!--{if $index==1 && !empty($index)}-->
+	<div class="pc_banner_wrapper clearfix">
+		<div id="bg_color" class="banner_bg_color">
+			<div class="banner_wrapper clearfix">
+				<!-- 导航 -->
+				<div class="nav_menu fl" >
+					<div area="index_market_nav_left_side" widget_type="area">
+				    <!--{widgets page=index area=index_market_nav_left_side}-->
+				    </div>
+				</div>
+				<!-- banner图片 -->
+
+				<div id="box" class="item_slider fl" >
+				     <div area="index_market_nav_center_side" widget_type="area">
+				      <!--{widgets page=index area=index_market_nav_center_side}-->
+				     </div>
+				</div>
+				<!-- 用户信息 -->
+				<div class="user_info fl">
+					<div class="base_info">
+						<a href="javascript:" target="_blank" class="avatar"></a>
+						<!--{if !$visitor.user_id}-->
+						<div class="welcome">
+							<span class="txt">客户您好!</span>
+							<span class="name">	欢迎来到51平台~</span>
+						</div>
+						<div class="privileged_warpper">
+							<a href="{url app=member&act=login&ret_url=$ret_url}" class="privileged fl" target="_blank" >
+								<span class="privilid-text">登录</span>
+							</a>
+							<a href="{url app=member&act=register&ret_url=$ret_url}" class="privileged fl" target="_blank" >
+								<span class="privilid-text">注册</span>
+							</a>
+						</div>
+						<!--{else}-->
+						<div class="welcome">
+							<span class="txt">您好!</span>
+							<span class="name">{$visitor.user_name|escape}~</span>
+						</div>
+						<div class="privileged_warpper">
+							<a rel="nofollow" class="privileged" target="_blank" href="{url app=member&ret_url=$ret_url}" style="width:78px;margin:0 auto;">
+								<span class="privilid-text">会员中心</span>
+							</a>
+						</div>
+						<!--{/if}-->
+					</div>
+					<div class="foot_wrapper" area="index_market_nav_right_side" widget_type="area">
+						<!--{widgets page=index area=index_market_nav_right_side}-->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--{/if}-->
+</div>

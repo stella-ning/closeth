@@ -1,0 +1,177 @@
+{include file=header.whole.html}
+
+<script type="text/javascript">
+
+  $(function(){
+	  
+	  var dt = $("#tags_stat_table").DataTable({
+	
+		     "order":[
+		        [0,null]      
+		     ],
+		     //dom:"Bfrtip",
+		     dom:"<'container-fluid' <'row' > <t> <'row' >  >",
+
+		 	// 上面的dom相当于以下的效果：
+		 	// <div class="container-fluid">
+			// 	<div class="row">
+			// 		<div class="col-xs-2">[l]分页数量控件</div>
+			// 		<div class="col-xs-7">[B]按钮控件</div>
+			// 		<div class="col-cs-3">[f]搜索控件</div>
+			// 	</div>
+	
+			// 	<table>表格</table>
+			
+			// 	<div class="row">
+			// 		<div class="col-xs-4">[i]表格信息控件</div>
+			// 		<div class="col-xs-8 text-right">[p]分页控件</div>
+			// 	</div>
+			// </div>
+
+		     "buttons":[
+		       'excel',{
+		    	   text:'打印表格',
+		    	   className:'btn btn-default',
+		    	   action:function(e,dt,node,config){
+		    		   print_table(dt.data());
+		    	   }
+		    	   
+		       },
+		          /* {
+		    	  	 text:'预览10页',
+		    	   	 className:'btn btn-default',
+		    	   	 action:function(e,dt,node,config){
+							tag_preview(dt.data());
+		    	   	 }
+		    	   }*/
+		    
+		     ],
+			"language":{
+				"url":"{lib file='/DataTables/zn.json'}",
+				"buttons":{
+					"copy":"复制表格",
+					"excel":"导出EXCEL",
+					"print":"打印表格",
+					"colvis":"隐/显列"
+				}
+			},
+			"pagingType":'full_numbers'
+		});
+
+	  	 var dt1 = $("#tags_stat_table_16").DataTable({
+
+		     "order":[
+		        [0,null]      
+		     ],
+		     //dom:"Bfrtip",
+		     dom:"<'container-fluid' <'row'  > <t> <'row' >  >",
+
+		     "buttons":[
+		       'excel',{
+		    	   text:'打印表格',
+		    	   className:'btn btn-default',
+		    	   action:function(e,dt,node,config){
+		    		   print_table(dt.data());
+		    	   }
+		    	   
+		       },
+
+		     ],
+			"language":{
+				"url":"{lib file='/DataTables/zn.json'}",
+				"buttons":{
+					"copy":"复制表格",
+					"excel":"导出EXCEL",
+					"print":"打印表格",
+					"colvis":"隐/显列"
+				}
+			},
+			"pagingType":'full_numbers'
+		});
+	
+  });
+
+
+</script>
+
+
+<div class="container-fluid">
+	<div class="panel panel-default" style="display:none;">
+		<div class="panel-body">
+		   <input type="hidden" name="save_nhd" value="" id="save_nhd_inp" />
+		  </div>
+	  </div>
+
+	  <div class="panel panel-default">
+		<div class="panel-body">	
+			<div class="row">
+				<div style="margin-left: 15px;">当前时间：{$time}
+					<div style="float: right;margin-right: 15px;"><a href="index.php?module=behalf&act=tags_stat"><input class="btn btn-primary"  type="submit" value="刷新"  style="margin-left:20px; padding:2px 5px;" /></a></div>
+				</div>
+
+				<div class="col-xs-2">
+					
+				</div>
+			</div>	
+			
+		</div>
+		
+			<table id="tags_stat_table" class="table table-condensed table-striped table-bordered table-hover" width="100%">
+		  	<thead>
+		  		<tr>
+		  		    <th class="text-center col-xs-1">实时待拿货数量</th>
+		  			<th class="text-center col-xs-1">拿货中数量</th>
+		  			<th class="text-center col-xs-1">缺货</th>
+		  			<th class="text-center col-xs-1">已入仓</th>
+		
+		  		</tr>
+		  	</thead>
+		  	<tbody>
+
+		  		<tr>
+
+		  			<td class="text-center col-xs-1">{$unassign_num}</td>
+		  			<td class="text-center col-xs-1">{$taking}</td>
+		  			<td class="text-center col-xs-1">{$shortage}</td>
+		  			<td class="text-center col-xs-1">{$warehouse}</td>
+		 			
+
+		  		</tr>
+
+		  	</tbody>
+		  </table>
+	  </div> 
+
+	  <div class="panel panel-default">
+		<div class="panel-body">	
+			<div class="row">
+				<div style="margin-left: 15px;">当日操作（截止16:00）</div>
+				<div class="col-xs-2">
+					
+				</div>
+			</div>	
+			
+		</div>
+		
+			<table id="tags_stat_table_16" class="table table-condensed table-striped table-bordered table-hover" width="100%">
+		  	<thead>
+		  		<tr>
+		  		    <th class="text-center col-xs-1">应分配数量</th>
+		  			<th class="text-center col-xs-1">已分配数量</th>
+		
+		  		</tr>
+		  	</thead>
+		  	<tbody>
+	
+		  		<tr>
+
+		  			<td class="text-center col-xs-1">{$should_assign_num_before_16}</td>
+		  			<td class="text-center col-xs-1">{$assign_num}</td>
+			
+		  		</tr>
+	
+		  	</tbody>
+		  </table>
+	  </div>
+</div>
+{include file=footer.whole.html}

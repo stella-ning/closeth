@@ -1,0 +1,140 @@
+{include file=header.whole.html}
+<script type="text/javascript">
+
+
+  $(function(){
+	    // Array to track the ids of the details displayed rows
+	    var detailRows = [];
+
+		var dt = $("#order_list_table").DataTable({
+			"ordering":true,
+			"paging":true,
+			"info":true,
+			"searching":true,
+			dom:"<'container-fluid' <'row' <'col-xs-2' l><'col-xs-7' B><'col-cs-3' f> > <t> <'row' <'col-xs-4' i><'col-xs-8 text-right' p>  >  >",
+			"buttons":[
+				{
+					extend: 'excel',
+					text: '导出订单',
+					title : '订单列表_仓库',
+
+				},{
+					text:'打印表格',
+					className:'btn btn-default',
+					action:function(e,dt,node,config){
+						print_table(dt.data());
+					}
+
+				}
+
+
+			],
+		//	"serverSide": true,
+			"columnDefs":[
+
+
+
+
+		],
+			"order":[
+				[0,null]
+			],
+
+			"processing": true,
+
+			"lengthMenu": [[100, 500, 1000, -1], [100, 500, 1000, "所有"]],
+
+					"language":{
+						"url":"{lib file='/DataTables/zn.json'}"
+
+					},
+			"pagingType":'full_numbers',
+			"deferRender": true,
+
+				});
+
+
+
+
+
+
+  });
+
+
+
+</script>
+<div class="container-fluid">
+	<div style="height:10px;"></div>
+
+    <!--搜索面板-->
+
+    <!-- 订单列表 -->
+	<table id="order_list_table" class="table table-striped table-bordered table-hover" celllspacing="0" border="0" width="100%">
+		<thead>
+			<tr><th  class="text-center"  rowspan="2" >日期</th><th class="text-center" colspan="6">拿货</th><th  class="text-center"
+																						 colspan="5">退货</th></tr>
+			<tr>
+
+
+				<th class="col-xs-1 text-center">订单件数</th>
+				<th class="col-xs-1 text-center">拿货件数</th>
+				<th class="col-xs-1 text-center">入仓件数</th>
+				<th class="col-xs-1 text-center">缺货件数</th>
+				<th class="col-xs-1 text-center">应支付金额</th>
+				<th class="col-xs-1 text-center">实际支付金额</th>
+				<th class="col-xs-1 text-center">订单件数</th>
+				<th class="col-xs-1 text-center">退货成功件数</th>
+				<th class="col-xs-2 text-center">退货失败件数</th>
+				<th class="col-xs-1 text-center">应退金额</th>
+				<th class="col-xs-1 text-center">实退金额</th>
+
+			</tr>
+		</thead>
+		<tfoot>
+			    <th class="text-center"></th>
+				<th class="col-xs-1 text-center"></th>
+				<th class="col-xs-1 text-center"></th>
+				<th class="col-xs-1 text-center"></th>
+				<th class="col-xs-1 text-center"></th>
+				<th class="col-xs-1 text-center"></th>
+			    <th class="col-xs-1 text-center"></th>
+				<th class="col-xs-1 text-center"></th>
+				<th class="col-xs-2 text-center"></th>
+				<th class="col-xs-1 text-center"></th>
+				<th class="col-xs-1 text-center"></th>
+				<th class="col-xs-1 text-center"></th>
+
+		</tfoot>
+
+		<tbody>
+		<!--{foreach from=$data item=statistics }-->
+			<tr>
+				<td>{$statistics.date}</td>
+				<td>{$statistics.order_num}</td>
+				<td>{$statistics.taken_num}</td>
+				<td>{$statistics.warehouse_num}</td>
+				<td>{$statistics.shortage_num}</td>
+				<td>{$statistics.amount}</td>
+				<td>{$statistics.actual_amount}</td>
+				<td>{$statistics.back_num}</td>
+				<td>{$statistics.back_success_num}</td>
+				<td>{$statistics.back_fail_num}</td>
+				<td>{$statistics.back_amount}</td>
+				<td>{$statistics.back_actual_amount}</td>
+			</tr>
+		<!--{/foreach}-->
+		</tbody>
+	
+	
+	</table>
+
+
+
+</div>
+<script type="text/javascript">
+	$(function(){		
+		$('#add_time_from_wrapper').datetimepicker({format:'YYYY-MM-DD HH:mm:ss'});
+		$('#add_time_to_wrapper').datetimepicker({format:'YYYY-MM-DD HH:mm:ss'});
+	});
+</script>
+{include file=footer.whole.html}

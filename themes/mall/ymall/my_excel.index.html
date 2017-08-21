@@ -1,0 +1,396 @@
+{include file=member.header.html}
+<style>
+    /*付款提示框CSS如下*/
+    .fukuan-tishi
+    {
+        border: 1px solid #888;
+        left: 40%;
+        margin: -100px 0 0 -100px;
+        position: fixed !important;
+        top: 50%;
+        width: 520px;
+        z-index: 999;
+        background-color: #fef3ed;
+    }
+    .fukuan-tishi .p1
+    {
+        text-align: center;
+        color: #FFF;
+        line-height: 35px;
+        font-size: 16px;
+        letter-spacing: 2px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        background-color: #d30c0f;
+    }
+    .fukuan-tishi .p2
+    {
+        color: #F00;
+        text-align: center;
+    }
+    .fukuan-tishi .p2, .fukuan-tishi .p3, .fukuan-tishi .p4, .fukuan-tishi .p5
+    {
+        margin-left: 50px;
+        font-size: 14px;
+        margin-right: 50px;
+        line-height: 24px;
+    }
+    .fukuan-tishi .p3
+    {
+        font-weight: bold;
+        color: #f33;
+        margin-top: 20px;
+    }
+    .fukuan-tishi .p5
+    {
+        margin-top: 20px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    .fukuan-tishi .p5 .a1
+    {
+        background-color: #ff6264;
+        border-radius: 5px;
+        border-style: none;
+        color: #f5f5f5;
+        cursor: pointer;
+        display: inline-block;
+        font-size: 14px;
+        padding: 5px 20px;
+    }
+    .fukuan-tishi .p5 .a1:hover
+    {
+        color: #fff000;
+        background-color: #ff6200;
+    }
+    .fukuan-tishi .p5 .a2
+    {
+        color: #f60;
+        border-bottom-width: 1px;
+        border-bottom-style: solid;
+        border-bottom-color: #f60;
+        margin-left: 10px;
+    }
+    .fukuan-tishi .p5 .a2:hover
+    {
+        color: #ff0000;
+        border-bottom-width: 1px;
+        border-bottom-style: solid;
+        border-bottom-color: #ff0000;
+    }
+    #fullbg {
+        background-color: Gray;
+        left: 0px;
+        opacity: 0.6;
+        position: absolute;
+        top: 0px;
+        z-index: 990;
+        filter: alpha(opacity=60);
+        -moz-opacity: 0.6;
+        -khtml-opacity: 0.6;
+    }
+</style>
+
+
+<script language="javascript">
+    function toSubmit() {
+    	
+         var title = jQuery("#title").val();
+        var totalfee = jQuery("#payAmount").val();
+        jQuery("#fullbg").css({
+            height: jQuery("body").height(),
+            width: jQuery("body").width(),
+            display: "block"
+        });
+        jQuery.ajax({ 																 //一个Ajax过程 
+            type : "get", 															//以get方式与后台沟通 
+            url : 'index.php?app=my_money&act=keepPossible'+"&title=" + title + "&totalfee=" + totalfee,		 															//与此php页面沟通 
+            dataType : 'json',													//从php返回的值以 JSON方式 解释 
+            success : function(json) {	
+                if(json.done == true){						
+                    //alert("操作success");				
+                }
+                else{												
+                    alert("操作失败");									
+                }
+            }
+        });
+        jQuery("#dialog").show();
+    }
+
+    function toQuery(url) {
+        var title = jQuery("#title").val();
+        var totalfee = jQuery("#payAmount").val();
+        window.location.href = url + "&title=" + title + "&totalfee=" + totalfee;
+    }
+
+    function closeMe() {
+        jQuery("#fullbg").css({
+            height: 0,
+            width: 0,
+            display: "none"
+        });
+          jQuery.ajax({ 																 //一个Ajax过程 
+            type : "get", 															//以get方式与后台沟通 
+            url : 'index.php?app=my_money&act=getNewSerial',		 															//与此php页面沟通 
+            dataType : 'json',													//从php返回的值以 JSON方式 解释 
+            success : function(json) {	
+                if(json.done == true){						
+
+                   $("#title").val( json.retval);
+                }
+                else{												
+                    alert("操作失败");									
+                }
+            }
+        });
+        jQuery("#dialog").hide();
+        return false;
+    }
+</script>
+<script language = "JavaScript">
+	  function goToTradeForm(obj){
+	    var _targetTop = $('#'+obj).offset().top;//获取位置
+	    jQuery("html,body").animate({scrollTop:_targetTop},30);//跳转
+	  }
+
+    function chongzhi()
+    {
+        if (document.chongzhi_form.cz_money.value=="")
+        {
+            alert("{$lang.tianxieyaochongzhidejine}");
+            document.chongzhi_form.cz_money.focus();
+            return false;
+        }
+
+        return true;  
+    }
+
+
+    function card()
+    {
+        if (document.card_form.user_name1.value =="")
+        {
+            alert("充值帐户不能为空!");
+            document.card_form.user_name1.focus();
+            return false;
+        }
+        if (document.card_form.user_name2.value =="")
+        {
+            alert("确认帐户不能为空!");
+            document.card_form.user_name2.focus();
+            return false;
+        }
+        if (document.card_form.user_name1.value != document.card_form.user_name2.value)
+        {
+            alert("两次输入充值帐户不同!");
+            document.card_form.user_name2.focus();
+            return false;
+        }
+        if (document.card_form.card_sn.value =="")
+        {
+            alert("充值卡卡号不能为空!");
+            document.card_form.card_sn.focus();
+            return false;
+        }
+        if (document.card_form.card_pass.value =="")
+        {
+            alert("充值卡密码不能为空!");
+            document.card_form.card_pass.focus();
+            return false;
+        }
+        return true;  
+    }
+
+    $(function(){
+        $('#bank_pay ul.tab li').hover(function(){
+            $(this).removeClass('normal').addClass('active');
+            $(this).siblings().removeClass('active').addClass('normal');
+            $("#bank_pay .wrap dd").addClass('hidden');
+            $("#bank_pay .wrap").find('.' + $(this).attr('id')).removeClass('hidden');
+        },function(){
+		
+        });
+
+    	$("#directpayform").validate({
+            errorPlacement: function(error, element){
+                var error_td = element.siblings('label');
+                error_td.append(error);
+            },
+            success: function(label){
+                label.hide();
+            },
+            submitHandler:function(form)
+            {
+            	//toSubmit();
+            	form.submit();
+            },
+            onkeyup: false,
+            rules: {               
+            	payAmount: {
+                   required: true,                
+                    number: true,
+                    min:1
+                }
+            },
+            messages: {               
+            	payAmount: {
+                    required: '{$lang.input_payAmount}',
+                    number: '{$lang.num_for_payAmount}',
+                    min: '{$lang.min_for_payAmount}'
+                }      
+            }
+        });
+    	
+    	$("#alipayBank").validate({
+            errorPlacement: function(error, element){
+                var error_td = element.siblings('label');
+                error_td.append(error);
+            },
+            success: function(label){
+                label.hide();
+            },
+            submitHandler:function(form)
+            {
+            	chongzhi();
+            	form.submit();
+            },
+            onkeyup: false,
+            rules: {               
+            	WIDtotal_fee: {
+                   required: true,                
+                    number: true,
+                    min:1
+                }
+            },
+            messages: {               
+            	WIDtotal_fee: {
+                    required: '{$lang.input_payAmount}',
+                    number: '{$lang.num_for_payAmount}',
+                    min: '{$lang.min_for_payAmount}'
+                }      
+            }
+        });
+    	
+    	$('#alipay_qr_img').hover(function(){
+    		$(this).attr('width','320px');
+    	},function(){
+    		$(this).attr('width','120px');
+    	});
+    	
+    	
+    });
+    
+    function checkTradeForm()
+    {
+    	var tradenoValue = document.getElementById('tradeno').value;
+    	tradenoValue = jQuery.trim(tradenoValue);
+    	var totalfeeValue = document.getElementById('totalfee').value;
+    	totalfeeValue = jQuery.trim(totalfeeValue);
+    	if(!/^[1-9]\d+$/.test(tradenoValue)) { alert('支付宝交易号只能是数字，且不能以0开头'); return false; }
+    	if(!/^(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*))$/.test(totalfeeValue)){alert('请输入正确的金额');return false;}
+    }
+
+    function type_change(){
+     //   var display = ($("#xls_type").val() == 3||);
+    }
+
+    function submitMsg(){
+        return true;
+    }
+</script>
+
+<div class="content">
+    {include file=member.menu.html}
+    <div id="right">
+        <ul class="tab">
+            <li class="active">{$lang.my_excel}</li>
+
+
+        </ul>
+
+        <div class="wrap margin1">
+            <div class="public table">
+                <div class="information_index" style="overflow:hidden; margin: 0px 0 -15px;">
+                    <div class="info">
+                        <h3 class="margin2">
+                            <span>{$lang.hello}！{$visitor.user_name}，欢迎来到表格下单管理中心</span>
+                            <!-- <a href="index.php?app=my_money&act=index" target="_blank">{$lang.shenmeshishangfutong}</a>-->
+                        </h3>
+                        <form action="" enctype="multipart/form-data" name="formMsg" onSubmit="return submitMsg()" method="post">
+                            <input type="hidden" name="act" value="excel_submit" />
+                        <table class="width6">
+                            <tr>
+                                <td><span style="font-size:14px">
+            表格类型
+                                    </span>
+
+                                </td>
+                                <td>
+                                    <select name="xls_type" onchange="type_change()" id="xls_type">
+
+                                        <option value="3">本站表格</option>
+                                    </select>
+
+                                </td>
+                            </tr>
+                            <tr><td><span style="font-size:14px">上传表格</span></td><td><input type="file" name="xls_file" /></td></tr>
+<tr><td colspan="2"><input type="submit" class="btn" value="提交表单"/></td></tr>
+                        </table>
+                        </form>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+
+        <!--开始
+                   <div class="wrap margin1">
+                    <div class="public table">
+                    <h3 class="title" style="margin: -10px 0 20px; color:#3E3E3E">{$lang.zaixianchongzhi}</h3>
+                          <div style="color:#646665;float:left;font-size:12px;font-weight:normal;line-height:30px;">
+        <form name="chongzhi_form" onSubmit="return chongzhi();" action="index.php?app=my_money&act=czfs" method="post" target="_blank">
+                                          {$lang.chongzhijine}
+                          <input name="cz_money" type="text" value="100" style="width:100px;height:24px;" />&nbsp;{$lang.yuan}
+                            {$lang.chongzhifangshi}：
+                            <select name="czfs" style="width:120px;height:24px;">
+                            <option value="tenpay">{$lang.caifutongchongzhi}</option>
+                            <option value="alipay">{$lang.zhifubaochongzhi}</option>
+                            <option value="chinabank">{$lang.wangyinchongzhi}</option>                    
+                                                </select>
+                          <BR>注：目前支持支付宝、财付通、各大银行网银、银联充值。您也可以<a href="index.php?app=article&act=view&article_id=31" target="_blank">[线下汇款]</a>。<BR><input type="submit" class="money_btn" value="{$lang.lijichongzhi}" />
+                          </form>
+                     </div>
+                                </div>
+                   </div>	
+        -->
+        <!--结束-->	
+
+
+        <div class="clear"></div>
+        <div class="adorn_right1"></div>
+        <div class="adorn_right2"></div>
+        <div class="adorn_right3"></div>
+        <div class="adorn_right4"></div>
+    </div>
+    <div class="clear"></div>
+</div>
+<div class="fukuan-tishi" id="dialog" style="height: 245px; width: 540px; display: none; background-color: rgb(254, 243, 237);">
+    <p class="p1">
+        转账充值提示</p>
+    <p class="p2">
+        请您在新打开的支付宝转账页面完成转账。</p>
+    <p class="p3">
+        重要提示：</p>
+    <p class="p4">
+        请勿修改支付宝转账页面的任何内容，且必须在10分钟之内完成支付！否则会造成充值失败！！！</p>
+    <p class="p5">
+        <a  onclick="toQuery('{$site_url}/index.php?app=my_money&act=searchtrade');" class="a1">转账完成，查看余额</a><a href="#" onclick="return closeMe();" class="a2">遇到问题，放弃操作</a></p>
+</div>
+<div id="fullbg" style="height: 1443px; width: 1263px; display: none;">
+</div>
+<!--<div class="clear"></div>
+<iframe id='iframe_post' name="iframe_post" frameborder="0" width="0" height="0">
+</iframe>-->
+{include file=footer.html}

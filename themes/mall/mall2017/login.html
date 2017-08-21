@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="{$site_url}/" />
+	<meta charset="UTF-8">
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta http-equiv="expires" content="0">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta name="viewport" content="width=1200px" >
+	<meta name="renderer" content="webkit">
+	{$page_seo}
+
+	<meta name="author" content="www.51zwd.com" />
+	<meta name="generator" content="www.51zwd.com" />
+	<meta name="copyright" content="www.51zwd.com. All Rights Reserved" />
+    <link type="text/css" href="{res file=css/reset.css}" rel="stylesheet" />
+    <link type="text/css" href="{res file=css/index.css}" rel="stylesheet" />
+    <link type="text/css" href="{res file=css/singin.css}" rel="stylesheet" />
+    <link type="text/css" href="{res file=css/main.css}" rel="stylesheet" />
+	<link type="text/css" href="{res file=css/footer.css}" rel="stylesheet" />
+	<script type="text/javascript" src="{lib file=jquery.js}" charset="utf-8"></script>
+	<script type="text/javascript" src="{res file=js/main.js}" charset="utf-8"></script> 
+</head>
+<body style="background:#fff;">
+
+<div class="a-full">
+    <div id="main" class="w-full">
+        <div id="page-login" class="w login-register mt20 mb20" style="margin-top:10px;">
+            <div class="w logo mb10">
+                <a href="http://www.51zwd.com" title="51做网店"><img
+                        alt="51做网店" src="{$site_url}/static/app/android/240x90.png"></a>
+            </div>
+            <div class="clearfdiv">
+
+                <div class="w clearfix">
+                    <div class="col-main">
+                        <div class="login-edit-field" area="login_left" widget_type="area">
+                        </div>
+                    </div>
+                    <div class="col-sub">
+                        <div class="form">
+                            <div class="a_title">
+                                <div class="title">{$lang.login}</div>
+                            </div>
+
+                            <div class="content">
+                                <form method="post" id="login_form">
+                                    <dl class="clearfix">
+                                        <dt></dt>
+                                        <dd>
+                                            <input class="input pwd_text" type="text" name="user_name" placeholder="{$lang.w_user_name}">
+                                            <div class="clr"></div>
+                                            <label></label>
+                                        </dd>
+                                    </dl>
+                                    <dl class="clearfix">
+                                        <dt></dt>
+                                        <dd>
+                                            <input class="input" type="password" name="password" placeholder="{$lang.w_passwoed}">
+                                            <div class="clr"></div>
+                                            <label></label>
+                                        </dd>
+                                    </dl>
+
+                                    <dl class="clearfix">
+                                        <dt></dt>
+                                        <dd class="clearfix">
+                                            <input type="submit" class="login-submit" name="Submit" value="{$lang.login}"
+                                                   title="{$lang.login}">
+                                            <input type="hidden" name="ret_url" value="{$ret_url}">
+                                        </dd>
+                                    </dl>
+                                    <dl class="clearfix">
+                                        <dt></dt>
+                                        <dd class="register-now">
+
+                                            {$lang.not_member}<a href="{url app=member&act=register&ret_url=$ret_url}"
+                                                title="{$lang.register}">{$lang.register}</a>
+                                            &nbsp;
+                                            <a href="{url app=find_password}" class="find-password">{$lang.forget_password}</a>
+
+                                        </dd>
+                                    </dl>
+
+                                    <div class="partner-login">
+                                        <h3>{$lang.use_partner_account_login}</h3>
+                                        <p class="f-login">
+                                            <a class="qq-login"
+                                               href="{url app=member&act=loginWithTaobao&ret_url=$ret_url}" title="{$lang.tb_account_login}"
+                                               title="{$lang.tb_account_login}" target="_blank">{$lang.tb_account_login}</a>
+                                            <a class="weibo-login"
+                                               href="{url app=member&act=loginWithAlibaba&ret_url=$ret_url}"
+                                               target="_blank">{$lang.ali_account_login}</a>
+                                        </p>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{include file="footer2017.html"}

@@ -1,0 +1,25 @@
+<div class="pagination pagination_all">
+    <!--{if $page_info.prev_link}-->
+	<a href="{$page_info.prev_link}"><span class="current prev">前一页</span></a>
+	<!--{/if}--> 
+	<!--{foreach from=$page_info.page_links key=page item=link}-->
+	<!--{if $page_info.curr_page eq $page}-->
+	<span class="current" >{$page}</span>
+	<!--{else}-->
+	<a href="{$link}">{$page}</a>
+	<!--{/if}-->
+	<!--{/foreach}-->
+	
+	<!--{if $page_info.next_link}-->
+	<a href="{$page_info.next_link}" class="next">后一页</a>
+	<!--{/if}-->
+	  
+	<div class="pager-jump">
+		<span class="pager-text">共 {$page_info.page_count|add:1} 页<!-- 跳转到第</span>
+		<div class="pager-textbox-wrapper">
+			<input value="1" class="jump-textbox">
+		</div>
+		<span class="pager-text">页</span>
+		<button class="jump-button">确定</button>-->
+	</div>
+</div>

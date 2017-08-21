@@ -1,0 +1,54 @@
+<!-- 订单状态 -->
+<!--{if $goods.goods_status eq '0'}-->
+<span style="width:36px;background-color:#777777;color:#FFFFFF;padding:1px 3px;border-radius:5px;border:1px solid #676767;font-size:12px;display:block;">{if $order.status eq '20'}备货中{else}未备货{/if}</span>
+<!--{/if}-->
+<!--{if $goods.goods_status eq '10'}-->
+<span style="width:36px;background-color:#337AB7;color:#FFFFFF;padding:1px 3px;border-radius:5px;border:1px solid #2E6DA4;font-size:12px;display:block;">已备货</span>
+<!--{/if}-->
+<!--{if $goods.goods_status eq '11'}-->
+<span style="width:36px;background-color:#5CB85C;color:#FFFFFF;padding:1px 3px;border-radius:5px;border:1px solid #4CAE4C;font-size:12px;display:block;">已发货</span>
+<!--{/if}-->
+<!--{if $goods.goods_status eq '12'}-->
+<span style="width:36px;background-color:#5CB85C;color:#FFFFFF;padding:1px 3px;border-radius:5px;border:1px solid #4CAE4C;font-size:12px;display:block;">换款中</span>
+<!--{/if}-->
+<!--{if $goods.goods_status eq '14'}-->
+<span style="width:60px;background-color:#5BC0DE;color:#FFFFFF;padding:1px 3px;border-radius:5px;border:1px solid #46B8DA;font-size:12px;display:block;">质检不合格</span>
+<!--{/if}-->
+<!--{if $goods.goods_status eq '5' or $goods.goods_status eq '9'}-->
+<span style="width:36px;background-color:#5CB85C;color:#FFFFFF;padding:1px 3px;border-radius:5px;border:1px solid #4CAE4C;font-size:12px;display:block;">已派单</span>
+<!--{/if}-->
+<!--{if $goods.goods_status eq '20'}-->
+<span style="width:36px;background-color:#5BC0DE;color:#FFFFFF;padding:1px 3px;border-radius:5px;border:1px solid #46B8DA;font-size:12px;display:block;">明天有</span>
+
+<div class="mt5 btn-group">
+	<button  onclick="javascript:change_lackgoods({$goods.id})" class="btn btn-default btn-info">换款</button>
+	<button onclick="javascript:cancel_lackgoods({$goods.id})" class='btn btn-default btn-warming'>取消</button>
+</div>
+<!--{/if}-->
+<!--{if $goods.goods_status eq '30'}-->
+<span style="width:36px;background-color:#5BC0DE;color:#FFFFFF;padding:1px 3px;border-radius:5px;border:1px solid #46B8DA;font-size:12px;display:block;">未出货</span>
+<div class="mt5 btn-group">
+	<button  onclick="javascript:change_lackgoods({$goods.id})" class="btn btn-default btn-info">换款</button>
+	<button onclick="javascript:cancel_lackgoods({$goods.id})" class='btn btn-default btn-warming'>取消</button>
+</div>
+<!--{/if}--> 
+<!--{if $goods.goods_status eq '40'}-->
+<span style="width:36px;background-color:#F0AD4E;color:#FFFFFF;padding:1px 3px;border-radius:5px;border:1px solid #EEA366;font-size:12px;display:block;">已下架</span>
+<div class="mt5 btn-group">
+	<button  onclick="javascript:change_lackgoods({$goods.id})" class="btn btn-default btn-info">换款</button>
+	<button onclick="javascript:cancel_lackgoods({$goods.id})" class='btn btn-default btn-warming'>取消</button>
+</div>
+<!--{/if}-->
+<!--{if $goods.goods_status eq '60'}-->
+<span style="width:36px;background-color:#F0AD4E;color:#FFFFFF;padding:1px 3px;border-radius:5px;border:1px solid #EEA366;font-size:12px;display:block;">档口错</span>
+<div class="mt5 btn-group">
+	<button  onclick="javascript:change_lackgoods({$goods.id})" class="btn btn-default btn-info">换款</button>
+	<button onclick="javascript:cancel_lackgoods({$goods.id})" class='btn btn-default btn-warming'>取消</button>
+</div>
+<!--{/if}-->
+<!--{if $goods.goods_status eq '50'}-->
+<span style="width:36px;background-color:#D9534F;color:#FFFFFF;padding:1px 3px;border-radius:5px;border:1px solid #D43F3A;font-size:12px;display:block;">已退货</span>
+<!--{/if}-->
+<!--{if $goods.goods_status eq '51'}-->
+<span style="width:36px;background-color:#D9534F;color:#FFFFFF;padding:1px 3px;border-radius:5px;border:1px solid #D43F3A;font-size:12px;display:block;">退货中</span>
+<!--{/if}-->

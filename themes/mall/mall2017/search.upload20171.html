@@ -1,0 +1,129 @@
+<ul>
+    <!--{foreach from=$goods_list item=goods name=fe_goods}-->
+    <li>
+        <div class="item">
+            <div class="pic">
+                <a href="{url app=goods&id=$goods.goods_id}" target="_blank" class="showed">
+                    <img alt="{$goods.goods_name|escape|truncate:120}" src="{res file=images/loading1.gif}" class="pImg DataLazyLoad" data-ks-lazyload="{$goods.default_image}"
+                         style="display: block;"/>
+                </a>
+                <i></i>
+                <div class="ctrl shops clearfix">
+                    <span class="upload" data-gid="{$goods.goods_id|default:0}">一键上传</span>
+                    <!--{if !$goods.collect_goods}-->
+                    <a href="javascript:collect_goods({$goods.goods_id});"><span
+                            id="collect_goods_emt_{$goods.goods_id}" class="addFav" vda="sc|itemcard|215805|0|0|1">{$lang.collect}</span></a>
+                    <!--{else}-->
+                    <span class="addFav" vda="sc|itemcard|215805|0|0|1">{$lang.collect_already}</span>
+                    <!--{/if}-->
+                    <a href="javascript:query_similar_goods({$goods.goods_id});" title="{$goods.goods_name|escape}">
+                        <span>找同款</span></a>
+                </div>
+            </div>
+            <div class="desc">
+                <div class="info clearfix">
+                    <div class="fl price">
+                        <span class="yuan ">¥</span>{$goods.price}
+                    </div>
+                    <i class="fl ico_item_active_0 ico_item_active"></i>
+                     <!-- <div class="fr j_clip_button">9686#</div> -->
+                    <div class="fr sales">
+                        <!--{if !preg_match('/#/',$goods.sku) and $goods.sku}-->{$goods.sku}#<!--{else}-->
+                        {$goods.sku}<!--{/if}-->
+                    </div>
+                </div>
+
+                <div class="foot clearfix">
+                    <div class=" ">
+                        <div style="float: left;line-height: 24px;" class="clearfix">
+                            <div class="fl">
+                                <a class="xtf" href="{url app=shop&id=$goods.store_id}" title="{$goods.store_name}"
+                                   target="_blank">{$goods.store_name|truncate:15:"...":true}</a>
+
+                            </div>
+
+
+                        </div>
+                       
+                    </div>
+
+                </div>
+
+
+
+
+            </div>
+
+            <div class="footer clearfix">
+                <div class="">
+                    <div class="fr sales">
+                        <a class="rze" href="{url app=shop&id=$goods.store_id}"
+                           target="_blank" title="{$goods.mk_name|truncate:18:'...':true}&nbsp;{$goods.dangkou_address|escape}">{$goods.mk_name|truncate:18:"...":true}&nbsp;{$goods.dangkou_address|escape}</a>
+                    </div>
+
+                </div>
+                <!-- <div class="fr j_clip_button">9686#</div> -->
+                <div style="overflow: hidden;">
+                    <!--{if $goods.serv_refund }-->
+                    <div class="s-item tx">
+                        <i></i>
+                    </div>
+                    <!--{/if}-->
+                    <!--{if $goods.serv_sendgoods }-->
+                    <div class="s-item df">
+                        <i></i>
+                    </div>
+                    <!--{/if}-->
+                </div>
+                <div style="overflow: hidden;height: 28px;">
+                    <div class="j-v-tip" style="color:#999;line-height: 30px;">
+                        {if $goods.sales!=0 && $goods.sales !=''}<span class="num">{$goods.sales}</span>件代发{/if}
+                    </div>
+                    <!--{if $goods.serv_realpic }-->
+                    <div class="s-item sp j-v-tip">
+                        <!--<i>{$goods.mk_name|escape}</i>-->
+                    </div>
+                    <!--{/if}-->
+
+
+                </div>
+            </div>
+        </div>
+    </li>
+    <!--{/foreach}-->
+</ul>
+<script>
+    $('.upload').on('click', function () {
+        var gid = $(this).attr("data-gid");
+        layer.open({
+            type: 1,
+            title: '',
+            area: ['240px', '185px'],
+            shadeClose: true, //点击遮罩关闭
+            content: '<div class="layer-up-box"><div class="up-btn-list clearfix">'
+            + '<a href="{url app=item_upload&dest=Taobao&goods_id=}' + gid + '" class="tb chklog" target="_blank">淘宝</a>'
+            + '<a href="{url app=item_upload&dest=Alibaba&goods_id=}' + gid + '" class="ali chklog" target="_blank">阿里巴巴</a>'
+            //+'<a href="javascript:;" class="smt chklog">速卖通</a>'
+            //+'<a href="javascript:;" class="jd chklog">京东</a>'
+            //+'<a href="javascript:;" class="mls chklog">美丽说</a>'
+            //+'<a href="javascript:;" class="mgj chklog">蘑菇街</a>'
+            //+'<a href="javascript:;" class="ccj chklog">楚楚街</a>'
+            + '</div><div class="msg clearfix">微信上传，请使用<a href="{url app=app_down}" target="_blank">51APP</a>！</div></div>'
+        });
+    });
+
+    $('.foot').each(function(){
+        $(this).hover(function(){
+            $(this).parent().next('.footer').show();
+        },function () {
+            $(this).parent().next('.footer').hide();
+        })
+    })
+    $('.footer').each(function(){
+        $(this).hover(function(){
+            $(this).show();
+        },function(){
+            $(this).hide();
+        })
+    })
+</script>

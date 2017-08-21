@@ -1,0 +1,1 @@
+alter table ecm_authtokenresp add column user_id  varchar(256) DEFAULT NULL after account;

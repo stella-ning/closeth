@@ -1,0 +1,161 @@
+{include file='top2017.html'}
+<link type="text/css" href="{res file=css/help3.css}" rel="stylesheet" />
+<div class="header_shop header_fixed_able">
+
+    <div class="header_inner">
+        <div class="w clearfix">
+
+            <a href="" title="{$lang.w_title}" class="logo fl">
+                <img src="{$site_url}/static/app/android/240x90.png" alt="">
+            </a>
+            <div class="stall-head fl">
+                <div class="update-head-name">{$lang.help_center}</div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<div class="help-warp" style="background:none;">
+    <div class="help-search">
+        <form action="" method="get">
+        <div class="w">
+            <div class="search_tab_content selected ">
+                <div class="search_query_wrap">
+                    <input id="helpKeyWord" type="text" class="search_query" value=""
+                           name="keyword" disableautocomplete="disableautocomplete" placeholder="请输入问题关键词">
+                </div>
+                <input type='hidden' name='app' value='article'>
+                <button type="submit" id="btnHelpSearch" class="btn_search" vad="action|search|ss">
+                    <i class="ico ico_search vvicon"></i>
+                    搜索
+                </button>
+            </div>
+        </div>
+        </form>
+    </div>
+    {if $keyw}
+    <div class="help-main w">
+        <div class="help-box mt20 help-result clearfix" id="helpResult">
+
+            <div class="help-result-q fl">您想问的是：</div>
+            
+            <div class="help-result-box fl">
+                
+                <ul class="help-result-list" style="margin-bottom: 10px;">
+                        {if $article}
+                        <!-- {foreach from=$article item=article key=key} -->
+                        <li>
+                        
+                            <a href="{url app=article&act=view&article_id=$article.article_id}" target="_blank" vda="link|top_questions">{$article.title}</a>
+                        
+                       
+                        <!--{/foreach}-->
+                        {else}
+                        <li>根据您当前提供内容，没有找到相关的答案。请您输入简洁、完整的问题，继续提问 </li>
+                        {/if}
+                </ul>
+                
+                <p>如果上述答案没有帮您解决问题，您可以咨询<a href="http://wpa.qq.com/msgrd?v=3&uin=800029051&site=51zwd&menu=yes" target="_blank" vda="action|search|zxkf"><i class="vvicon"></i>在线客服</a></p>
+            </div>
+        </div>
+    </div>
+    {else}
+    <div class="help-main w">
+
+
+        <h1>自助服务</h1>
+        <div class="help-service clearfix">
+
+
+            <a href="{url app=buyer_order}" target="_blank" title="查询订单" class="help-service-item"
+               vda="action|self_service|cxdd">
+                <em class="vvicon"></em>
+                <span>查询订单</span>
+            </a>
+            <a href="{url app=buyer_order}" target="_blank" title="修改订单" class="help-service-item"
+               vda="action|self_service|xgdd">
+                <em class="vvicon"></em>
+                <span>修改订单</span>
+            </a>
+            <a href="{url app=buyer_order}" target="_blank" title="取消订单" class="help-service-item"
+               vda="action|self_service|qxdd">
+                <em class="vvicon"></em>
+                <span>取消订单</span>
+            </a>
+            <a href="{url app=buyer_order}" target="_blank" title="查看物流" class="help-service-item"
+               vda="action|self_service|ckwl">
+                <em class="vvicon"></em>
+                <span>查看物流</span>
+            </a>
+            <a href="{url app=find_password}" target="_blank" title="忘记密码" class="help-service-item last"
+               vda="action|self_service|wjmm">
+                <em class="vvicon"></em>
+                <span>忘记密码</span>
+            </a>
+
+
+        </div>
+        <h1>热门问题</h1>
+        <div class="help-box help-qa clearfix" id="helpQaList">
+			<!-- {foreach from=$acategories item=acategory} -->
+            <dl class="help-qa-list">
+                <dt>
+                    {$acategory.cate_name|escape}
+                </dt>
+                <dd>
+					<!-- {foreach from=$acategory.article item=new_article} -->
+                    <a href="{url app=article&act=view&article_id=$new_article.article_id}" target="_blank" vda="link|top_questions">{$new_article.title|escape}</a>
+					<!--{/foreach}-->
+					<a href="index.php?app=article&act=view&article_id=46" target="_blank" vda="link|top_questions">查看更多 <i class="vvicon"></i></a>
+                </dd>
+            </dl>
+			<!--{/foreach}-->
+            
+
+        </div>
+        <h1>联系我们</h1>
+        <div class="help-box help-contact clearfix">
+            <dl class="contact-kf clearfix">
+                <dt><i class="vvicon"></i></dt>
+                <dd>
+                    <h3>{$lang.online_service}</h3>
+                    <p>在线对话，为您解决遇到的问题</p>
+                    <a href="http://wpa.qq.com/msgrd?v=3&uin=800029051&site=51zwd&menu=yes"
+                       class="btn btn-default btn-small" target="_blank" vda="action|search|zxkf">立即咨询</a>
+                </dd>
+            </dl>
+
+            <dl class="contact-tel clearfix">
+                <dt><i class="vvicon"></i></dt>
+                <dd>
+                    <!--
+                    <h3 style="display:none;"><em>400-8070-929</em></h3>
+                    <p>
+                        热线时间：<br />
+                        周一至周五 9:00 - 20:00<br />
+                        周六至周日 10:00 - 18:00
+                    </p>-->
+                    <p class="contact-tel-block">
+                        <span class="contact-tel-label">网站/推广：</span>
+                        <span class="contact-tel-content contact-tel-num">400-8070-929</span>
+                    </p>
+                    <p class="contact-tel-block">
+                        <span class="contact-tel-label">代发咨询：</span>
+                        <span class="contact-tel-content contact-tel-num">020-38094242</span>
+                    </p>
+                    <p class="contact-tel-block">
+                        <span class="contact-tel-label">咨询时间：</span>
+                        <span class="contact-tel-content">周一至周五 <em class="contact-tel-num">9:00 - 20:00</em></span>
+                        <span class="contact-tel-content contact-tel-content-last">周六至周日 <em class="contact-tel-num">10:00 - 18:00</em></span>
+                    </p>
+                </dd>
+            </dl>
+        </div>
+
+
+    </div>
+    {/if}
+</div>
+{include file='footer2017.html'}

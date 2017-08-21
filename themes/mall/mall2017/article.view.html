@@ -1,0 +1,58 @@
+{include file='top2017.html'}
+<link type="text/css" href="{res file=css/help3.css}" rel="stylesheet" />
+<div class="header_shop header_fixed_able">
+
+    <div class="header_inner">
+        <div class="w clearfix">
+
+            <a href="#" title="{$lang.w_title}" class="logo fl">
+                <img src="{$site_url}/static/app/android/240x90.png" alt="">
+            </a>
+            <div class="stall-head fl">
+                <div class="update-head-name">{$lang.help_center}</div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="w mt20 help-warp clearfix">
+    <div class="help-nav fl" id="helpList">
+		<!-- {foreach from=$acategories item=acategory} -->
+        <dl class="<!--{if $cate_id==$acategory.cate_id}-->curr<!--{/if}-->">
+            <dt>
+                {$acategory.cate_name|escape}
+                <i></i>
+            </dt>
+            <dd>
+				<!-- {foreach from=$acategory.article item=articles} -->
+                <a href="{url app=article&act=view&article_id=$articles.article_id}" data-pag="tskw" <!--{if $articles.article_id == $smarty.get.article_id}-->class="curr"<!--{/if}-->>{$articles.title}</a>
+				<!-- {/foreach} -->
+            </dd>
+        </dl>
+		<!-- {/foreach} -->
+    </div>
+    <div class="help-content fr" id="content"><h1>{$article.title|escape}</h1>
+        <div class="content">
+            <!-- {if $article.store_id} -->
+			{$article.content|escape:editor}
+			<!-- {else} -->
+			{$article.content}
+			<!-- {/if} -->
+        </div>
+    </div>
+</div>
+<script>
+    $(function(){
+        $('#helpList dl').each(function(){
+            $(this).on('click',function(){
+                $(this).toggleClass('curr');
+            })
+        })
+    })
+</script>
+
+{include file='footer2017.html'}

@@ -1,0 +1,95 @@
+{include file=member.header.html}
+<script type="text/javascript">
+$(function(){
+   
+});
+</script>
+<style>
+.member_no_records {border-top: 0px !important;}
+.table td{ padding-left: 5px; }
+.table .ware_text { width: 155px; }
+</style>
+<div class="content">
+  <div class="totline"></div>
+  <div class="botline"></div>
+  {include file=member.menu.html}
+  <div id="right">
+    {include file=member.submenu.html}
+        <div class="wrap">
+            <!-- <div class="eject_btn_two eject_pos1" title="{$lang.pub_lease}"><b class="ico2" onclick="go('index.php?app=my_stalllease&amp;act=add');">{$lang.pub_lease}</b></div> -->
+            <div class="eject_btn_two eject_pos1" title="{$lang.pub_lease}"><input type="button" value="{$lang.pub_lease}" class="ico2" ectype="dialog" dialog_width="600" dialog_title="{$lang.pub_lease}" dialog_id="pub_lease" uri="index.php?app=my_stalllease&amp;act=add"  id="my_stalllease" style="display:block;width:137px;height:32px;border:0" /></div>
+            <div class="public_select table">
+                <table>
+
+                    <tr class="line_bold">
+                        <th class="width1"></th>
+                        <th class="align1" colspan="3">                         
+                            
+                            <a href="javascript:void(0);" class="delete" ectype="batchbutton" uri="index.php?app=my_stalllease&act=drop" name="id" presubmit="confirm('{$lang.drop_confirm}')">{$lang.drop}</a>
+                        </th>
+                        <th colspan="3">
+                           
+                        </th>
+                    </tr>
+                    <!--{if $infos}-->
+                    <tr class="gray"  ectype="table_header">
+                        <th width="30"></th>
+                        <th width="55">{$lang.stall_type}</th>						
+                        <th width="55"><span>{$lang.stall_size}</span></th>
+                        <th width="90" ><span>{$lang.pub_time}</span></th>
+                        <th width="90" ><span>{$lang.end_time}</span></th>
+                        <th width="90" ><span>{$lang.mobile}</span></th>
+                        <th width="" ><span>{$lang.detail}</span></th>
+                    </tr>
+                    <!--{/if}-->
+                    <!--{foreach from=$infos item=stall name=stall_f}-->
+                    <tr class="line<!--{if $smarty.foreach.stall_f.last}--> last_line<!--{/if}-->" ectype="table_item" idvalue="{$stall.id}">
+                        <td width="30" class="align2"><input type="checkbox" class="checkitem" value="{$stall.id}"/></td>
+                        <td width="50" class="align2 f66">{$stall.stall_type}</td>						
+                        <td width="55" class="align2 f66">{$stall.stall_size}</td>
+                        <td width="90" class="align2 f66">{$stall.pub_time|date:simple}</td>
+                        <td width="90" class="align2 f66">{$stall.end_time|date:simple}</td>
+                        <td width="90" class="align2 f66">{$stall.mobile}</td>
+                        <td width="" class="align2 f66">{$stall.detail}</td>
+                    </tr>
+                    <!--{foreachelse}-->
+                    <tr>
+                        <td class="align2 member_no_records padding6" colspan="7">{$lang.$smarty.get.act}{$lang.no_records}</td>
+                    </tr>
+                    <!--{/foreach}-->
+                    <!--{if $infos}-->
+                    <tr class="line_bold line_bold_bottom">
+                        <td colspan="7"> </td>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <th colspan="6">                           
+                            <p class="position2">
+                                {include file=member.page.bottom.html}
+                            </p>
+                        </th>
+                    </tr>
+                    <!--{/if}-->
+                </table>
+            </div>
+            <div class="wrap_bottom"></div>
+        </div>
+        <div class="clear"></div>
+        <div class="adorn_right1"></div>
+        <div class="adorn_right2"></div>
+        <div class="adorn_right3"></div>
+        <div class="adorn_right4"></div>
+    </div>
+    <div class="clear"></div>
+</div>
+<iframe name="iframe_post" id="iframe_post" width="0" height="0"></iframe>
+{include file=footer.html}
+{if $store.enable_radar}
+<input type="hidden" id="radar_lincense_id" value="" />
+<input type="hidden" id="radar_product_key" value="ecmall" />
+<input type="hidden" id="radar_sign_key" value="" />
+<script type="text/javascript" src="http://js.sradar.cn/radarForGoodsList.js"></script>
+<script>
+radar_point_extract();
+</script>
+{/if}

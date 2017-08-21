@@ -1,0 +1,134 @@
+{include file=header.whole_nolefttop.html}
+
+<script type="text/javascript">
+
+$(function(){
+		
+	$("#form1").bootstrapValidator({
+			  feedbackIcons: {
+		            valid: 'glyphicon glyphicon-ok',
+		            invalid: 'glyphicon glyphicon-remove',
+		            validating: 'glyphicon glyphicon-refresh'
+		        }, 
+			  fields:{
+				  shipping_unit:{
+					  validators:{
+						  notEmpty:{}
+					  }
+				  },
+				  invoice:{
+					  validators:{
+						  notEmpty:{}						  
+				  	  }
+			  		}
+			   }
+		  }).on('success.field.bv', function(e, data) {
+			  //console.log('data:'+data);
+			    /* recount_order_amount();
+	            if (data.field == 'postalCode') {
+	                // The postal code is valid
+	                $('#lookupBtn').prop('disabled', false).removeClass('btn-success btn-warning').addClass('btn-success');
+	            }  */
+	        });
+	
+	    $("#cancelbtn").on('click',function(){
+	    	window.parent.js_success(0);
+	    });
+	   
+	
+});
+</script>
+
+<div class="container-fluid">
+		<div class="alert alert-info">
+				<!--{if $order_postback.status eq 0}-->
+				状态：待寄回；买家已支付邮费 <strong>{$order_postback.shipping_fee|default:0|price}</strong>，申请寄回无法退货的商品。
+				<!--{elseif $order_postback.status eq 1}-->
+				状态：已发货
+				<!--{elseif $order_postback.status eq 2}-->
+				状态：已拒绝
+				<!--{elseif $order_postback.status eq 3}-->
+				状态：已收货
+				<!--{/if}-->				
+				<!--{if $order_postback.invoice}-->
+				<br>物流信息：{$order_postback.shipping_unit} {$order_postback.invoice}				
+				<!--{/if}-->
+				<br>
+				<p class="text-warning">收件信息：{$order_postback.consignee} {$order_postback.phone_mob|default:-} {$order_postback.region_name}{$order_postback.address} {$order_postback.zipcode}</p>
+       </div>
+       
+       <table class="table table-bordered table-striped table-border">
+				<tbody>					
+					<!--{foreach from=$goods_list item=goods key=gid}-->
+					<tr>
+						<td><input type="checkbox" name="id"
+							value="{$goods.id}"  checked="checked"   disabled="disabled" /></td>
+						<td><a target="_blank"><img src="{$goods.goods_image}"
+								alt="{$goods.goods_name|escape}" height="68" /></a></td>
+						<td>
+							<p>
+								<a href="{url app=goods&id=$goods.goods_id}" target="_blank">{$goods.goods_name|escape}</a>
+							</p>
+							<dd class="f66">{$goods.goods_specification|escape}</dd>
+							<dd class="price">{$goods.goods_price|price}</dd>
+						</td>
+						<td>
+							无法退货<br>申请寄回
+						</td>
+					</tr>
+					<!--{/foreach}-->
+				</tbody>
+
+			</table>
+
+<!--{if $order_postback.status eq 0}-->
+	<form id="form1" class="form-horizontal" action="index.php?module=behalf&act=handle_postback&order_id={$order_postback.order_id}" method="post">
+		<div class="form-group">
+			<label class="col-xs-3 text-right control-label">物流公司</label>
+			<div class="col-xs-6">
+				<input type="text" id="shipping_unit" class="form-control" name="shipping_unit" value="{$order_postback.shipping_unit}"/>
+			</div>
+			<div class="col-xs-3">例：中通</div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-3 text-right control-label">物流单号</label>
+			<div class="col-xs-6">
+				<input type="text" id="invoice" class="form-control" name="invoice" value="{$order_postback.invoice}"/>
+			</div>
+			<div class="col-xs-3"></div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-3 text-right control-label">操作</label>
+			<div class="col-xs-6">
+				<input type="radio"  name="status" value="1" checked/> 发货
+				<input type="radio"  name="status" value="2" /> 拒绝
+			</div>
+			<div class="col-xs-3"></div>
+		</div>
+		
+		
+		 <div class="form-group">
+			<label class="col-xs-3 text-right control-label"></label>
+			<div class="col-xs-9">
+				<button class="btn btn-primary" id="savebtn" type="submit">确定</button>
+			</div>
+	     </div>
+	</form>
+<!--{/if}-->
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+{include file=footer.whole.html}

@@ -1,0 +1,50 @@
+﻿<script type="text/javascript">
+var _d = DialogManager.get('config_dialog');
+_d.setWidth(450);
+_d.setPosition('center');
+
+function drop_shop(btnObj)
+{
+    $(btnObj).parents('.field_item').remove();
+}
+</script>
+
+<div class="field_item">
+    <p><label>档口名称：</label><input type="text" name="sname" value="{$options.sname}" /></p>
+    <p><label>档口链接：</label><input type="text" name="slink" value="{$options.slink}" style="width:100%"/></p>   
+</div>
+<div class="field_item">
+    <p><label>宝贝一ID：(<span>如：5673567，取值http://www.51zwd.com/goods/5673567</span>)</label><input type="text" name="goods_id[]" value="{$options.goods_id.0}"/></p>
+    <p><label>宝贝一名称：</label><input type="text" name="goods_name[]" value="{$options.goods_name.0}" style="width:100%"/></p>
+    <p><label>宝贝一链接：</label><input type="text" name="goods_link[]" value="{$options.goods_link.0}" style="width:100%"/></p>
+    <p><label>宝贝一价格：</label><input type="text" name="goods_price[]" value="{$options.goods_price.0}" /></p>
+    <label>上传图片:(<span>支持 gif|jpg|jpeg|png 格式,推荐尺寸：宽280px*高380px</span>)</label>
+    <p><input type="file" name="goods_img[]" /><img src="{$options.goods_image.0}" height="25" /><input type="hidden" name="goods_image[]" value="{$options.goods_image.0}" /></p>   
+</div>
+<div class="field_item">
+    <p><label>宝贝二ID：</label><input type="text" name="goods_id[]" value="{$options.goods_id.1}"/></p>
+    <p><label>宝贝二名称：</label><input type="text" name="goods_name[]" value="{$options.goods_name.1}" style="width:100%"/></p>
+    <p><label>宝贝二链接：</label><input type="text" name="goods_link[]" value="{$options.goods_link.1}" style="width:100%"/></p>
+    <p><label>宝贝二价格：</label><input type="text" name="goods_price[]" value="{$options.goods_price.1}" /></p>
+    <label>上传图片:(<span>支持 gif|jpg|jpeg|png 格式,推荐尺寸：宽280px*高380px</span>)</label>
+    <p><input type="file" name="goods_img[]" /><img src="{$options.goods_image.1}" height="25" /><input type="hidden" name="goods_image[]" value="{$options.goods_image.1}" /></p>   
+</div>
+<div class="field_item">
+    <p><label>宝贝三ID：</label><input type="text" name="goods_id[]" value="{$options.goods_id.2}"/></p>
+    <p><label>宝贝三名称：</label><input type="text" name="goods_name[]" value="{$options.goods_name.2}" style="width:100%"/></p>
+    <p><label>宝贝三链接：</label><input type="text" name="goods_link[]" value="{$options.goods_link.2}" style="width:100%"/></p>
+    <p><label>宝贝三价格：</label><input type="text" name="goods_price[]" value="{$options.goods_price.2}" /></p>
+    <label>上传图片:(<span>支持 gif|jpg|jpeg|png 格式,推荐尺寸：宽280px*高380px</span>)</label>
+    <p><input type="file" name="goods_img[]" /><img src="{$options.goods_image.2}" height="25" /><input type="hidden" name="goods_image[]" value="{$options.goods_image.2}" /></p>   
+</div>
+<div class="field_item">
+    <p><label>宝贝四ID：</label><input type="text" name="goods_id[]" value="{$options.goods_id.3}"/></p>
+    <p><label>宝贝四名称：</label><input type="text" name="goods_name[]" value="{$options.goods_name.3}" style="width:100%"/></p>
+    <p><label>宝贝四链接：</label><input type="text" name="goods_link[]" value="{$options.goods_link.3}" style="width:100%"/></p>
+    <p><label>宝贝四价格：</label><input type="text" name="goods_price[]" value="{$options.goods_price.3}" /></p>
+    <label>上传图片:(<span>支持 gif|jpg|jpeg|png 格式,推荐尺寸：宽280px*高380px</span>)</label>
+    <p><input type="file" name="goods_img[]" /><img src="{$options.goods_image.3}" height="25" /><input type="hidden" name="goods_image[]" value="{$options.goods_image.3}" /></p>   
+</div>
+
+
+

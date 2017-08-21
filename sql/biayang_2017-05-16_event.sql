@@ -1,0 +1,7 @@
+DELIMITER $$
+CREATE EVENT IF NOT EXISTS e_statis_goods
+ON SCHEDULE EVERY 1 DAY STARTS date_add(date(curdate() + 1), INTERVAL 90 MINUTE) 
+DO BEGIN
+CALL proc_statis_goods();
+END$$
+DELIMITER ;

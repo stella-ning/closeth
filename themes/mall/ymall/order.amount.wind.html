@@ -1,0 +1,84 @@
+﻿              <script type="text/javascript">
+                $(function(){	
+                 $('#howtoupgradevip').on('click',function(){
+				  layer.tips('下单数达200单，自动升级为vip1每单优惠1元；下单数达1000单，自动升级为vip2每单优惠2元。',this, {
+					  style: ['background-color:#78BA32; color:#fff', '#78BA32'],
+					  maxWidth:225,
+					  time: 6,
+					  closeBtn:[0, true]
+					});
+                 });
+                 <!--{if $behalfs}-->
+                 $('#delivery_notice_zy').on('mouseover',function(){
+                	 layer.tips('新疆、西藏、甘肃、青海四省份，首重一公斤以内，超过一公斤发韵达，补运费10元！',this, {
+	   					  style: ['background-color:#3368cf; color:#fff', '#3368cf'],
+	   					  maxWidth:235,
+	   					  time: 6,
+	   					  guide:1,
+	   					  closeBtn:[0, true]
+	   				});
+                 });
+                 
+                 layer.tips('新疆、西藏、甘肃、青海四省份，首重一公斤以内，超过一公斤发韵达，补运费10元！','#delivery_notice_zy', {
+  					  style: ['background-color:#3368cf; color:#fff', '#3368cf'],
+  					  maxWidth:235,
+  					  time: 6,
+  					  guide:1,
+  					  closeBtn:[0, true]
+  				});
+				<!--{/if}-->
+               });                
+                
+                </script>
+              <!--
+                <script type="text/javascript">
+                $(function(){		   
+				   /* tyioocom  */
+				   $('#use_coupon').click(function(){
+					   $(this).parent('p').next().toggle();
+					   //$(this).hide();
+					   
+					   if($(this).val()=='{$lang.use_coupon}'){
+						   $(this).val('{$lang.close_coupon}');
+						   $("select[name='coupon_sn']")[0].selectedIndex=0;
+					   }else{
+						   $(this).val('{$lang.use_coupon}')
+					   }
+				   }); 
+               });
+                </script>
+                <div class="w price-promotion mt10 mb10 f60">
+               		<p class="mb10 mt10">
+                       {if $goods_info.allow_coupon}
+					   <input id="use_coupon" type="button" class="btn-allow-coupon center" value="{$lang.use_coupon}" />
+                       {/if}
+					</p>
+                    {if $goods_info.allow_coupon}
+                    <p class="allow-coupon border padding10 mb10 hidden clearfix">
+                       <select name="coupon_sn">
+                          <option value="">{$lang.pls_coupon}</option>
+                          {foreach from=$coupon_list item=coupon}
+                          <option value="{$coupon.coupon_sn}" coupon_value="{$coupon.coupon_value}">SN:{$coupon.coupon_sn}({$coupon.coupon_value|price})</option>
+                          {/foreach}
+                       </select>
+                       <span class="note">{$lang.coupon_note}{$lang.colon}</span>
+                    </p>
+                    {/if}
+                </div>
+                -->
+                
+                <div class="w order-goods-price-bycate mb10 text-right f66" style="line-height:24px;">
+                    <p class="pr10">{$lang.goods_price_amount}{$lang.colon}<span id="goods_price_amount" class="fs14 strong f90 inline-block text-left price" style="width:80px;">&yen;</span></p>
+                    <p class="pr10">{$lang.goods_service_amount}{$lang.colon}<span id="goods_service_amount" class="fs14 strong f90 inline-block text-left price" style="width:80px;">{$goods_info.behalf_fee|price}</span></p>
+                    <p class="pr10">( <span class="f60 strong">VIP已优惠：{$vip_info.fee|default:0}元</span>【<a href="javascript:;" id="howtoupgradevip" class="f60">如何提升VIP</a>】) {$lang.delivery_price_amount}{$lang.colon}<span id="delivery_price_amount" class="fs14 strong f90 inline-block text-left price" style="width:80px;">&yen;</span></p>
+                    <p class="pr10 hidden">{$lang.coupon_price_amount}{$lang.colon}<span style="width:80px;" class="inline-block text-left"><span class="fs14 strong f90 price">&yen;-</span><span id="coupon_price_amount" class="fs14 strong f90">0.00</span></span></p>
+                </div>
+                <div class="make_sure w mb10">
+                    <p>
+                        <a href="{url app=cart&store_id=$goods_info.store_id}" class="back">{$lang.backto_cart}</a>
+                        <span class="ml20">{$lang.order_amount}{$lang.colon}</span>
+					   	<strong  id="order_amount" class="price">{$goods_info.amount|price}</strong>
+                        <a id="submitOrderBtn" href="javascript:void($('#order_form').submit());" class="btn-step fff center strong fs14 ml20">{$lang.shopping_step_three}</a>
+                    </p>
+                </div>
+                <div class="w price-notice mt10 mb10 pt10 f60 pb10">{$lang.price_notice}</div>

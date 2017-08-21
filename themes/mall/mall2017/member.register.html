@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <base href="{$site_url}/" />
+	<meta charset="UTF-8">
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta http-equiv="expires" content="0">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta name="viewport" content="width=1200px" >
+	<meta name="renderer" content="webkit">
+	{$page_seo}
+
+	<meta name="author" content="www.51zwd.com" />
+	<meta name="generator" content="www.51zwd.com" />
+	<meta name="copyright" content="www.51zwd.com. All Rights Reserved" />
+	<link rel="shortcut icon" href="{$site_url}/favicon.ico"/>
+	<link rel="bookmark" href="{$site_url}/favicon.ico"/>
+	<link type="text/css" href="{res file=css/reset.css}" rel="stylesheet" />
+	<link type="text/css" href="{res file=css/index.css}" rel="stylesheet" />
+	<link type="text/css" href="{res file=css/reg3.css}" rel="stylesheet" />
+    <script type="text/javascript" src="{lib file=jquery.js}" charset="utf-8"></script>
+	<script type="text/javascript" src="{lib file=ecmall.js}" charset="utf-8"></script> 
+	<script type="text/javascript" src="{res file=js/main.js}" charset="utf-8"></script> 
+	{$_head_tags}
+</head>
+<script type="text/javascript">
+$(function(){
+	
+    $('#register_form').validate({
+        errorPlacement: function(error, element){
+            var error_td = element.parent('dd');
+            error_td.find('label').hide();
+            error_td.append(error);
+        },
+        success       : function(label){
+            label.addClass('validate_right').text('OK!');
+        },
+        onkeyup: false,
+        rules : {
+            user_name : {
+                required : true,
+                byteRange: [3,25,'{$charset}'],
+                remote   : {
+                    url :'index.php?app=member&act=check_user&ajax=1',
+                    type:'get',
+                    data:{
+                        user_name : function(){
+                            return $('#user_name').val();
+                        }
+                    },
+                    beforeSend:function(){
+                        var _checking = $('#checking_user');
+                        _checking.prev('.field_notice').hide();
+                        _checking.next('label').hide();
+                        $(_checking).show();
+                    },
+                    complete :function(){
+                        $('#checking_user').hide();
+                    }
+                }
+            },
+            password : {
+                required : true,
+                minlength: 6
+            },
+            password_confirm : {
+                required : true,
+                equalTo  : '#password'
+            },
+            email : {
+                required : true,
+                email    : true
+            },
+            captcha : {
+                required : true,
+                remote   : {
+                    url : 'index.php?app=captcha&act=check_captcha',
+                    type: 'get',
+                    data:{
+                        captcha : function(){
+                            return $('#captcha1').val();
+                        }
+                    }
+                }
+            },
+            agree : {
+                required : true
+            }
+        },
+        messages : {
+            user_name : {
+                required : '{$lang.user_name_required}',
+                byteRange: '{$lang.user_name_limit}',
+                remote   : '{$lang.user_already_taken}'
+            },
+            password  : {
+                required : '{$lang.password_required}',
+                minlength: '{$lang.password_length_limit}'
+            },
+            password_confirm : {
+                required : '{$lang.password_confirm_please}',
+                equalTo  : '{$lang.password_inconsistent}'
+            },
+            email : {
+                required : '{$lang.email_required}',
+                email    : '{$lang.email_invalid}'
+            },
+            captcha : {
+                required : '{$lang.captcha_required}',
+                remote   : '{$lang.captcha_error}'
+            },
+            agree : {
+                required : '{$lang.agree_required}'
+            }
+        }
+    });
+});
+</script>
+<script type="text/javascript">
+$(function(){
+    poshytip_message($('#user_name'));
+    poshytip_message($('#password'));
+    poshytip_message($('#password_confirm'));
+    poshytip_message($('#email'));
+    poshytip_message($('#captcha1'));
+});
+</script>
+<body class="body_reg3 gz" id="contents">
+<!--顶通-->
+<div class="top_ban_60">
+
+    <div class="inner">
+        <i class="close"></i>
+    </div>
+</div>
+
+<!-- logo，搜索 -->
+<div class="header_shop">
+
+    <div class="header_inner">
+        <div class="w clearfix ">
+
+            <div class="login fr">
+                <a href="{url app=member&act=login}" vda="link|reg">{$lang.login_immediately}</a>
+            </div>
+
+            <a href="#" title="51做网店" class="logo fl">
+                <img src="{$site_url}/static/app/android/240x90.png" alt="">
+            </a>
+
+            <div class="stall-head">
+                <div class="update-head-name">{$lang.welcome_register}</div>
+            </div>
+
+
+        </div>
+    </div>
+
+</div>
+
+
+<!-- logo，搜索 -->
+
+<style>
+	.error{color:red;}
+</style>
+<div class="w reg clearfix">
+
+    <form id="register_form" method="post" action="">
+        <div class="reg-warp">
+            <div class="reg-inner">
+
+                <div class="reg-from">
+                    <ul class="reg-nav">
+                        <li class="current" data-type="0">{$lang.user_register}</li>
+                    </ul>
+                    <div class="form-main">
+						 <dl class="text-box hide clearfix">
+                            <dt>{$lang.user_name}</dt>
+                            <dd class="long">
+                                <input id="user_name" class="input" name="user_name" type="text" placeholder="{$lang.w_user_name}">
+								<br /><label></label>
+                            </dd>
+                        </dl>
+						
+                        <dl class="text-box hide" id="typeMail">
+                            <dt>{$lang.email}</dt>
+                            <dd class="long">
+                                <input id="email" name="email" type="text" placeholder="{$lang.w_user_name}">
+                            </dd>
+                        </dl>
+
+                        <dl class="text-box">
+                            <dt>{$lang.password}</dt>
+                            <dd class="long">
+								<input class="input" type="password" id="password" name="password" title="{$lang.password_tip}" placeholder="{$lang.password_length_limit}"  />
+                               
+								<label></label>
+                            </dd>
+
+                        </dl>
+                        <dl class="text-box">
+                            <dt>{$lang.password_confirm}</dt>
+                            <dd class="long">
+								<input class="input" type="password" id="password_confirm" name="password_confirm" title="{$lang.password_confirm_tip}" placeholder="请{$lang.password_confirm}" />
+                                
+                            </dd>
+
+                        </dl>
+						<!--{if $captcha}-->
+                        <dl class="text-box clearfix">
+                            <dt>{$lang.captcha}</dt>
+                            <dd class="s-long captcha clearfix">
+                                <input id="captcha1" name="captcha" id="captcha1" placeholder="{$lang.captcha_tip}">
+									<img width="120" height="40" alt="{$lang.captcha}"
+                                     src="index.php?app=captcha&{$random_number}" id="captcha">
+									<a href="javascript:change_captcha($('#captcha'));" class="float-left"  style="line-height:41px;margin-left:5px;float:right;">{$lang.next_captchat}</a><br />
+                            </dd>
+                        </dl>
+                        <!--{/if}-->
+                        <dl class="text-box text-box-last">
+                            <dt><b>&nbsp;</b></dt>
+                            <dd class="long auto" id="error-layer">
+                                <label class="v-single-check">
+                                    <em
+                                        class="vvicon check-true"><input type="checkbox" class="chckbox" name="agree" value="1" checked="checked" ></em>{$lang.i_have_read}
+                                </label>
+                                <input type="hidden" name="auto" id="auto" value="1">
+                                <a href="{url app=article&act=system&code=eula}" target="_blank">{$lang.mall_eula}</a>
+
+                            </dd>
+                        </dl>
+                        <div class="clearfix"></div>
+                        <div class="btn-box">
+                            <input value="{$lang.register_now}" type="Submit" class="form-btn register-submit" vda="action|reg|zc" >
+							<input type="hidden" name="ret_url" value="{$ret_url}" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</div>
+{include file="footer.html"}

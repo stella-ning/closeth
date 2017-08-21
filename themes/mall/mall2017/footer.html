@@ -1,0 +1,151 @@
+<div id="footer" class="module_1200">
+    <div class="mgj_copyright" style="margin-top: 30px;">
+        <div class="foot-service clearfix">
+            <dl>
+                <dt>特色服务</dt>
+                <dd>
+                    <a href="index.php?app=article&amp;act=view&amp;article_id=30" target="_blank">一键上传</a>
+                </dd>
+                <dd>
+                    <a href="index.php?app=article&amp;act=view&amp;article_id=31" target="_blank">数据包下载</a>
+                </dd>
+                <dd>
+                    <a href="index.php?app=article&amp;act=view&amp;article_id=33" target="_blank">微信搜款</a>
+                </dd>
+                <dd>
+                    <a href="#" target="_blank">主图替换</a>
+                </dd>
+            </dl>
+            <dl>
+                <dt>用户帮助</dt>
+                <dd>
+                    <a href="index.php?app=article&amp;act=view&amp;article_id=25">如何入驻</a>
+                </dd>
+                <dd>
+                    <a href="index.php?app=article&amp;act=view&amp;article_id=27">搜索帮助</a>
+                </dd>
+                <dd>
+                    <a href="#">使用帮助</a>
+                </dd>
+                <dd>
+                    <a href="#">意见建议</a>
+                </dd>
+            </dl>
+            <dl>
+                <dt>商务合作</dt>
+                <dd>
+                    <a href="themes/mall/default/store_reg.php">商家入驻</a>
+                </dd>
+                <dd>
+                    <a href="#">广告洽谈</a>
+                </dd>
+                <dd>
+                    <a href="index.php?app=article&amp;act=view&amp;article_id=34">市场合作</a>
+                </dd>
+                <dd>
+                    <a href="index.php?app=article&amp;act=view&amp;article_id=35">友情链接</a>
+                </dd>
+            </dl>
+            <dl>
+                <dt>
+                    关于
+                    51					网
+                </dt>
+                <dd>
+                    <a href="index.php?app=article&amp;act=view&amp;article_id=21">关于我们</a>
+                </dd>
+                <dd>
+                    <a href="index.php?app=article&amp;act=view&amp;article_id=22">联系我们</a>
+                </dd>
+                <dd>
+                    <a href="index.php?app=article&amp;act=view&amp;article_id=23">加入我们</a>
+                </dd>
+                <dd>
+                    <a href="#">网站公告</a>
+                </dd>
+            </dl>
+            <dl>
+                <dt>关注我们</dt>
+                <dd>
+                    <a href="http://weibo.com/wangpi"> <?php if(OEM == 'nc') echo "南城"; else echo "51"; ?>网新浪微博
+                    </a>
+                </dd>
+                <dd>
+                    <a href="http://t.qq.com/woyaozuowangdian"> <?php if(OEM == 'nc') echo "南城"; else echo "51"; ?>网腾讯微博
+                    </a>
+                </dd>
+                <dd>
+                    <a href="data/system/ma01.jpg"> <?php if(OEM == 'nc') echo "南城"; else echo "51"; ?>网官方微信
+                    </a>
+                </dd>
+            </dl>
+            <dl>
+                <dt>联系我们</dt>
+                <dd style="width: 160px;">
+                    <a href="javascript:;">客服电话 : 400 099 0051</a>
+                </dd>
+                <dd style="width: 160px;">
+                    <a href="javascript:;">客服在线：9:30-22:00</a>
+                </dd>
+                <dd style="width: 160px;">
+                    <a href="javascript:;">邮箱：459618776@qq.com</a>
+                </dd>
+                <dd style="width: 200px; overflow: visible;">
+                    <a href="javascript:;">地址：上海市闵行区虹梅南路1755号一幢一层C1053室(总部)</a>
+                </dd>
+            </dl>
+        </div>
+        <div class="foot-baozhang">
+            <ul class="clearfix">
+                <li class="clearfix"><a target="_blank" href="#"><em>源</em><span>一手货源</span></a></li>
+                <li class="clearfix"><a target="_blank" href="#"><em>传</em><span>一键上传</span></a></li>
+                <li class="clearfix"><a target="_blank" href="#"><em>免</em><span>免费代发</span></a></li>
+                <li class="clearfix last"><a target="_blank" href="#"><em>保</em><span style="border-right: 0;">担保交易</span></a></li>
+            </ul>
+        </div>
+
+        <div class="foot-copyright">Copyright © 2010-2015 我要做网店&nbsp;&nbsp;&nbsp;&nbsp;版权所有&nbsp;&nbsp;&nbsp;&nbsp;沪ICP备11047876号&nbsp;&nbsp; </div>
+        <div class="foot-group">
+            <p>
+                <a href="http://webscan.360.cn/index/checkwebsite?url=51zwd.com"> <img src="http://www.51zwd.com/static/footer_360.png" alt=""></a>
+                <a key="54925ee43b05a3da0fbc9b09" logo_size="83x30" logo_type="realname" href="http://www.anquan.org"><img src="http://www.51zwd.com/static/sm_83x30.png"></a>
+            </p>
+        </div>
+		<div class="footer-fixed">
+	   <ul>	     	     
+	     <div class="placeholder">
+	       <li id="gotop" class="toTop"><em>回到顶部</em></li>
+	     </div>
+	   </ul>    
+    </div>
+    </div>
+</div>
+<script>
+    $(function () {
+//        鼠标移入显示隐藏层
+//        li绑定id
+        $(".small-photo").hide();
+        $(".market_right dl dd ul li").each(function(index,item){
+
+           var $item = $(item).attr('id', 'id-' + index);
+//            console.log($(item));
+            $item.hover(function (){
+
+                $(this).find(".small-photo").toggle();
+                console.log($item);
+            },function (){
+                $(this).find(".small-photo").hide();
+            });
+        })
+
+
+        $(".closea").click(function (){
+            var flag = $(".small-photo").is(":hidden");
+                $(".small-photo").hide();
+        });
+    })
+</script>
+<div style="display:none;"><script language="javascript" type="text/javascript" src="http://js.users.51.la/18819414.js"></script>
+<noscript><a href="http://www.51.la/?18819414" target="_blank"><img alt="&#x6211;&#x8981;&#x5566;&#x514D;&#x8D39;&#x7EDF;&#x8BA1;" src="http://img.users.51.la/18819414.asp" style="border:none" /></a></noscript></div>
+</body>
+</html>

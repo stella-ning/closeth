@@ -1,0 +1,110 @@
+{include file=header.whole.html}
+<div class="container-fluid">
+    <div style="height:10px;"></div>
+	<div class="panel panel-default">
+		<div class="panel-body">			
+			<div class="">
+				<form id="query_time_form" class="form-vertical" method="post">
+					<div class="form-group">
+					  <div class="row">
+					  	<label class="col-xs-1 text-right">选择月份</label>
+					  	<div class="col-xs-4">
+			   				<select name="stat_month" class="form-control">
+			   					<option value="">请选择……</option>
+			   					<option value="2015-01-01" {if $stat_month eq '2015-01-01'}selected{/if}>2015-01</option>
+			   					<option value="2015-02-01" {if $stat_month eq '2015-02-01'}selected{/if}>2015-02</option>
+			   					<option value="2015-03-01" {if $stat_month eq '2015-03-01'}selected{/if}>2015-03</option>
+			   					<option value="2015-04-01" {if $stat_month eq '2015-04-01'}selected{/if}>2015-04</option>
+			   					<option value="2015-05-01" {if $stat_month eq '2015-05-01'}selected{/if}>2015-05</option>
+			   					<option value="2015-06-01" {if $stat_month eq '2015-06-01'}selected{/if}>2015-06</option>
+			   					<option value="2015-07-01" {if $stat_month eq '2015-07-01'}selected{/if}>2015-07</option>
+			   					<option value="2015-08-01" {if $stat_month eq '2015-08-01'}selected{/if}>2015-08</option>
+			   					<option value="2015-09-01" {if $stat_month eq '2015-09-01'}selected{/if}>2015-09</option>
+			   					<option value="2015-10-01" {if $stat_month eq '2015-10-01'}selected{/if}>2015-10</option>
+			   					<option value="2015-11-01" {if $stat_month eq '2015-11-01'}selected{/if}>2015-11</option>
+			   					<option value="2015-12-01" {if $stat_month eq '2015-12-01'}selected{/if}>2015-12</option>
+			   					<option value="2016-01-01" {if $stat_month eq '2016-01-01'}selected{/if}>2016-01</option>
+			   					<option value="2016-02-01" {if $stat_month eq '2016-02-01'}selected{/if}>2016-02</option>
+			   					<option value="2016-03-01" {if $stat_month eq '2016-03-01'}selected{/if}>2016-03</option>
+			   					<option value="2016-04-01" {if $stat_month eq '2016-04-01'}selected{/if}>2016-04</option>
+			   					<option value="2016-05-01" {if $stat_month eq '2016-05-01'}selected{/if}>2016-05</option>
+			   					<option value="2016-06-01" {if $stat_month eq '2016-06-01'}selected{/if}>2016-06</option>
+			   					<option value="2016-07-01" {if $stat_month eq '2016-07-01'}selected{/if}>2016-07</option>
+			   					<option value="2016-08-01" {if $stat_month eq '2016-08-01'}selected{/if}>2016-08</option>
+			   					<option value="2016-09-01" {if $stat_month eq '2016-09-01'}selected{/if}>2016-09</option>
+			   					<option value="2016-10-01" {if $stat_month eq '2016-10-01'}selected{/if}>2016-10</option>
+			   					<option value="2016-11-01" {if $stat_month eq '2016-11-01'}selected{/if}>2016-11</option>
+			   					<option value="2016-12-01" {if $stat_month eq '2016-12-01'}selected{/if}>2016-12</option>
+			   				</select>
+			            </div>			            
+			            
+		              </div>
+			       </div>			      
+			       
+			       <input type="hidden" name="module" value="behalf" />
+			       <input type="hidden" name="act" value="stat_order_bymonth" />
+			       <div class="form-group">
+			       		<div class="row">
+				       		<div class="col-xs-1"></div>
+					      	<div class="col-xs-4">
+				            	<input type="submit" class="btn btn-primary" id="query_submit" value="开始统计" />
+				           		 
+				            </div>
+			            </div>
+		            </div>
+				</form>
+			</div>
+		    
+		  </div>
+	  </div>
+	  
+	  <!--{if $rets}-->
+	  <div class="panel panel-default">
+		<div class="panel-body">	
+			<div class="row">
+				<div class="col-xs-10">
+					<label>统计：</label>亲，您在&nbsp;<span class="text-info">{$stat_month|truncate:7}</span>&nbsp;共有 <b class="text-warning">已完成</b> 交易订单 <b class="text-danger"> {$rets.counts|default:0} </b>单。<br>
+					<table class="table table-bordered text-muted">
+						<tr>
+							<td width="30%" class="text-right">订单总金额</td>
+							<td class="text-info"> {$rets.order_amount_total|price} </td>
+						</tr>
+						<tr>
+							<td class="text-right">商品总金额</td>
+							<td class="text-info"> {$rets.goods_amount_total|price} </td>
+						</tr>
+						<tr>
+							<td class="text-right">总退款</td>
+							<td class="text-info"> {$rets.order_refund_amount|price} </td>
+						</tr>
+						<tr>
+							<td class="text-right">总补邮</td>
+							<td class="text-info"> {$rets.order_add_mail_fee|price} </td>
+						</tr>
+						<tr>
+							<td class="text-right">总赔付</td>
+							<td class="text-info"> {$rets.compensation_fee|price} </td>
+						</tr>
+						<tr>
+							<td class="text-right">小计</td>
+							<td class="text-danger"><b>{$rets.final_amount|price}</b></td>
+						</tr>
+						<tr>
+						   <td class="text-right">备注</td>
+							<td  class="text-muted">小计 = 订单总金额 - 商品总金额 - 总退款 - 总赔付 + 总补邮 <br>
+							总退款：客户申请退款，代发同意，退款成功。<br>
+							总补邮：代发向客户补收邮费差价，补收成功。<br>
+							总赔付：代发主动返款给客户，即时到账！（由于发错货赔付运费，缺货主动退款等）
+							</td>
+						</tr>
+					</table>
+					
+				</div>
+				
+			</div>	
+		</div>
+	  </div>
+	  <!--{/if}-->
+	  
+</div>
+{include file=footer.whole.html}

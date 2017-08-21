@@ -1,0 +1,142 @@
+<!-- 每日搜索 -->
+<ul>
+	<!--{foreach from=$goods_list item=goods name=fe_goods}-->
+	<li>
+		<div class="item">
+			<div class="pic">
+				<a href="{url app=goods&id=$goods.goods_id}" target="_blank" class="showed"> 
+					<img alt="{$goods.goods_name|escape|truncate:120}" data-ks-lazyload="{$goods.default_image}" src="{res file=images/loading1.gif}" class="pImg DataLazyload" style="display: block;" />
+				</a> 
+				<i></i>
+				<div class="ctrl shops clearfix">
+					<span class="upload" data-gid="{$goods.goods_id|default:0}">一键上传</span> 
+						<!--{if !$goods.collect_goods}-->
+						<a href="javascript:collect_goods({$goods.goods_id});" ><span id="collect_goods_emt_{$goods.goods_id}" class="addFav" vda="sc|itemcard|215805|0|0|1">{$lang.collect}</span></a>
+						<!--{else}-->
+						<span class="addFav" vda="sc|itemcard|215805|0|0|1">{$lang.collect_already}</span>
+						<!--{/if}-->
+					 <a href="javascript:query_similar_goods({$goods.goods_id});"  title="{$goods.goods_name|escape}"> <span>找同款</span></a>
+				</div>
+			</div>
+			<div class="desc">
+				<div class="info clearfix">
+					<div class="fl price">
+						<span class="yuan ">¥</span>{$goods.price}
+					</div>
+					<i class="fl ico_item_active_0 ico_item_active"></i>
+					<!-- <div class="fr j_clip_button">9686#</div> -->
+                    <div class="fr sales">
+                        <!--{if !preg_match('/#/',$goods.sku) and $goods.sku}-->{$goods.sku}#<!--{else}-->
+                        {$goods.sku}<!--{/if}-->
+                    </div>
+				</div>
+				<div class="title">
+					<a href="{url app=goods&id=$goods.goods_id}" title="{$goods.goods_name|escape|truncate:120}" target="_blank"> {$goods.goods_name|escape|truncate:60} </a>
+				</div>
+				<div class="foot clearfix">
+					<div class=" ">
+						<div style="margin-top:8px;" class="clearfix">
+							<div class="fl">
+							   <a class="xtf" href="{url app=shop&id=$goods.store_id}" title="{$goods.store_name}"	target="_blank">{$goods.store_name|truncate:15:"...":true}</a>
+								
+							</div>
+                            <div class="service-icon service-icon-tg shown_sp_1 shown_tx_1 shown_df_1 icon-hook">
+                                <!--{if $goods.serv_realpic }-->
+                                <div class="s-itemi sp j-v-tip">
+                                    <!--<i>{$goods.mk_name|escape}</i>-->
+                                </div>
+                                <!--{/if}-->
+                                <div class="oft">
+                                    <!--{if $goods.serv_refund }-->
+                                    <div class="s-itemi tx">
+                                        <i></i>
+                                    </div>
+                                    <!--{/if}-->
+                                    <!--{if $goods.serv_sendgoods }-->
+                                    <div class="s-itemi df">
+                                        <i></i>
+                                    </div>
+                                    <!--{/if}-->
+                                </div>
+
+
+                            </div>
+
+						</div>
+					<!-- <div class="fr j_clip_button">9686#</div> -->
+				</div>
+				<div class="foot clearfix">
+					<div class="fl ">
+                        <div class="fr salese" style="float:right">
+                            <a class="rze" href="{url app=shop&id=$goods.store_id}"
+                               target="_blank">{$goods.mk_name|truncate:18:"...":true}&nbsp;{$goods.dangkou_address|escape}</a>
+                        </div>
+						<div class="tips-wrapper">
+						    <!--{if $goods.serv_realpic }--> 
+							<div class="service-tips">
+								<i class="sp"></i> <span>实拍</span>
+								<p>档口承诺：本档口80%商品为真实拍摄。本款商品是否为实拍，欢迎在上款前联系档口确认。</p>
+							</div>
+							<!--{/if}--> 
+		                    <!--{if $goods.serv_refund }--> 
+							<div class="service-tips">
+								<i class="tx"></i> <span>退现</span>
+								<p>
+									档口承诺：未下架、非特价或过季商品，且不影响二次销售，可申请退现。51网不对退现结果负责，<b>请尽量提前向档口确认，特别是下列情况：1、快递寄回档口；2、特殊时间（如春节前、双十一）；3、出售太久（超过15天）；4、件数太多（超过10件）。</b>
+								</p>
+							</div>
+							<!--{/if}--> 
+		                    <!--{if $goods.serv_sendgoods }-->
+							<div class="service-tips">
+								<i class="df"></i> <span>代发</span>
+								<p>档口承诺：本档口可直接提供档口代发服务。</p>
+							</div>
+							<!--{/if}--> 	
+						</div>
+
+					</div>
+					<!-- <div class="fr j_clip_button">9686#</div> -->
+                    <div class="j-v-tip" style="color:#999;float: right;margin-top: 3px;">
+                        {if $goods.sales!=0 && $goods.sales !=''}<span class="num">{$goods.sales}</span>件代发{/if}
+                    </div>
+				</div>
+			</div>
+
+		</div>
+	</li>	
+<!--{/foreach}-->
+</ul>
+<script>
+    $('.upload').on('click', function(){
+    	 var gid = $(this).attr("data-gid");    
+        layer.open({
+            type: 1,
+            title:'',
+            area: ['240px', '185px'],
+            shadeClose: true, //点击遮罩关闭
+            content: '<div class="layer-up-box"><div class="up-btn-list clearfix">'
+            	+'<a href="{url app=item_upload&dest=Taobao&goods_id=}'+gid+'" class="tb chklog">淘宝</a>'
+            	+'<a href="{url app=item_upload&dest=Alibaba&goods_id=}'+gid+'" class="ali chklog">阿里巴巴</a>'
+            	//+'<a href="javascript:;" class="smt chklog">速卖通</a>'
+            	//+'<a href="javascript:;" class="jd chklog">京东</a>'
+            	//+'<a href="javascript:;" class="mls chklog">美丽说</a>'
+            	//+'<a href="javascript:;" class="mgj chklog">蘑菇街</a>'
+            	//+'<a href="javascript:;" class="ccj chklog">楚楚街</a>'
+            	+'</div><div class="msg clearfix">微信上传，请使用<a href="{url app=app_down}" target="_blank">51APP</a>！</div></div>'
+        });
+    });
+  
+  //图片变形函数调用
+// window.onload = function(){
+// 	showImg('.pImg','.showed')
+// }
+// $(window).scroll(function(){
+// 	console.log(1)
+// 	setTimeout(function(){
+// 		showImg('.pImg','.showed')
+// 	},500)
+// })
+
+	
+
+</script>

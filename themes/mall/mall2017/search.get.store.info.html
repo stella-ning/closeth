@@ -1,0 +1,74 @@
+  <!--{if $store}-->
+  <div class="store-info clearfix">
+
+            <div class="row_2 ">
+                <div class="address"><em>{$store.mk_name|escape}-{$store.dangkou_address|escape}</em></div>
+
+                <div class="owner_info mt5">
+				    <!--
+                     <span>{$lang.owner}{$lang.colon}</span>
+                     <a href="{url app=store&id=$store.store_id}">{$store.user_name|escape}</a>
+                     -->
+                    <a class="icon" style="border:1px solid #ccc;padding:3px;" target="_blank" href="http://www.taobao.com/webww/ww.php?ver=3&touid={$store.im_ww}&siteid=cntaobao&status=1&charset=utf-8">旺</a>
+                    <a class="icon" style="border:1px solid #ccc;padding:3px;" target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin={$store.im_qq}&site=qq&menu=yes">QQ</a>
+					<a class="icon" style="border:1px solid #ccc;padding:3px;" target="_blank" href="{$store.shop_http|default:#}">淘</a>
+					<!--{if $store.see_price}-->
+					<span class="zhe" style="background:#f07;color:white;padding:1px 5px;">{$store.see_price}</span>
+					<!--{/if}-->
+                 </div>
+                 <div class="mt5 overflowHidden" style="height:18px;width:130px;"><span>{$lang.tel}:</span><em class="ml5" title="{$store.tel|escape|default:-}">{$store.tel|escape|default:-}</em></div>
+			</div>
+            <div class="row_4 row-heig">
+			     <div>
+				    <span>{$lang.credit_value_desc}:</span>
+                     <!--{if $store.credit_value ge 0}-->
+                     <img src="{$store.credit_image}" style="vertical-align:middle;" />
+                     <!--{else}-->
+                     {$store.credit_value}
+                     <!--{/if}-->
+                 </div>
+
+			</div>
+            <div class="row_5">
+			    <div class="mb5">
+                      <span>{$lang.mainbussiness}{$lang.colon}</span><a href="{url app=store&id=$store.store_id}">{$store.business_scope|default:-}</a>
+                </div>
+                <span class="row-left">
+                    <p>{$lang.praise_rate}:<font color=red>{$store.praise_rate}</font><em>%</em></p>
+                    <p>{$lang.back_rate}:<font color=red>{$rates.back_rate}</font><em>%</em></p>
+
+                </span>
+                <span class="row-right">
+                    <p>{$lang.realpic_rate}:-</p>
+                    <p>{$lang.lack_rate}:<font color=red>{$rates.lack_rate}</font><em>%</em></p>
+
+                </span>
+
+
+
+            </div>
+            <div class="row_6 arrow_up" {if ($smarty.foreach.fe_store.iteration mod 5) gt 3}style="right:10px;"{/if}></div>
+            <div class="row-btn">
+                <div class="btn-left"><button class="btn"><a href="{url app=shop&id=$store.store_id}">进去店铺</a></button></div>
+                <div class="btn-right"><button class="btn "><a href="javascript:collect_store({$store.store_id})">关注档口</a></button></div>
+
+            </div>
+
+</div>
+<!--{else}-->
+  <div>{$lang.store_not_exist}</div>
+<!--{/if}-->
+  <script>
+      $(function () {
+
+          $('.row_5 p font').each(function(){
+
+              if($(this).html() == 100.00){
+              $(this).html(100);
+                  console.log($(this).html())
+              }
+          })
+
+
+      })
+  </script>

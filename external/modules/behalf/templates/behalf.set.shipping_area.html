@@ -1,0 +1,400 @@
+<!-- <script type="text/javascript" src="{res file=js/region.js}" charset="utf-8"></script> -->
+<script type="text/javascript">
+
+    <!--
+    // 这里把JS用到的所有语言都赋值到这里
+    
+    var no_area_name = "配送区域名称不能为空。";
+    var invalid_free_mondy = "免费额度必须是一个数字。";
+    var invalid_base_fee = "首重费用必须是一个数字。";
+    var invalid_item_fee = "首件商品费用必须是一个数字。";
+    var invalid_item_step_fee = "非首件商品费用必须是一个数字。";
+    var invalid_step_fee = "续重费用必须是一个数字。";
+    var blank_shipping_area = "配送区域的所辖区域不能为空。";
+    var same_area_name = "已经存在同名配送区域。";
+    var lang_shipping = "配送方式";
+    var region_exists = "选定的地区已经存在。";
+    //-->
+
+
+    $(function(){
+
+        // $("#form").bootstrapValidator({
+        //     feedbackIcons: {
+        //         valid: 'glyphicon glyphicon-ok',
+        //         invalid: 'glyphicon glyphicon-remove',
+        //         validating: 'glyphicon glyphicon-refresh'
+        //     },
+        //     fields:{
+        //         seller_message:{
+        //             validators:{
+        //                 stringLength:{
+        //                     min:5,
+        //                     message:'最少5个字'
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }).on('success.form.bv', function(e) {
+        //     // Prevent form submission
+        //     e.preventDefault();
+
+        //     // Get the form instance
+        //     var $form = $(e.target);
+
+        //     // Get the BootstrapValidator instance
+        //     var bv = $form.data('bootstrapValidator');
+
+        //     // Use Ajax to submit form data
+        //     $.post($form.attr('action'), $form.serialize(), function(result) {
+        //         //var json = $.parseJSON(result);
+        //         bootbox.alert(result.msg);
+        //         window.parent.js_success(result.retval);
+        //     }, 'json');
+
+        //     //$form.data('bootstrapValidator').resetForm(true);
+
+        // });
+
+        $("#cancelbtn").on('click',function(){
+            js_success();
+        });
+
+
+
+    });
+
+    /**
+     * zjh 配送费用计算方式
+     */
+    function compute_mode(mode)
+    {
+        var base_fee  = document.getElementById("base_fee");
+        var step_fee  = document.getElementById("step_fee");
+        var item_fee  = document.getElementById("item_fee");
+		var item_step_fee  = document.getElementById("item_step_fee");
+
+        if(mode == 'number')
+        {
+            item_fee.style.display = '';
+			item_step_fee.style.display='';
+            base_fee.style.display = 'none';
+            step_fee.style.display = 'none';
+
+        }
+        else
+        {
+            item_fee.style.display = 'none';
+			item_step_fee.style.display='none';
+            base_fee.style.display = '';
+            step_fee.style.display = '';
+
+        }
+    }
+
+    /**
+     * 添加一个区域
+     */
+    function addRegion()
+    {
+        var selCountry  = document.forms['theForm'].elements['country'];
+        var selProvince = document.forms['theForm'].elements['province'];
+        var selCity     = document.forms['theForm'].elements['city'];
+        var selDistrict = document.forms['theForm'].elements['district'];
+        var regionCell  = document.getElementById("regionCell");
+
+        if (selDistrict.selectedIndex > 0)
+        {
+            regionId = selDistrict.options[selDistrict.selectedIndex].value;
+            regionName = selDistrict.options[selDistrict.selectedIndex].text;
+        }
+        else
+        {
+            if (selCity.selectedIndex > 0)
+            {
+                regionId = selCity.options[selCity.selectedIndex].value;
+                regionName = selCity.options[selCity.selectedIndex].text;
+            }
+            else
+            {
+                if (selProvince.selectedIndex > 0)
+                {
+                    regionId = selProvince.options[selProvince.selectedIndex].value;
+                    regionName = selProvince.options[selProvince.selectedIndex].text;
+                }
+                else
+                {
+                    if (selCountry.selectedIndex >= 0)
+                    {
+                        regionId = selCountry.options[selCountry.selectedIndex].value;
+                        regionName = selCountry.options[selCountry.selectedIndex].text;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+            }
+        }
+
+        // 检查该地区是否已经存在
+        exists = false;
+        for (i = 0; i < document.forms['theForm'].elements.length; i++)
+        {
+            if (document.forms['theForm'].elements[i].type=="checkbox")
+            {
+                if (document.forms['theForm'].elements[i].value == regionId)
+                {
+                    exists = true;
+                    alert(region_exists);
+                }
+            }
+        }
+        // 创建checkbox
+        if (!exists)
+        {
+            regionCell.innerHTML += "<input type='checkbox' name='regions[]' value='" + regionId + "' checked='true' /> " + regionName + "&nbsp;&nbsp;";
+        }
+    }
+
+    /**
+ * 检查表单输入的数据
+ */
+function validate()
+{ 
+    validator = new Validator("theForm");
+
+    validator.required('shipping_area_name', no_area_name);
+
+    var areaName = document.forms['theForm'].elements['shipping_area_name'];
+    var dl_id = document.forms['theForm'].elements['delivery_id'];
+    if (originAreaName !== Utilstrim(areaName.value)){
+        checkAreaName(Utilstrim(areaName.value),dl_id.value);
+    }
+
+    if(!check){
+        validator.addErrorMsg(same_area_name);
+    }
+
+    validator.isNumber('free_money', invalid_free_mondy, false);
+    validator.isNumber('item_fee', invalid_item_fee, false);
+	validator.isNumber('item_step_fee', invalid_item_step_fee, false);
+    validator.isNumber('base_fee', invalid_base_fee, false);
+    validator.isNumber('step_fee', invalid_step_fee, false);
+
+    var regions_chk_cnt = 0;
+    for (i=0; i<document.getElementsByName('regions[]').length; i++)
+    {
+      if (document.getElementsByName('regions[]')[i].checked == true)
+      {
+        regions_chk_cnt++;
+      }
+    }
+
+    if (regions_chk_cnt == 0)
+    {
+      validator.addErrorMsg(blank_shipping_area);
+    }
+    
+    // return validator.passed();
+
+    if (validator.passed())
+    {
+        sendForm();
+    }
+ 
+    return false;
+}
+
+var check = true;
+var  originAreaName= '{$shipping_area.shipping_area_name}';
+// 检查是否已经存在配送区域
+function checkAreaName(areaName,dl_id)    
+{ 
+    $.ajaxSetup({  
+        async : false  
+    }); 
+
+    $.post("index.php?module=behalf&act=set_shipping_area",
+    {
+      shipping_area_name:areaName,
+      dl_id:dl_id,
+      operate:"checkAreaName"
+    },
+    function(data,status){
+      
+      if(data){
+            check=false;
+        }else{
+            check=true;
+        }
+    },'text');
+}
+
+
+// 发送form表单
+function sendForm()    
+{   
+    var shipping_area_name = document.forms['theForm'].elements['shipping_area_name'].value;
+    var fee_compute_mode = document.forms['theForm'].elements['fee_compute_mode'].value;
+    var item_fee = document.forms['theForm'].elements['item_fee'].value;
+    var base_fee = document.forms['theForm'].elements['base_fee'].value;
+    var item_step_fee = document.forms['theForm'].elements['item_step_fee'].value;
+    var step_fee = document.forms['theForm'].elements['step_fee'].value;
+    var free_money = document.forms['theForm'].elements['free_money'].value;
+    var regions = [];
+
+    for (i=0; i<document.getElementsByName('regions[]').length; i++)
+    {
+      if (document.getElementsByName('regions[]')[i].checked == true)
+      {
+         regions.push(document.getElementsByName('regions[]')[i].value);
+      }
+    }
+
+    var operate = document.forms['theForm'].elements['operate'].value;
+    var shipping_area_id = document.forms['theForm'].elements['shipping_area_id'].value;
+    var delivery_id = document.forms['theForm'].elements['delivery_id'].value;
+
+    $.ajaxSetup({  
+        async : false  
+    }); 
+
+    $.post("index.php?module=behalf&act=set_shipping_area",
+    {
+        shipping_area_name:shipping_area_name,
+        fee_compute_mode:fee_compute_mode,
+        item_fee:item_fee,
+        base_fee:base_fee,
+        item_step_fee:item_step_fee,
+        step_fee:step_fee,
+        free_money:free_money,
+        regions:regions,
+        operate:operate,
+        shipping_area_id:shipping_area_id,
+        delivery_id:delivery_id
+    },
+    function(data,status){
+    // alert(data);
+      js_success();
+      js_success("操作成功！",1);
+      getShippingInfo(data);
+    },'text');
+}
+ 
+</script>
+
+<div class="container-fluid">
+    <form id="form" class="form-horizontal" name="theForm" action="javascript:void(0);" method="post" onsubmit="return validate();" >
+
+        <fieldset style="border:1px solid #DDEEF2;display: block;">
+            <table style="margin-left: 18px;font-size:12px;margin-top:5px;margin-bottom: 5px;">
+                <tr>
+                    <td style="font-weight: bold;width:120px;">{$sa_lang.shipping_area_name}:</td>
+                    <td><input type="text" name="shipping_area_name" maxlength="60" size="30" value="{$shipping_area.shipping_area_name}"  />{$sa_lang.require_field}</td>
+                </tr>
+                 <tr>
+                    <td style="font-weight: bold;">{$sa_lang.fee_compute_mode}:</td>
+                    <td>
+                        <input type="radio"  {if $fee_compute_mode != 'by_number' }checked="true"{/if} onclick="compute_mode('weight')" name="fee_compute_mode" value="by_weight" />{$sa_lang.fee_by_weight}
+                        <input type="radio" {if $fee_compute_mode != 'by_weight'}checked="true"{/if}  onclick="compute_mode('number')" name="fee_compute_mode" value="by_number" />{$sa_lang.fee_by_number}
+                    </td>
+                </tr>
+
+                <!--{foreach from=$fields item=field}-->
+                <!--{if $fee_compute_mode == 'by_number'}-->
+                <!--{if $field.name == 'item_fee' || $field.name == 'free_money' || $field.name == 'item_step_fee'}-->
+                <tr id="{$field.name}" >
+                    <td style="font-weight: bold;">{$field.label}:</td>
+                    <td><input type="text" name="{$field.name}"  maxlength="60" size="20" value="{$field.value}" />{$sa_lang.require_field}</td>
+                </tr>
+                <!--{else}-->
+                <tr id="{$field.name}" style="display:none">
+                    <td style="font-weight: bold;">{$field.label}:</td>
+                    <td><input type="text" name="{$field.name}"  maxlength="60" size="20" value="{$field.value}" />{$sa_lang.require_field}</td>
+                </tr>
+                <!--{/if}-->
+                <!--{else}-->
+                <!--{if $field.name == 'base_fee' || $field.name == 'step_fee' || $field.name == 'free_money' }-->
+                <tr id="{$field.name}">
+                    <td style="font-weight: bold;">{$field.label}:</td>
+                    <td><input type="text" name="{$field.name}"  maxlength="60" size="20" value="{$field.value}" />{$sa_lang.require_field}</td>
+                </tr>
+                <!--{else}-->
+                <tr id="{$field.name}" style="display:none">
+                    <td style="font-weight: bold;">{$field.label}:</td>
+                    <td><input type="text" name="{$field.name}"  maxlength="60" size="20" value="{$field.value}" />{$sa_lang.require_field}</td>
+                </tr>
+                <!--{/if}-->
+                <!--{/if}-->
+                <!--{/foreach}-->
+
+            </table>
+        </fieldset>
+
+
+        <p style="margin-top:10px;margin-left:10px;background:#FFF;font-size:12px;font-weight: bold;">所辖地区:</p>
+        <fieldset style="border:1px solid #DDEEF2;display: block;margin-top:-19px;">
+
+           <!--  <legend style="">所辖地区:</legend> -->
+            <table style="margin-top:10px;font-size:12px;margin-left: 18px;" align="center;">
+                <tr style="">
+                    <td id="regionCell">
+
+                        {foreach from=$regions item=region key=id}
+                        <input type="checkbox" name="regions[]" value="{$id}" checked="true" /> {$region}&nbsp;&nbsp;
+                        {/foreach}
+
+                    </td>
+                </tr>
+                <tr style="margin-top:5px;display: inline-block;">
+                    <td >
+                        <span  style="vertical-align: top;font-weight: bold;">{$sa_lang.label_country} </span>
+                        <select name="country" id="selCountries" onchange="region.changed(this, 1, 'selProvinces')" size="10" style="width:70px">
+                            {foreach from=$countries item=country}
+                            <option value="{$country.region_id}">{$country.region_name|escape:html}</option>
+                            {/foreach}
+                        </select>
+                        <span  style="vertical-align: top;font-weight: bold;">{$sa_lang.label_province} </span>
+                        <select name="province" id="selProvinces" onchange="region.changed(this, 2, 'selCities')" size="10" style="width:90px">
+                            <option value=''>{$sa_lang.select_please}</option>
+                        </select>
+                        <span  style="vertical-align: top;font-weight: bold;">{$sa_lang.label_city} </span>
+                        <select name="city" id="selCities" onchange="region.changed(this, 3, 'selDistricts')" size="10" style="width:110px">
+                            <option value=''>{$sa_lang.select_please}</option>
+                        </select>
+                        <span  style="vertical-align: top;font-weight: bold;">{$sa_lang.label_district}</span>
+                        <select name="district" id="selDistricts" size="10" style="width:120px">
+                            <option value=''>{$sa_lang.select_please}</option>
+                        </select>
+                        <span  style="vertical-align: top;font-weight: bold;"><img src="{res file=images/add.svg}" style="cursor:pointer;margin-left:5px;" onclick="addRegion()"></span>
+                    </td>
+                </tr>
+            </table >
+        </fieldset>
+
+        <div class="form-group">
+            <label class="col-xs-2 text-right control-label"></label>
+            <!--<div class="col-xs-9">-->
+                <!--<button class="btn btn-primary" id="savebtn" type="submit">确 定</button>-->
+                <!--<button class="btn btn-default" data-dismiss="modal">重置</button>-->
+            <!--</div>-->
+            <table style="width:100%;">
+                <tr>
+                    <td colspan="2" align="center">
+                        <input class="btn btn-primary"  type="submit" value="确 定" />
+                        <input class="btn btn-default" type="reset"  value="取消"  id="cancelbtn" style="margin-top:10px;font-size:10px;" />
+                        <input type="hidden" name="operate" value="{$form_action}" />
+                        <input type="hidden" name="shipping_area_id" value="{$shipping_area.shipping_area_id}" />
+                        <input type="hidden" name="delivery_id" value="{$shipping_area.dl_id}" />
+                    </td>
+                </tr>
+            </table>
+
+
+        </div>
+    </form>
+
+
+
+</div>

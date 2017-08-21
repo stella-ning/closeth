@@ -1,0 +1,472 @@
+{include file=header2017.html}
+
+<script type="text/javascript">
+var store_id = {$smarty.get.id};
+/* 替换参数 */
+function replaceParam(key, value)
+{
+        if(location.search == '')
+        {
+                var params = new Array();
+                params.push("app=shop");
+                params.push('id='+store_id);
+        }
+        else
+        {
+                var params = location.search.substr(1).split('&');
+        }
+    var found  = false;
+    for (var i = 0; i < params.length; i++)
+    {
+        param = params[i];
+        arr   = param.split('=');
+        pKey  = arr[0];
+        if (pKey == 'page')
+        {
+            params[i] = 'page=1';
+        }
+        if (pKey == key)
+        {
+            params[i] = key + '=' + value;
+            found = true;
+        }
+    }
+    if (!found)
+    {
+        value = transform_char(value);
+        params.push(key + '=' + value);
+    }
+    location.assign(SITE_URL + '/index.php?' + params.join('&'));
+}
+
+/* 删除参数 */
+function dropParam(key)
+{
+        if(location.search == '')
+        {
+                var params = new Array();
+                params.push("app=shop");
+                params.push('id='+store_id);
+        }
+        else
+        {
+                var params = location.search.substr(1).split('&');
+        }
+    for (var i = 0; i < params.length; i++)
+    {
+        param = params[i];
+        arr   = param.split('=');
+        pKey  = arr[0];
+        if (pKey == 'page')
+        {
+            params[i] = 'page=1';
+        }
+        if (pKey == key)
+        {
+            params.splice(i, 1);
+        }
+    }
+    location.assign(SITE_URL + '/index.php?' + params.join('&'));
+}
+
+$(function(){
+        var order = '{$smarty.get.order}';
+        var css = '';
+
+        <!--{if $smarty.get.order}-->
+        order_arr = order.split(' ');
+        switch (order_arr[1]){
+                case 'desc' :
+                        css = 'order-down curr';
+                break;
+                case 'asc' :
+                        css = 'order-up curr';
+                break;
+                default :
+                        css = '';
+        }
+        $('.goods-sort a[ectype='+order_arr[0]+']').attr('class','clk h-item h-opt '+css);
+        <!--{else}-->
+        $('.goods-sort a[id=""]').attr('class','clk h-item h-opt curr');
+        <!--{/if}-->
+
+        $(".goods-sort a").click(function(){
+                if(this.id==''){
+                        dropParam('order');// default order
+                        return false;
+                }
+                else
+                {
+                        dd = " desc";
+                        if(order != '') {
+                                order_arr = order.split(' ');
+                                if(order_arr[0]==this.id && order_arr[1]=="desc")
+                                        dd = " asc";
+                                else dd = " desc";
+                        }
+                        replaceParam('order', this.id+dd);
+                        return false;
+                }
+        });
+
+        $(".j-category-item").bind("click" , function (){
+        	var params = new Array();
+        	params.push("app=shop");
+        	params.push('id='+store_id);
+        	params.push('cid='+  $(this).attr("cid"));	
+        	
+        	location.assign(SITE_URL + '/index.php?' + params.join('&'));
+        });
+        
+        $("#update_store_goods_help_ta").bind("click" , function(){
+            $(this).attr('disabled','disabled');
+             $.ajax({
+                type:'getJSON',
+                dataType:'jsonp',
+                jsonp:'jsonp_callback',
+                url:"http://121.41.170.236:30005/store/{$smarty.get.id}",
+                success:function(json){
+                    //console.log(json);
+                    if(json.status == 'ok')
+                    {
+                        jBox.info("更新成功！",null);
+                        $("#update_store_goods_help_ta").removeAttr('disabled');
+                        location.reload();
+                    } else if (json.status == 'wait') {
+                      jBox.info("30分钟内已经更新过了，请稍后再试",null);
+                      $("#update_store_goods_help_ta").removeAttr('disabled');
+                    }
+                },
+                error:function(errors){
+                    console.log(errors);
+                    jBox.alert("更新失败,等会再试吧！",null);
+                    $("#update_store_goods_help_ta").removeAttr('disabled');
+                }
+            });
+        });
+        
+        
+        $(".j-price_start_end").bind('click' , function (){
+        	start_price = number_format($(this).parent().find('input[name="start_price"]').val(),0);
+    		end_price   = number_format($(this).parent().find('input[name="end_price"]').val(),0);	
+    		
+    		if(start_price != 0 || end_price != 0 )
+    		{
+    			if(Number(start_price) >= Number(end_price)){
+    				end_price = Number(start_price) + 200;
+    			}
+    			replaceParam('price', start_price+'-'+end_price);
+    		}
+    		return false;
+        });
+        
+        
+        <!--{if $smarty.get.price}-->
+        var filter_price = '{$smarty.get.price}';
+        filter_price = filter_price.split('-');
+        $('input[name="start_price"]').val(number_format(filter_price[0],0));
+        $('input[name="end_price"]').val(number_format(filter_price[1],0));
+        <!--{/if}-->
+
+});
+
+
+</script>
+
+<div class="shop-wrap">
+	<div class="shop-info fl">
+		<div class="shop-content">
+			<div class="shop-year">
+				<i></i>
+				<span>
+					<em>{$store.year}</em> 年老店
+				</span>
+			</div>
+			<h2 class="shop-name">
+				<span>{$store.store_name|escape}</span>
+				<!-- <a href="javascrip:" class="fr shop-name-modify">
+					修改<br>信息 
+				-->
+				</a>
+			</h2>
+			<div class="shop-icon">
+				<i class="cert j-v-tip"></i>
+				 <!--{if $store.serv_sendgoods }-->
+                 <i class="icon_send" title="{$lang.service_send}"><a href="javascript:;" title="{$lang.service_send}" class="block"></a></i><!--{/if}-->
+                 <!--{if $store.serv_refund }-->
+                 <i class="icon_cash" title="{$lang.service_cash}"><a href="javascript:;" title="{$lang.service_cash}" class="block"></a></i><!--{/if}-->
+                 <!--{if $store.serv_exchgoods }-->
+                 <i class="icon_change" title="{$lang.service_pattern}"><a href="javascript:;" title="{$lang.service_pattern}" class="block"></a></i><!--{/if}-->
+			</div>
+			  <!--{if !$favorite}-->
+                <a href="javascript:collect_store({$store.store_id})" class="icon-btn care btn-shop-care" > <span>{$lang.collect_shop}</span></a>
+                <!--{else}-->
+                <a href="javascript:;"><span> {$lang.be_collected}</span></a>
+                <!--{/if}-->
+			<ul class="mt10">
+				<li>
+					<div class="attr">
+						地址:
+					</div>
+					<div class="text">
+					{$store.mk_name|escape}-{$store.dangkou_address}
+					</div>
+				</li>
+				<li>
+					<div class="attr">
+						商品:
+					</div>
+					<div class="text">
+						{$store.goods_count} 件
+					</div>
+				</li>
+				<!-- 
+				<li>
+            	<div class="attr">产地：</div>
+          	  	<div class="text">广东省 广州市</div>
+        		</li>
+         		-->
+				<li>
+            <div class="attr">主营：</div>
+            <div class="text">
+            	{$store.business_scope|escape|default:-}
+            </div>
+        </li>
+				<li class="tel-list">
+            <div class="attr">电话：</div>
+            <div class="text">
+              <p>{$store.tel|escape}</p>
+            </div>
+        </li>
+				<li>
+            <div class="attr">QQ：</div>
+            <div class="text"> {imqq uin=$store.im_qq&site=$store.store_name|escape:url} {$store.im_qq|escape}</div>
+        </li>
+			</ul>
+			<div class="btns clearfix">
+			<a href="http://www.taobao.com/webww/ww.php?ver=3&touid={$store.im_ww}&siteid=cntaobao&status=2&charset=utf-8" target="_blank" title="{$store.store_name|escape}" class="fl btn-default kf">
+            	<img src="{res file=images/online.png}" alt="{$store.store_name|escape}">
+            <span>旺旺</span>
+          </a>
+          <a href="{$store.shop_http}" target="_blank" class="fl tb btn-default">{$lang.taobao_shop}</a>
+      </div>
+		</div>
+	</div>
+	<div class="stall-goods fr">
+		<!-- baiyang close
+		<div class="msg">
+			<span class="t">档口通知:</span>
+      上图卖家请注意： 原佰润一楼A1030档魅致佳丽欧美店现今搬到柏美一楼A145档，请拿货的亲们移步到柏美拿货。
+  为了所有卖家的利益，上传图片后的产品标价规定是拿货价乘以1.5，也就是不能低于我们淘宝官网店铺零售价的百分之75，允许下浮5元内范围，低于这个范围的系统会自动投诉，请亲们配合，谢谢！
+		</div>
+		 -->
+		<div class="tab_top clearfix">
+			<!-- tab开始 -->
+			<div class="hasMoreTab" style="margin:0 auto">
+				<div class="hd">
+					<ul>
+						<li class="on">所有商品</li>
+						<!-- <li>下架商品</li> -->
+						<!-- <li></li> -->
+					</ul>
+					
+					<div class="dk_rt_f1_rt">
+                        <span>
+                        <a href="javascript:void(0)" id="update_store_goods_help_ta">
+                           	更新店内商品
+                        </a>
+                        </span>
+                         <!--{if $store.auto_sync eq 1}-->
+            				<a href="javascript:void 0">
+                			{$lang.store_asyc_intime}
+            			</a>
+            			<!--{else}-->
+            			<a href="{url app=shop&act=permitTaobaoTmc&id=$store.store_id&im_ww=$store.im_ww}" target="_blank">
+                		{$lang.store_unasyc_intime}
+            			</a>
+            			<!--{/if}-->
+                    </div>
+					 
+				</div>
+				<div class="bd">
+					<div class="conWrap" style="width:955px;">
+						<div class="con" >
+							<div class="tab_content">
+								<div class="screen">
+									<div class="nav-category">
+										<div class="nc-key">
+											所有类目:
+										</div>
+										<div class="nc-value">
+																		
+                        <div class="nc-current fl"><span>{if $search_cate} {$search_cate.cate_name} {else} 全部商品 {/if}  </span></div>
+                        <div class="nc-count fr">
+                            共 <span class="num">{$store.goods_count}</span> 件相关商品
+                        </div>
+                    </div>
+									</div>
+				<!--{foreach from=$store.goodsCountByCate item=cateinfo}-->
+				<div id="cateNav1" class="nav-category clearfix show-more">
+					<div class="nc-key">{$cateinfo.cate_name}:</div>
+					<div class="nc-value" style="width:815px;">
+						<div class="types" style="width: auto;">
+							<!--{foreach from=$cateinfo.cates item=cate}-->
+								<a href="javascript:void(0)" class="h-opt j-category-item" cid="{$cate.cate_id}" title="{$cate.cate_name}">{$cate.cate_name} ( {$cate.t} ) </a>
+							<!--{/foreach}-->
+						</div>
+					</div>
+				</div>
+				<!--{/foreach}-->					
+								</div>
+								<div class="goods-sort">
+									<div class="pro-sort">
+										<div class="s-b-left">
+											<ul>
+												<a id="" ectype="" href="javascript:" class="clk h-item  h-opt"><span>综合</span></a>
+												<a id="price" ectype="price" href="javascript:" class="clk h-item  h-opt"><span>价格</span></a>
+												<a id="add_time" ectype="add_time" href="javascript:" class="clk h-item  h-opt"><span>上新时间</span></a>
+												<a id="sales" ectype="sales" href="javascript:" class="clk h-item  h-opt"><span>销量</span></a>
+												
+												<li class="item price">
+                            					<input type="text" placeholder="¥ 最低价" name="start_price" class="fl price-box ml price_start" value="">
+                            					<div class="fl line">-</div>
+                            					<input type="text" placeholder="¥ 最高价" name="end_price" class="fl price-box price_end" value="">
+                            					<div class="btn j-price_start_end" style="width:46px;">确定</div>
+                        						
+											</ul>
+										</div>
+									</div>
+								</div>
+								
+								
+								<div class="goods-list">
+								<ul>
+								<!--{foreach from=$searched_goods item=ngoods name=ngood_fee}-->
+								<li>
+                      			<div class="item">
+                          <div class="pic">
+                              <a href="{url app=goods&id=$ngoods.goods_id}" target="_blank" class="showed">
+                                  <img alt="{$ngoods.goods_name|escape}" src="data/system/empty.gif" data-ks-lazyload="{$ngoods.default_image}" class="pImg" style="display: inline;">
+                              </a>
+                              <i></i>
+                              <div class="ctrl shops clearfix">
+                                  <!-- <span class="upload" >一键上传</span> 
+                                       <a href="javascript:" target="_blank" title="{$ngoods.goods_name|escape}"> <span>找同款</span></a>
+                                  -->
+                                  <span class="addFav" vda="sc|itemcard|215805|0|0|1" onclick="collect_goods({$ngoods.goods_id})">收藏</span>
+                              </div>
+                          </div>
+                          <div class="desc">
+                              <div class="info clearfix">
+                                  <div class="fl price">
+                                      <span class="yuan "></span><!--{if $ngoods.price lte 600 }-->{$ngoods.price|price}<!--{else}-->{$lang.prepare_sell}<!--{/if}-->
+                                  </div>
+                                  <i class="fl ico_item_active_0 ico_item_active"></i>
+                                     <!--<div class="fr sales"><span class="num">2</span>件代发</div>--> 
+                              </div>
+                              <div class="title">
+                                  <a href="javascript:" title="{$ngoods.goods_name|escape}" target="_blank" >
+                                      {$ngoods.goods_name|escape}
+                                  </a>
+                              </div>
+                              <div class="foot clearfix">
+                                  <div class="fl ">
+                                      <div class="service-icon service-icon-tg shown_sp_1 shown_tx_1 shown_df_1">
+                                       <!--{if $ngoods.realpic }-->
+                                       <i class="icon_detail" title="{$lang.service_detail}"><a href="javascript:;"  class="block"></a></i>
+                                       <!--{/if}-->
+                                       <!--{if $store.serv_sendgoods }-->
+                                       <i class="icon_send" title="{$lang.service_send}"><a href="javascript:;" title="{$lang.service_send}" class="block"></a></i><!--{/if}-->
+                                       <!--{if $store.serv_refund }-->
+                                       <i class="icon_cash" title="{$lang.service_cash}"><a href="javascript:;" title="{$lang.service_cash}" class="block"></a></i><!--{/if}-->
+                                       <!--{if $store.serv_exchgoods }-->
+                                       <i class="icon_change" title="{$lang.service_pattern}"><a href="javascript:;" title="{$lang.service_pattern}" class="block"></a></i><!--{/if}-->
+                                      
+                                      <!-- 
+                                          <div class="s-item sp j-v-tip">
+                                              <i></i>
+                                          </div>
+                                          <div class="s-item tx j-v-tip">
+                                              <i></i>
+                                          </div>
+                                          <div class="s-item df j-v-tip">
+                                              <i></i>
+                                          </div>
+                                        -->
+                                      </div>
+                                  </div>
+                                  <!-- <div class="fr j_clip_button">9686#</div> -->
+                              </div>
+                          </div>
+                      	</div>
+                  		</li>
+								<!--{/foreach}-->
+								</ul>
+								</div>
+								
+{include file="page2017.bottom.html"}
+				
+							</div>
+						</div>
+			
+						
+					</div>
+
+				</div>
+			</div>
+			<!-- tabs结束 -->
+		</div>
+	</div>
+	<div class="con-side fl">
+		<h2>推荐商品</h2>
+		<div class="comment-relative">
+			<div class="slide-pagination top-hd">
+			
+				<div class="hd">
+					<!-- 
+					<a href="javascript:void(0)" class="prev" id="hdprev">
+						<i><</i>
+					</a>
+					<span class="pageState"><span style="color:#f46;" id="hdnum">1</span>/<span id="bdlength"></span></span>
+					<a href="javascript:void(0)" class="next" id="hdnext">
+						<i>></i>
+					</a>
+					 -->
+				</div>
+			</div>
+	
+			<div class="bd" id="bd">
+				<ul><li style="display:block;"><dl class="side-list clearfix showed">
+				<!--{foreach from=$recommended_goods item=rgoods name=fe_rgoods}-->
+					<dd class="clearfix ishide" >
+						<a href="{url app=goods&id=$rgoods.goods_id}" title="{$rgoods.goods_name|escape}" target="_blank" class="j-vda">
+							<div class="pic">							
+	                        	<img src="{if $rgoods.recom_img}{$rgoods.recom_img}{else}{$rgoods.default_image}{/if}" height="330" class="lazy">
+	                    	</div>
+	                	</a>
+	                	<div class="priceall">
+	                		<div class="price">
+	                			<span class="yuan"></span><!--{if $rgoods.price lte 600 }-->{$rgoods.price|price}<!--{else}-->{$lang.prepare_sell}<!--{/if}-->
+		                	</div>
+		                	<div class="pos">
+		                    	<a target="_blank" href="{url app=shop&id=$rgoods.store_id}" title="{$rgoods.store_name}">
+		                        	<!--<img src="images/gold.png"  width="19">-->
+		                        	{$rgoods.store_name}
+		                    </a>
+		                	</div>
+						</div>		
+						</dd>
+				<!--{/foreach}-->
+				</dl>
+				</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	jQuery(".hasMoreTab").slide({ mainCell:".conWrap", targetCell:".more a", effect:"fold",trigger:"click"});
+	jQuery(".hp-tab-newprd").slide({ titCell:".j-sw-nav li",mainCell:".j-sw-c",effect:"left",easing:"easeInOutSine",delayTime:800,autoPlay:"true"});
+	
+</script>
+{include file=footer2017.html}

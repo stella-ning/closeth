@@ -1,0 +1,81 @@
+<script type="text/javascript">
+	var _d = DialogManager.get('config_dialog');
+	_d.setWidth(650);
+	_d.setPosition({
+		top : 0,
+		left : window.width / 2
+	});
+	$('#_config_widget_form_').submit(function() {
+		stopScroll();
+	});
+	$('#add_image')
+			.click(
+					function() {
+						var field_nums = $(".field_item").size();
+
+						var html = '<div class="field_item">'
+								+ '<p><b>商品名称：</b><input type="text" name="ad_gname[]" value="{$image.ad_gname}" style="width:200px">'
+								+ '<p><b>商品链接：</b><input type="text" name="goods_link_url[]" value="{$image.goods_link_url}" style="width: 280px;" /></p>'
+								+ '<p><strong>上传图片：</strong>(<span style="color: green">gif|jpg|jpeg|png格式,100px*100px</span>) <input type="file" name="ad_image_file[]" /></p>'
+								+ '<p><input type="button" value="删除图片" onclick="drop_image(this)" style="width: 66px;" /></p>'
+								+ '</div>';
+						if (field_nums <= 16) {
+							$(this).before(html);
+						} else {
+							alert('已达到最大数量!');
+						}
+
+					});
+	function drop_image(btnObj) {
+		$(btnObj).parents('.field_item').remove();
+	}
+</script>
+<div class="field_item">
+	<label>显示商品分类个数:</label>
+	<p>
+		<input type="text" name="gcate_num" value="{$options.gcate_num}" />&nbsp;&nbsp;(默认为4个)
+	</p>
+</div>
+<div class="field_item">
+	<label>显示市场分类个数:</label>
+	<p>
+		<input type="text" name="mcate_num" value="{$options.mcate_num}" />&nbsp;&nbsp;(默认为12个)
+	</p>
+</div>
+<!-- {if $options.ads} -->
+<!-- {foreach from=$options.ads item=goods name=fe_img} -->
+<div class="field_item">
+	<p>
+		<b>商品名称：</b><input type="text" name="ad_gname[]" value="{$goods.ad_gname}" style="width: 200px">
+	</p>
+	<p>
+		<b>商品链接：</b><input type="text" name="goods_link_url[]" value="{$goods.goods_link_url}" style="width: 280px;" />
+	</p>
+	<p>
+		<strong>上传图片：</strong>(<span style="color: green">gif|jpg|jpeg|png格式,100px*100px</span>) <input type="file" name="ad_image_file[]" /> <input type="hidden" name="ad_image_url[]"
+			value="{$goods.ad_image_url}"
+		/> <img src="{$goods.ad_image_url}" height="45" />
+	</p>
+	<p>
+		<input type="button" value="删除图片" onclick="drop_image(this)" style="width: 66px;" />
+	</p>
+</div>
+
+<!-- {/foreach} -->
+<!-- {else} -->
+<div class="field_item">
+	<p>
+		<b>商品名称：</b><input type="text" name="ad_gname[]" value="{$image.ad_gname}" style="width: 200px">
+	</p>
+	<p>
+		<b>商品链接：</b><input type="text" name="goods_link_url[]" value="{$image.goods_link_url}" style="width: 280px;" />
+	</p>
+	<p>
+		<strong>上传图片：</strong>(<span style="color: green">gif|jpg|jpeg|png格式,100px*100px</span>) <input type="file" name="ad_image_file[]" />
+	</p>
+	<p>
+		<input type="button" value="删除图片" onclick="drop_image(this)" style="width: 66px;" />
+	</p>
+</div>
+<!-- {/if} -->
+<input type="button" id="add_image" value="新增图片" />

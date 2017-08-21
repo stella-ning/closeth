@@ -1,0 +1,32 @@
+<!--{if !$widget_data.ads}-->
+<div class="padding10 center">请配置</div>
+<!--{else}-->
+<div id="item{$widget_data.floor_no}" class="module_1200 items">
+	<div class="hot_shops">
+		<div class="title">
+			<img class="title-number" src="static/images/floor{$widget_data.floor_no}.png">
+			<div class="cateTitleName">{$widget_data.floor_name}</div>
+		</div>
+		<div class="f2_goods_list">
+			<!--{foreach from=$widget_data.ads item=ad name=fee_ad}-->
+			<div class="item-f2">
+				<div class="img_box_f2">
+					<span class="bd_f2"> 
+						<a href="{$ad.goods_link_url}" class="li" target="_blank"> 
+							<img src="data/system/empty.gif" class="DataLazyLoad" data-ks-lazyload="{$ad.ad_image_url}"  target="_blank">
+						</a>
+					</span>
+				</div>
+				<p class="info">
+					<span class="price"> <span class="yuan">¥</span>{$ad.ad_gprice|number_format:2}
+					</span> <a href="{$ad.goods_link_url}" target="_blank" class="name" title="{$ad.ad_gname}">{$ad.ad_gname|escape}</a>
+				</p>
+			</div>
+			<!--{/foreach}-->
+		</div>
+	</div>
+</div>
+<script>
+	
+</script>
+<!--{/if}-->

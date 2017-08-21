@@ -1,0 +1,2 @@
+ALTER TABLE `ecm_recommended_goods`
+ADD COLUMN `recom_img`  varchar(100) NOT NULL COMMENT '推荐图片' AFTER `sort_order`;

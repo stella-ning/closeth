@@ -1,0 +1,100 @@
+<ul id="nav" class="nav_list">
+	<li class="nav_list_row mainCate">
+		<dl class="nav_wrap">
+			<dt class="nav_list_title">
+				<a href="{url app=search&act=store}" target="_blank">市场导航</a><i></i>
+			</dt>
+			<dd class="nav_list_content">
+			    <!--{foreach from=$widget_data.markets item=market name=fe_market}-->
+			      <span class="nav_list_content_span"> <a href="{url app=search&act=store&mkid=$market.mk_id}" target="_blank">{$market.mk_name|mb_substr2}</a> <ins></ins></span>		          
+		        <!--{/foreach}-->				
+			</dd>
+			<div class="subCate" style="display: none;">
+				<div style="height: 300px;">
+					<ul>
+						<li>
+						<!--{foreach from=$widget_data.all_markets item=mark name=fe_mark}-->
+						  <a href="{url app=search&act=store&mkid=$mark.mk_id}" target="_blank">{$mark.mk_name}<span>|</span></a>
+				        <!--{/foreach}-->						
+						</li>
+					</ul>
+					<ul>
+						<h4>为您推荐</h4>
+						<li>
+						<!--{if $widget_data.ads }-->
+						<!--{foreach from=$widget_data.ads item=image name=fe_img}-->
+						<a class="nav_more_item" href="{$image.goods_link_url}" target="_blank">
+								<div class="nav_more_item_image">
+									<div class="nav_more_title">{$image.ad_gname}</div>
+									<img src="{$image.ad_image_url}" alt="">
+								</div>
+						</a> 
+						<!--{/foreach}-->
+						<!--{/if}-->
+						</li>
+
+					</ul>
+				</div>
+			</div>
+		</dl>
+	</li>
+	
+	
+	<!--{foreach from=$widget_data.gcategory item=cate name=fe_cate}-->
+		<li class="nav_list_row mainCate">
+		<dl class="nav_wrap">
+			<dt class="nav_list_title">
+				<a href="{url app=search&act=index&cate_id=$cate.cate_id}" target="_blank"><!--{if $cate.cate_mname}-->{$cate.cate_mname}<!--{else}-->{$cate.cate_name}<!--{/if}--></a><i></i>
+			</dt>
+			<dd class="nav_list_content">
+			    <!--{foreach from=$cate['children'] item=cat name=fe_cat}-->			    
+			    	<!--{if $smarty.foreach.fe_cate.iteration lte 2}-->
+				    	<!--{if $smarty.foreach.fe_cat.iteration lte 8}-->
+				        <span class="nav_list_content_span"> <a href="{url app=search&act=index&cate_id=$cat.cate_id}" target="_blank"><!--{if $cat.cate_mname}-->{$cat.cate_mname}<!--{else}-->{$cat.cate_name}<!--{/if}--></a> <ins></ins></span>
+				        <!--{/if}--> 
+			        <!--{else}-->
+			            <!--{if $smarty.foreach.fe_cat.iteration lte 4}-->
+				        <span class="nav_list_content_span"> <a href="{url app=search&act=index&cate_id=$cat.cate_id}" target="_blank"><!--{if $cat.cate_mname}-->{$cat.cate_mname}<!--{else}-->{$cat.cate_name}<!--{/if}--></a> <ins></ins></span>
+				        <!--{/if}--> 
+			        <!--{/if}-->
+		        <!--{/foreach}-->			
+			</dd>
+		</dl>
+		<div class="subCate" style="display: none;">
+			<div style="height: 300px;">
+				<ul>
+					<li>
+					<!--{foreach from=$cate['children'] item=cat name=fe_cat}-->
+			         <a href="{url app=search&act=index&cate_id=$cat.cate_id}" target="_blank"><!--{if $cat.cate_mname}-->{$cat.cate_mname}<!--{else}-->{$cat.cate_name}<!--{/if}--></a>
+		            <!--{/foreach}-->
+					</li>
+				</ul>
+				<ul>
+					<h4>为您推荐</h4>
+					<li>
+					<!--{if $cate.ads }-->
+						<!--{foreach from=$cate.ads item=ad name=fe_ad}-->
+						<a class="nav_more_item" href="{$ad.goods_link_url}" target="_blank">
+								<div class="nav_more_item_image">
+									<div class="nav_more_title">{$ad.ad_gname}</div>
+									<img src="{$ad.ad_image_url}" alt="">
+								</div>
+						</a> 
+						<!--{/foreach}-->
+						<!--{/if}-->					
+					</li>
+
+				</ul>
+			</div>
+			<div style="height: 140px;position: absolute;width: 469px;opacity: 0;margin-left: -19px;">1111111</div>
+		</div>
+	</li>	
+   <!--{/foreach}-->	
+</ul>
+
+<script type="text/javascript">
+<!--
+jQuery("#nav").slide({  type:"menu", titCell:".mainCate", targetCell:".subCate", delayTime:0, triggerTime:0, defaultPlay:false, returnDefault:true });
+jQuery(".slideTxtBox").slide({});
+//-->
+</script>

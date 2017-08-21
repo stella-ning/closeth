@@ -1,0 +1,50 @@
+<IfModule mod_rewrite.c>
+RewriteEngine On
+#old
+
+
+RewriteRule ^main.php$ old/main.php  [L]
+
+#商品详情
+RewriteRule ^goods/([0-9]+)/?$ index.php?app=goods&id=$1 [L]
+RewriteRule ^goods/([0-9]+)/([^/]+)/?$ index.php?app=goods&id=$1&act=$2 [L]
+RewriteRule ^goods/([0-9]+)/([^/]+)/page_([^/]+)/?$ index.php?app=goods&id=$1&act=$2&page=$3 [L]
+RewriteRule ^groupbuy/([0-9]+)/?$ index.php?app=groupbuy&id=$1 [L]
+#RewriteRule returnurl_51*& index.php?app=my_money&act=returnurl_51*
+#RewriteRule notifyurl_51& index.php?app=my_money&act=notiryurl_51
+#分类
+RewriteRule ^category/goods/?$ index.php?app=category [L]
+RewriteRule ^category/(.*)/?$ index.php?app=category&act=$1 [L]
+
+#品牌
+RewriteRule ^brand/?$ index.php?app=brand [L]
+
+#文章
+RewriteRule ^article/([0-9]+).html$ index.php?app=article&act=view&article_id=$1 [L]
+RewriteRule ^admin$ index.php?app=category [L]
+RewriteRule ^admin/index.php$ index.php?app=category [L]
+
+#店铺页面
+RewriteRule ^shop/([0-9]+)/?$ index.php?app=shop&id=$1 [L] 
+RewriteRule ^store/article/([0-9]+).html$ index.php?app=store&act=article&id=$1 [L]
+RewriteRule ^store/([0-9]+)/credit/?$ index.php?app=store&id=$1&act=credit [L]
+RewriteRule ^store/([0-9]+)/credit/page_([^/]+)/?$ index.php?app=store&id=$1&act=credit&page=$2 [L]
+RewriteRule ^store/([0-9]+)/credit/([0-9]+)/?$ index.php?app=store&id=$1&act=credit&eval=$2 [L]
+RewriteRule ^store/([0-9]+)/credit/([0-9]+)/page_([^/]+)/?$ index.php?app=store&id=$1&act=credit&eval=$2&page=$3 [L]
+RewriteRule ^store/([0-9]+)/goods/?$ index.php?app=store&id=$1&act=search [L]
+RewriteRule ^store/([0-9]+)/goods/page_([^/]+)/?$ index.php?app=store&id=$1&act=search&page=$2 [L]
+RewriteRule ^store/([0-9]+)/category/([0-9]+)/?$ index.php?app=store&id=$1&act=search&cate_id=$2 [L]
+RewriteRule ^store/([0-9]+)/category/([0-9]+)/page_([^/]+)/?$ index.php?app=store&id=$1&act=search&cate_id=$2&page=$3 [L]
+RewriteRule ^store/([0-9]+)/groupbuy/?$ index.php?app=store&id=$1&act=groupbuy [L]
+RewriteRule ^store/([0-9]+)/groupbuy/page_([^/]+)/?$ index.php?app=store&id=$1&act=groupbuy&page=$2 [L]
+
+#新旧兼容 
+RewriteRule ^category11.html$    http://o.51zwd.com/category11.html [R=301,L]
+RewriteRule ^yjdf.html$    http://o.51zwd.com/yjdf.html [R=301,L]
+RewriteRule ^category8.html$    http://o.51zwd.com/category8.html [R=301,L]
+RewriteRule ^foreign.html$    http://o.51zwd.com/foreign.html [R=301,L]
+RewriteRule ^shop([0-9]+).html$  http://o.51zwd.com/shop$1.html  [L]
+RewriteRule ^goods([0-9]+).html$  http://o.51zwd.com/goods$1.html [L]
+RewriteRule ^category2.html$ index.php?app=search&act=index  [L]
+RewriteRule ^category3.html$ index.php?app=search&act=newgoods [L]
+</IfModule>

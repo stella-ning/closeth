@@ -1,0 +1,31 @@
+    <style>
+		#ico1{color:#ef3664;
+            background: #fff;}
+	</style>
+	<div id="left" class="user-left">
+         <div class="user-menu">
+	
+			<!--{foreach from=$_member_menu item=item}-->
+			<!--{if $item.submenu}-->
+            <dl class="big ">
+                <dt><a href="javascript:void(0);"><span>{$item.text}</span></a><i class="vvicon"></i></dt>
+				<!--{foreach from=$item.submenu item=subitem k=k}-->
+                <dd>
+					 <!--{if $subitem.name eq $_curitem}-->
+                    <a href="{$subitem.url}" class="active" <!--{if $subitem.name eq $_curitem AND $smarty.get.type != 'sbehalf'}-->id="ico1"<!--{/if}-->><span class="{$subitem.icon}">{$subitem.text}</span></a>
+					 <!--{else}-->
+                    <a href="{$subitem.url}" class="normal" <!--{if $subitem.text eq '已签约代发' AND  $smarty.get.type eq 'sbehalf'}-->id="ico1"<!--{/if}-->><span class="{$subitem.icon}">{$subitem.text}</span></a>
+					<!--{/if}-->
+                </dd>
+				<!--{/foreach}-->
+            </dl>
+			<!--{/if}-->
+			<!--{/foreach}-->
+			<!--{if $_member_menu.behalf_system}-->
+        <div style="padding:10px;border-top:1px solid #e3e3e3;">
+                <a href="{$_member_menu.behalf_system.url}" target="_blank" style="width:153px;height:42px;background:#00C0EF;color:white;display:block;text-align:center;line-height:42px;font-size:22px;font-weight:bold;border-radius:3px 3px 3px 3px;">
+                {$_member_menu.behalf_system.text}</a>
+        </div>
+        <!--{/if}-->
+        </div>
+    </div>

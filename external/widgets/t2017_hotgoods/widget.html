@@ -1,0 +1,111 @@
+<!--{if !$widget_data.ads}-->
+<div class="padding10 center">请配置</div>
+<!--{else}-->
+<!-- 优质精选 -->
+<div class="hot_shops">
+	<div class="title">
+		<div class="sideIcon"></div>
+		<div class="cateTitleName">{$widget_data.model_name}</div>
+		<div class="mini_page">
+			<a href="javascript:void(0)" class="prev" id="hot_prev{$widget_data.model_id}"><span><</span></a> <span> <i class="currentPage" id="hot_num{$widget_data.model_id}">1</i> /{$widget_data.pages}
+			</span> <a href="javascript:void(0)" class="next" id="hot_next{$widget_data.model_id}"><span>></span></a>
+		</div>
+	</div>
+	<div id="hot_shops_list{$widget_data.model_id}" class="hot_goods_list">
+		<!--{foreach from=$widget_data.ads item=ad name=fee_ad}-->
+		<!--{if $smarty.foreach.fee_ad.iteration % 10 eq 1}-->
+		<div class="hot-cell-box" {if $smarty.foreach.fee_ad.first}style="display: block;"{/if}>
+			<!--{/if}-->
+			<div class="item">
+				<div class="img_box">
+					<span class="bd"> 
+						<a href="{$ad.ad_link_url}" class="li" style="display: table-cell;" target="_blank"> 
+							<img src="static/images/loading1.gif" class="DataLazyLoad" data-ks-lazyload="{$ad.ad_image_url1}" target="_blank">
+						</a> 
+						<a href="{$ad.ad_link_url}" class="li" style="display: none;" target="_blank"> 
+							<img src="static/images/loading1.gif" class="DataLazyLoad" data-ks-lazyload="{$ad.ad_image_url2}" >
+						</a>
+					</span>
+				</div>
+				<p class="info">
+					<span class="price"> <span class="yuan">¥</span>{$ad.ad_price|number_format:2}
+					</span> <a href="{$ad.ad_link_url}" target="_blank" class="name" title="{$ad.ad_gname}">{$ad.ad_gname}</a>
+				</p>
+			</div>
+			<!--{if $smarty.foreach.fee_ad.iteration % 10 eq 0}-->
+		</div>
+		<!--{/if}-->
+		<!--{/foreach}-->
+	</div>
+</div>
+<script>
+	$(function() {
+		var hot_shops_list = $('#hot_shops_list{$widget_data.model_id}');
+		var img_box = $('.img_box');
+		var hot_list_li = hot_shops_list.find('.hot-cell-box')
+		var hot_prev = $('#hot_prev{$widget_data.model_id}');
+		var hot_next = $('#hot_next{$widget_data.model_id}');
+		var hot_num = $('#hot_num{$widget_data.model_id}');
+		var m = 0;
+		var timer = null;
+		hot_prev.click(function() {
+			m--;
+			if (m == -1) {
+				m = {$widget_data.pages} -1;
+			}
+			hot_num.get(0).innerHTML = m + 1;
+			changk(m);
+		});
+		hot_next.click(function() {
+			m++;
+			if (m == {$widget_data.pages}) {
+				m = 0
+			}
+			;
+			hot_num.get(0).innerHTML = m + 1;
+			changk(m);
+		});
+		function autoplay() {
+			m++;
+			if (m > hot_list_li.length - 1) {
+				m = 0;
+			}
+			changk(m);
+		}
+		function changk(m) {
+			// hot_list_li.css({"display":'none'});
+			hot_num.get(0).innerHTML = m + 1;
+			hot_list_li.css({
+				"opacity" : "0",
+				"zIndex" : 0,
+				"-webkit-transition" : 0.5 + "s"
+			});
+			hot_list_li.stop(true);
+			// hot_list_li.eq(m).css({"display":"block"});
+			hot_list_li.eq(m).css({
+				"opacity" : 1,
+				"zIndex" : 9,
+				"-webkit-transition" : 0.5 + "s"
+			});
+		}
+
+		img_box.hover(function() {
+			$(this).find('a:first').css("display", "none");
+			$(this).find('a:last').css("display", "block");
+		}, function() {
+			$(this).find('a:first').css("display", "block");
+			$(this).find('a:last').css("display", "none");
+		})
+		timer = setInterval(autoplay, 4000);
+		hot_shops_list.hover(function() {
+			clearInterval(timer)
+		}, function() {
+			timer = setInterval(autoplay, 4000);
+		});
+	});
+</script>
+<!--{/if}-->
+
+
+
+

@@ -1,0 +1,36 @@
+<!--{if !$widget_data.ads1 or !$widget_data.ads2}-->
+<div class="padding10 center">请配置</div>
+<!--{else}-->
+<div class="cewebrity_dress_module">
+	<div class="cewebrity_dress_module_title">
+		<div class="cewebrity_dress_title">
+			<span class=" cewebrity_dress_title cewebrity_dress_block"></span> <span class=" cewebrity_dress_txt">{$widget_data.model_name}</span>
+		</div>
+		<a href="{$widget_data.show_all_linkurl}" target="_blank" class="cewebrity_dress_checkmore">查看全部 > </a>
+	</div>
+	<div class="cewebrity_dress_module_content">
+		<div class="cewebrity_dress_left_part fl">
+		    <!--{foreach from=$widget_data.ads1 item=ad name=fee_ad}-->
+		    <div class="cewebrity_dress_left_part_item fl">
+				<a href="{$ad.ad_link_url}" class="cewebrity_dress_left_item" target="_blank">
+					<div class="cewebrity_dress_left_part_item_title">{$ad.ad_title}</div> <img data-ks-lazyload="{$ad.ad_image_url}" src="{$ad.ad_image_url}" alt=""  class="DataLazyLoad">
+				</a>
+			</div>		    
+			<!--{/foreach}-->
+			
+			
+		</div>
+		<div class="cewebrity_dress_right_part fr">
+		    <!--{foreach from=$widget_data.ads2 item=ad name=fee_ad}-->		    
+		    <a href="{$ad.ad_link_url}" class="cewebrity_dress_right_part_item fl {if $smarty.foreach.fee_ad.iteration mod 2 eq 0}cewebrity_dress_right_part_item_db{/if}" target="_blank">
+				<div class="cewebrity_dress_right_part_item_title">{$ad.ad_title}</div> <img  data-ks-lazyload="{$ad.ad_image_url}" src="{$ad.ad_image_url}" alt=""  class="DataLazyLoad" />
+			</a>		       
+			<!--{/foreach}-->		
+		</div>
+	</div>
+</div>
+<!--{/if}-->
+
+
+
+

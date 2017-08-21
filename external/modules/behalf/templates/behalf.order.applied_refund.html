@@ -1,0 +1,372 @@
+{include file=header.whole_nolefttop.html}
+<style>
+	#form ul{padding:0;}
+	#form ul li{padding:0;}
+	#form .goodsprice{
+		display:inline-block;
+		width:50%;
+	}
+	#form label{
+		padding-right:5px;
+	}
+</style>
+<script type="text/javascript">
+	$(function(){
+		
+		$("#form").bootstrapValidator({
+			  feedbackIcons: {
+		            valid: 'glyphicon glyphicon-ok',
+		            invalid: 'glyphicon glyphicon-remove',
+		            validating: 'glyphicon glyphicon-refresh'
+		        }, 
+			  fields:{
+				  zf_pass:{
+					  validators:{
+						  callback:{
+							  message:'支付密码必填,不能少于6位',
+							  callback:function(value,validator){
+								  if($("input[name='agree']:checked").val() == 1)
+								  {
+									  var newValue = value.replace(/[^\x00-\xff]/g, "**");
+									  if(newValue.length < 6)
+									  {
+											 return false;
+									   }
+								  }
+								  return true;
+							  }
+						  }
+						  
+					  }
+				  },
+				 
+				   refuse_reason:{
+					   validators:{
+							  callback:{
+								  message:'拒绝原因必填,不能少于5个字',
+								  callback:function(value,validator){
+									  
+									 
+									  if($("input[name='agree']:checked").val() == 2)
+									  {
+										  
+										  var newValue1 = value.replace(/[^\x00-\xff]/g, "**");
+										  if(newValue1.length < 6)
+										  {
+												 return false;
+										  }
+									  } 
+									  return true;
+								  }
+							  }
+							  
+						  }
+				   }
+				 
+			  }
+		  });
+		
+	    $("#cancelbtn").on('click',function(){
+	    	window.parent.js_success(0);
+	    });
+		
+	    $("input[name='agree']").click(function(){
+	    	if($(this).val() == 1)
+	    	{
+	    		$("#show_zifumima").show();
+	    		$("#reapply_refund").hide();
+	    		$('#refuse_reason').hide();
+	    	}
+	    	if($(this).val() == 2)
+	    	{
+	    		$("#show_zifumima").hide();
+	    		$("#reapply_refund").show();
+	    		$("#refuse_reason").show();
+	    	}
+	    });
+		$("#arrived_do").on('click',function(){
+
+			$.post("index.php?module=behalf&act=arrived",{refund_id: {$refund.id} },function(data){
+
+				if(data.code==0){
+
+					$("#arrived").modal('hide');
+					$("#btn-arrived").after("<font color='green'>已收到</font>");
+					$("#btn-arrived").remove();
+				}
+			},'json')
+		});
+
+		var pf = {};
+		$(".project-pf input").on('click  load', function (e) {
+			var self = $(this);
+			var checkboxs = self.closest('.project-pf').find('.checkboxs');
+			var current_price = 0;
+			var checks = [];
+			checkboxs.each(function(){
+				if($(this).prop( "checked" )){
+					current_price += parseInt($(this).data('price'));
+					checks.push($(this).val());
+				}
+			});
+			self.closest('.project-pf').find('.project_checks').val(checks.join(','));
+			var input_goodsprice = self.closest('.project-pf').next().find('.goodsprice');
+			input_goodsprice.val(current_price);
+
+			$('.totalprice').trigger('load1');
+		});
+
+		$(".shipped-fee .shipped").on('click load', function (e) {
+			var self = $(this);
+			var checkboxs = self.closest('.shipped-fee').find('.shipped');
+			var current_price = 0;
+			checkboxs.each(function(){
+				if($(this).prop( "checked" )){
+					current_price += parseInt($(this).data('price'));
+				}
+			});
+
+			$('.totalprice').trigger('load1');
+
+		});
+
+		$('.goodsprice').on('change',function(){
+			var goodsprices = $('.goodsprice');
+			var total_price = 0;
+			goodsprices.each(function(){
+				total_price += parseInt($(this).val());
+			});
+
+
+			$('.totalprice').val(total_price);
+
+		});
+
+		$('#shipping_fee').on('click',function(){
+			var price = $(this).data('price');
+			$('.shipping_fee').val(price);
+		});
+
+		$('#back_shipping_fee').on('click change',function(){
+			var price = $(this).data('price');
+			$('.back_shipping_fee').val(price);
+		});
+
+		$('.createtext').on('click' ,function(){
+			createText($(this));
+		});
+
+		$('.totalprice').on('load1' ,function(){
+			var total_price = 0;
+			var goodsprices = $('.goodsprice');
+			//商品费用
+			goodsprices.each(function(){
+				total_price += parseInt($(this).val());
+			});
+			//快递费用
+			var shippedprices = $('.shipped');
+			shippedprices.each(function(){
+				if($(this).prop('checked')){
+					total_price += parseInt($(this).data('price'));
+				}
+			});
+
+			$(this).val(total_price);
+
+		});
+
+		createText = function(node){
+			var element_text = $('<input class="setNodePriceInput form-control" style="display:inline-block;width:100px;" onchange="setNodePrice(this)" />');
+			element_text.val($(node).data('price'));
+			if(node.prop('checked')){
+				$(node).parent().append(element_text);
+				$($(node).closest('li')).on('change',element_text,function(){
+					$(node).data($(this).val());
+				});
+			}else{
+				node.parent().find('.setNodePriceInput').remove();
+			}
+
+		};
+
+		setNodePrice = function(node){
+
+			$(node).closest('li').find('.createtext').data('price' ,$(node).val());
+
+			$(".project-pf input").trigger('load');
+			$(".shipped-fee input").trigger('load');
+
+			$('.totalprice').trigger('load1');
+			$("#back_shipping_fee").trigger('change');
+
+		}
+
+		$(".project-pf input").trigger('load');
+
+	});
+
+
+</script>
+
+<div class="container-fluid">
+	<form id="form" class="form-horizontal" action="index.php?module=behalf&act=applied_refund&order_id={$order.order_id}" method="post">
+		<!-- 申请人 -->
+		<div class="form-group">
+			<label class="col-xs-2 text-right control-label">{$lang.refund_name}</label>
+			<div class="col-xs-9">
+				{$order.buyer_name}
+			</div>
+		</div>
+		<!-- 申请金额 -->
+		<div class="form-group">
+			<label class="col-xs-2 text-right control-label">{$lang.refund_amount}</label>
+			<div class="col-xs-9">
+				{$refund.apply_amount|price}
+			</div>
+		</div>
+		<!-- 退货原因 -->
+		<div class="form-group">
+			<label class="col-xs-2 text-right control-label">{$lang.refund_reason}</label>
+			<div class="col-xs-9">
+				{$refund.refund_reason|escape}
+			</div>
+	     </div>
+	     <!-- 物流信息 -->
+	    <!--{if $refund.invoice_no}-->
+		<div class="form-group">
+			<label class="col-xs-2 text-right control-label">{$lang.see_logistics_info}</label>
+			<div class="col-xs-9">
+				{$lang.invoice}:{$refund.invoice_no|escape} <a href="http://www.kuaidi100.com/chaxun?com={$refund.dl_code|escape}&nu={$refund.invoice_no|escape}"  class="btn btn-info btn-xs"  target="_blank;">{$lang.see_logistics}</a>
+				<span><!--{if $refund.dl_status}--><font color="green">已收到</font><!--{else}--><button class="btn btn-success btn-xs"  data-toggle="modal" data-target="#arrived" id="btn-arrived" type="button"  >确定收到</button><!--{/if}--></span>
+			</div>
+	     </div>
+		 <!--{/if}-->
+		 <div class="form-group">
+			<label class="col-xs-2 text-right control-label">{$lang.refund_intro}</label>
+			<div class="col-xs-9">
+				<ul class="col-xs-12">
+				<!--{foreach from=$refund_goods item=refund}-->
+
+					<li class="col-xs-12 text-left">{$refund.goods_name} &nbsp;{$refund.goods_price}   </li>
+					<!--{if $refund.project != 1}-->
+					<input type="hidden"  name="goods_ids[]" value="{$refund.id}"/>
+					
+					<li class="project-pf">
+
+						<input type="hidden" name="project_checks[]" class="project_checks" />
+						<p>
+							<input type="checkbox"   class="checkboxs" value="1" data-price="{$refund.goods_price}" checked/>
+							<label for="">商品金额</label>
+							<input type="checkbox"    class="checkboxs"  value="2"  data-price="{$refund.behalf_fee}" checked/>
+							<label for="">拿货服务费</label>
+						</p>
+						<p>
+							<input type="checkbox"    class="checkboxs createtext"  value="3"   data-price="0"/>
+							<label for="">质检补偿</label>
+						</p>
+						
+					</li>
+					<li>
+						<label for="">退款金额/每件：</label>
+						<input type="text" name="goods_price[]" class="form-control goodsprice" value="0"  disabled="true"/>
+					</li>
+					<!--{/if}-->
+				<!--{/foreach}-->
+
+
+				</ul>
+				<ul class="col-xs-12 shipped-fee">
+					<li>
+						<input type="hidden" name="shipping_fee" class="shipping_fee" >
+						<input type="hidden" name="back_shipping_fee" class="back_shipping_fee" >
+						<p>
+							<input type="checkbox"  id="shipping_fee" class="shipped"  data-price="{$shipping_fee}"/>
+							<label for="">寄出运费</label>
+							<input type="checkbox"  id="back_shipping_fee" class="shipped createtext" data-price="0" />
+							<label for="">寄回运费</label>
+						</p>
+						<p>
+							<label for="">合计:</label>
+							<input type="text" name="totalprice" class="totalprice form-control"  style="display:inline-block;width:100px;" value="0"/>
+						</p>
+					
+					</li>
+				</ul>
+			</div>
+	     </div>
+		 <div class="form-group" id="show_zifumima">
+			<label class="col-xs-2 text-right control-label">{$lang.zifumima}</label>
+			<div class="col-xs-9">
+				<input type="password" name="zf_pass" class="form-control"/>
+			</div>
+	     </div>
+	     <!--{if $show_refund}-->
+		 <div class="form-group" id="reapply_refund" style="display:none;">
+			<label class="col-xs-2 text-right control-label"></label>
+			<div class="col-xs-9">
+				<div class="checkbox">
+					<input type="checkbox" name="reapplay_refund"> {$lang.reapply_refund}
+				</div>
+			</div>
+	     </div>
+	     <!--{/if}-->
+	     <div class="form-group" id="refuse_reason" style="display:none;">
+			<label class="col-xs-2 text-right control-label">{$lang.refuse_reason}</label>
+			<div class="col-xs-9">
+				<textarea name="refuse_reason" class="form-control"></textarea>
+			</div>
+	     </div>
+	     <div class="form-group">
+			<label class="col-xs-2 text-right control-label"></label>
+			<div class="col-xs-9">
+				<label for="agree" style="cursor:pointer">
+					<input type="radio" id="agree" name="agree" value="1" checked>{$lang.agree}
+				</label>
+				<label for="disagree" style="cursor:pointer">
+					<input type="radio" id="disagree" name="agree" value="2" >{$lang.disagree}
+				</label>
+					
+				
+			</div>
+	     </div>
+		 <div class="form-group">
+			<label class="col-xs-2 text-right control-label"></label>
+			<div class="col-xs-9">
+				<button class="btn btn-primary" id="savebtn" type="submit">保 存</button>
+				<button class="btn btn-success" id="cancelbtn">取 消</button>
+			</div>
+	     </div>
+	</form>
+
+
+
+</div>
+
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="arrived" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="myModalLabel">快递录入确认</h4>
+			</div>
+			<div class="modal-body">确定已经收到了该快递吗？</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+				<button type="button" class="btn btn-primary" id="arrived_do" >确定收到</button>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
+
+
+
+
+
+
+
+
+
+
+
+{include file=footer.whole.html}

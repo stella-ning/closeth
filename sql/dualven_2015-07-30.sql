@@ -1,0 +1,1 @@
+alter table ecm_my_moneylog add column  `moneyleft` decimal(10,2) DEFAULT '0.00'

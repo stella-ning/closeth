@@ -1,0 +1,385 @@
+{include file=header.whole.html}
+<script type="text/javascript">
+//
+//Pipelining function for DataTables. To be used to the `ajax` option of DataTables
+//
+$.fn.dataTable.pipeline = function ( opts ) {
+// Configuration options
+var conf = $.extend( {
+   pages: 5,     // number of pages to cache
+   url: '',      // script url
+   data: null,   // function or object with parameters to send to the server
+                 // matching how `ajax.data` works in DataTables
+   method: 'GET' // Ajax HTTP method
+}, opts );
+
+// Private variables for storing the cache
+var cacheLower = -1;
+var cacheUpper = null;
+var cacheLastRequest = null;
+var cacheLastJson = null;
+
+return function ( request, drawCallback, settings ) {
+   var ajax          = false;
+   var requestStart  = request.start;
+   var drawStart     = request.start;
+   var requestLength = request.length;
+   var requestEnd    = requestStart + requestLength;
+    
+   if ( settings.clearCache ) {
+       // API requested that the cache be cleared
+       ajax = true;
+       settings.clearCache = false;
+   }
+   else if ( cacheLower < 0 || requestStart < cacheLower || requestEnd > cacheUpper ) {
+       // outside cached data - need to make a request
+       ajax = true;
+   }
+   else if ( JSON.stringify( request.order )   !== JSON.stringify( cacheLastRequest.order ) ||
+             JSON.stringify( request.columns ) !== JSON.stringify( cacheLastRequest.columns ) ||
+             JSON.stringify( request.search )  !== JSON.stringify( cacheLastRequest.search )
+   ) {
+       // properties changed (ordering, columns, searching)
+       ajax = true;
+   }
+    
+   // Store the request for checking next time around
+   cacheLastRequest = $.extend( true, {}, request );
+
+   if ( ajax ) {
+       // Need data from the server
+       if ( requestStart < cacheLower ) {
+           requestStart = requestStart - (requestLength*(conf.pages-1));
+
+           if ( requestStart < 0 ) {
+               requestStart = 0;
+           }
+       }
+        
+       cacheLower = requestStart;
+       cacheUpper = requestStart + (requestLength * conf.pages);
+
+       request.start = requestStart;
+       request.length = requestLength*conf.pages;
+
+       // Provide the same `data` options as DataTables.
+       if ( $.isFunction ( conf.data ) ) {
+           // As a function it is executed with the data object as an arg
+           // for manipulation. If an object is returned, it is used as the
+           // data object to submit
+           var d = conf.data( request );
+           if ( d ) {
+               $.extend( request, d );
+           }
+       }
+       else if ( $.isPlainObject( conf.data ) ) {
+           // As an object, the data given extends the default
+           $.extend( request, conf.data );
+       }
+
+       settings.jqXHR = $.ajax( {
+           "type":     conf.method,
+           "url":      conf.url,
+           "data":     request,
+           "dataType": "json",
+           "cache":    false,
+           "success":  function ( json ) {
+               cacheLastJson = $.extend(true, {}, json);
+
+               if ( cacheLower != drawStart ) {
+                   json.data.splice( 0, drawStart-cacheLower );
+               }
+               json.data.splice( requestLength, json.data.length );
+                
+               drawCallback( json );
+           }
+       } );
+   }
+   else {
+       json = $.extend( true, {}, cacheLastJson );
+       json.draw = request.draw; // Update the echo for each response
+       json.data.splice( 0, requestStart-cacheLower );
+       json.data.splice( requestLength, json.data.length );
+
+       drawCallback(json);
+   }
+}
+};
+
+//Register an API method that will empty the pipelined data, forcing an Ajax
+//fetch on the next draw (i.e. `table.clearPipeline().draw()`)
+$.fn.dataTable.Api.register( 'clearPipeline()', function () {
+return this.iterator( 'table', function ( settings ) {
+   settings.clearCache = true;
+} );
+} );
+
+
+
+
+$(function(){
+	
+	
+	
+	var dt = $("#nhd_list_table").DataTable({
+			"ordering":false,
+		    "paging":true,
+		    "info":true,
+		    "searching":false,
+		    "processing": true,
+	        "serverSide": true,
+	        "columns": [
+	                    { "data": "id"},
+	                    { "data": "id" },
+	                    { "data": "createtime" },
+	                    { "data": "goods_count" },
+	                    { "data": "goods_amount" },
+	                    { "data": "store_bargin" },
+	                    { "data": "mk_names" },
+	                    { "data": "goods_details" },
+	                    { "data": "id" }
+	                ],
+		         
+		     "ajax": $.fn.dataTable.pipeline( {
+		            url: "index.php?app=behalfDataTables&act=get_pipe_goods_taker_inventory",
+		            pages: 2 // number of pages to cache
+		        } ),
+		     //dom:"<Blftp>",
+		     //"dom":"<'container-fluid' <'row' <'col-xs-2' l><'col-xs-7' B><'col-cs-3' f> > <t> <'row' <'col-xs-4' i><'col-xs-8 text-right' p>  >  >",
+		     /* "buttons":[
+		       {
+		    	   text:'多单统计',
+		    	   className:'btn btn-primary btn-xs',
+		    	   action:function(e,dt,node,config){
+							//tag_printer(dt.data());
+					   
+					   stat_nhd(dt.data());
+		    	   }
+		       }
+		     ], */
+		     "columnDefs":[
+		    		       {
+		                 	  "render": function(data, type, row) {
+		                           return '<input value="'+data+'" type="checkbox"/>';
+		                       },
+		                       "targets": [1]
+		                   },
+		    		       {
+		                 	  "render": function(data, type, row) {
+		                           return '&yen;'+data;
+		                       },
+		                       "targets": [4]
+		                   },
+		    		       {
+		                 	  "render": function(data, type, row) {
+		                           return '&yen;'+data;
+		                       },
+		                       "targets": [5]
+		                   },
+		    		       {
+		                 	  "render": function(data, type, row) {
+		                 		 return "<small>"+data+"</small><br>"
+		     		  			 +"<small class='text-muted'>"+ row.search_time +"</small><br>"
+		     		  			 + "<small class='text-muted'>"+ row.search_delivery+"</small>";
+		                       },
+		                       "targets": [6]
+		                   },
+		    		       {
+		                 	  "render": function(data, type, row) {
+		                 		var html = '<small class="text-muted">'
+		 		  				+'已备货（数量：<b class="text-success">'+ data.ready.count+'</b>，'
+		 		  				+'<b class="text-success">&yen;'+data.ready.amount+'</b>，'
+		 		  				+'应优惠：<b class="text-success">&yen;'+data.ready.discount+'</b>）<br>'
+		 		  				+'缺&nbsp;&nbsp;&nbsp;货（数量：<b class="text-danger">'+data.lack.count+'</b>，'
+		 		  				+'<b class="text-danger">&yen;'+data.lack.amount+'</b>，'
+		 		  				+'应优惠：<b class="text-danger">&yen;'+data.lack.discount+'</b>）<br>'
+		 		  				+'未入库（数量：<b class="text-info">'+data.outhouse.count+'</b>，'
+		 		  				+'<b class="text-info">&yen;'+data.outhouse.amount+'</b>，'
+		 		  				+'应优惠：<b class="text-info">&yen;'+data.outhouse.discount+'</b>）<br>'
+		 		  				+'已退货（数量：<b class="text-warning">'+data.reback.count+'</b>，'
+		 		  				+'<b class="text-warning">&yen;'+data.reback.amount+'</b>，'
+		 		  				+'应优惠：<b class="text-warning">&yen;'+data.reback.discount+'</b>）</small>';
+		 		  				return html;
+		                       },
+		                       "targets": [7]
+		                   },
+		                   {
+			                 	  "render": function(data, type, row) {
+			                 		 var html = '<form method="post" action="index.php?module=behalf&act=get_nhd_goods">'
+			                 			+'<input type="hidden" name="id" value="'+ data +'">'
+			                 			+'<input class="btn btn-default btn-sm" type="submit"  value="商品详情">'
+			                 			+'</form>';
+			                 		 return html;
+			                       },
+			                       "targets": [8]
+			                   },
+		    		     ],		
+			"language":{
+				"url":"{lib file='/DataTables/zn.json'}",
+				/* "buttons":{
+					"copy":"复制表格",
+					"excel":"导出为EXCEL",
+					"print":"打印表格",
+					"colvis":"隐藏/显示列"
+				} */
+			},
+			"pagingType":'full_numbers'
+		});
+		
+	/*  dt.on('order.dt search.dt',
+			    function() {
+			        dt.column(0, {
+			            search: 'applied',
+			            order: 'applied'
+			        }).nodes().each(function(cell, i) {
+			            cell.innerHTML = i + 1;
+			        });
+			    }).draw();  */
+	 
+	 /* jQuery("#checkall").on('ifChecked ifUnchecked',function(){			 
+		 var checkall = this.checked ? 'check':'uncheck';
+		 jQuery("input[name='nhd_ids[]']").iCheck(checkall);		
+	 }); */
+	 
+	 jQuery("#checkall").on('ifClicked',function(event){
+		 //console.log(event);
+		 var checkall = event.target.checked ? 'uncheck':'check';
+		 jQuery("input[name='nhd_ids[]']").iCheck(checkall);
+	 });
+	 jQuery("input[name='nhd_ids[]']").on('ifUnchecked',function(){
+		jQuery('#checkall').iCheck('uncheck'); 
+	 });
+	 
+	 
+		
+});
+
+/* function stat_nhd(rows)
+{
+	var nhd_ids = new Array();	
+	$("input[name='nhd_ids[]']").each(function(i){
+		if(this.checked) nhd_ids.push(this.value);
+	});
+	if(nhd_ids.length == 0)
+	{
+		bootbox.alert('请选择任一或多个拿货单');
+		return false;
+	}
+	$.getJSON("index.php?module=behalf&act=stat_nhd&ids=" +  encodeURIComponent(nhd_ids.join()),function(result){
+		if(result.done)
+	    {
+			var data = result.retval;
+			var resultHtml ="<p>共有商品 <b class='text-danger'>"+data.total+"</b> 件。其中：</p>"+
+				"<p>已备货（数量：<b class='text-success'>"+ data.details.ready.count +"</b>，<b class='text-success'>&yen;"+ data.details.ready.amount +"</b>，应优惠：<b class='text-success'>"+data.details.ready.discount+"</b>）</p>"+
+				"<p>&nbsp;&nbsp;&nbsp;缺货（数量：<b class='text-danger'>"+ data.details.lack.count +"</b>，<b class='text-danger'>&yen;"+ data.details.lack.amount +"</b>，应优惠：<b class='text-danger'>"+data.details.lack.discount+"</b>）</p>"+
+				"<p>未入库（数量：<b class='text-info'>"+ data.details.outhouse.count +"</b>，<b class='text-info'>&yen;"+ data.details.outhouse.amount +"</b>，应优惠：<b class='text-info'>"+data.details.outhouse.discount+"</b>）</p>"+
+				"<p>已退货（数量：<b class='text-warning'>"+ data.details.reback.count +"</b>，<b class='text-warning'>&yen;"+ data.details.reback.amount +"</b>，应优惠：<b class='text-warning'>"+data.details.reback.discount+"</b>）</p>";
+			$('#modal-nhd .modal-body').html(resultHtml);
+			$('#modal-nhd').modal('show');
+	    }
+	});
+	//console.log(nhd_ids);
+		
+}
+ */
+
+
+</script>
+<div class="container-fluid">
+    <div class="lead">
+				<h4 class="blue09c">拿货单列表</h4>
+	</div>
+	<div class="alert alert-warning">
+		关于<span class="text-danger">拿货单详情</span>中已备货、缺货、未入库等3中状态其商品状态说明。已备货（已备货、已发货、已退货），缺货（明天、未出货、已下架），未入库（备货中）<br>
+		<small class="text-muted">另，拿货单来源。当您生成拿货单后，点击“标签打印”时，系统自动保存拿货单，<b>拿货单名称</b> 就您开始打印的时间。其他情况不会自动保存拿货单。</small>
+	</div>
+	  
+	  <div class="panel panel-default">
+		<div class="panel-body">	
+			
+		</div>
+		<div class="container-fluid">
+			<table id="nhd_list_table" class="table table-condensed table-striped table-bordered table-hover" width="100%">
+		  	<thead>
+		  		<tr>
+		  		    <th class="text-center" width="">NO</th>
+		  		    <th class="text-center"><input type="checkbox" id="checkall"/></th>
+		  			<th class="text-center ">拿货单名称</th>
+		  			<th class="text-center ">商品数量</th>
+		  			<th class="text-center "><small class="text-muted">不含优惠</small><br>商品金额</th>
+		  			<th class="text-center ">档口优惠</th>
+		  			<th class="text-center">拿货单条件</th>
+		  			<th class="text-center ">拿货单详情</th>
+		  			<th class="text-center ">操作</th>
+		  		</tr>
+		  	</thead>
+		  	
+		  </table>
+	     </div>
+	  </div>
+	 
+	  
+	  <!-- <div id="modal-nhd" class="modal fade">
+	  	<div class="modal-dialog">
+	  		<div class="modal-content">
+	  		   <form method="post" id="form-nhd" action="index.php?module=behalf&act=save_nhd">
+	  			<div class="modal-header">
+       	 			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        			<h4 class="modal-title">拿货单信息</h4>
+      			</div>
+      			<div class="modal-body">
+        			<div class="container-fluid">
+        				
+        					<div class="form-group">
+        						<label class="control-label col-xs-12">拿货单名称</label>
+        						<div class="col-xs-12">
+        							<input type="text" name="nhd_name" class="form-control">
+        					    </div>
+        					</div>
+        					<div class="form-group">
+        						<label class="col-xs-12">拿货员</label>
+        						<div class="col-xs-12">
+	        						<select class="form-control" name="nhd_taker">
+	        							{foreach from=$takers item=tak}
+	        							<option value="{$tak.user_id}">{$tak.user_name} | {$tak.real_name}</option>
+	        							{/foreach}
+	        						</select>
+	        					</div>
+        					</div>
+        					<input type="hidden" name="goods_count" value="{$total_count}">
+        					<input type="hidden" name="goods_amount" value="{$total_amount}">
+        					<input type="hidden" name="store_bargin" value="{$store_bargin}">
+        					<input type="hidden" name="behalf" value="{$bh_id}">
+        					<input type="hidden" name="market_id" value="{$mkids}">
+        					<input type="hidden" name="market_name" value="{$mknames}">
+        					<input type="hidden" name="content" value="{$content}">
+        				
+        			</div>
+      			</div>
+      			<div class="modal-footer">
+      				<button type="submit" class="btn btn-primary" id="savebtn-nhd">保 存</button>
+        			<button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+     			</div>
+     			</form>
+	  		</div>
+	  	</div>
+	  </div> -->
+</div>
+
+<div id="modal-nhd" class="modal fade">
+	  	<div class="modal-dialog">
+	  		<div class="modal-content">	  		   
+	  			<div class="modal-header">
+       	 			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        			<h4 class="modal-title">统计信息</h4>
+      			</div>
+      			<div class="modal-body">
+        			
+      			</div>
+      			<div class="modal-footer">
+        			<button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+     			</div>     			
+	  		</div>
+	  	</div>
+	  </div>
+{include file=footer.whole.html}

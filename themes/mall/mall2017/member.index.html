@@ -1,0 +1,198 @@
+{include file=member.header.html}
+<div class="w user-w">
+    {include file='member.menu.html'}
+    <div class="user-main">
+        <div class="main-wrap">
+            <div class="home-main">
+                <div class="h-userinfo clearfix">
+                    <!--<div class="h-userbar clearfix">-->
+                       <!---->
+                        <!--<div class="h-my-stuffs fr">-->
+                            <!--<ul>-->
+                                <!--<li>-->
+                                    <!--<a href="{url app=message&act=newpm}" class="i-trigger">消息中心 <em class="red messageUnRead"></em></a>-->
+                                <!--</li>-->
+                               <!--&lt;!&ndash; <li class="interval"></li>-->
+                                <!--<li>-->
+                                    <!--<a href="" class="i-trigger">账户设置</a>-->
+                                <!--</li>&ndash;&gt;-->
+                            <!--</ul>-->
+                            <!--<div class="clear"></div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <div class="h-box h-account fl">
+                        <div class="h-box-title">
+                            账户余额
+                        </div>
+                        <div class="h-box-content clearfix">
+                            <div class="h-account-info mt10 fl">
+                                <span class="yuan">¥</span>
+                                <em id="userMoney">{$money}</em>
+                            </div>
+                            <a href="{url app=my_money&act=txlist}" class="btn btn-red btn-small fr mt10">提现</a>
+                        </div>
+                    </div>
+                    <div class="h-box h-my-counts fr">
+                        <ul>
+                            <li>
+                                <a target="_blank" href="{url app=buyer_order&type=pending}"><span>待付款</span></a>
+                            </li>
+                            <li class="brn">
+                                <a target="_blank" href="{url app=buyer_order&type=accepted}"><span>拿货中<em></em></span></a>
+                            </li>
+                            <li class="bbn">
+                                <a target="_blank" href="{url app=buyer_order&type=shipped}"><span>配送中</span></a>
+                            </li>
+                            <li class="brn bbn">
+                                <a target="_blank" href="{url app=buyer_order&type=refund}"><span>退货记录<em></em></span></a>
+                            </li>
+                        </ul>
+                        <div class="clear"></div>
+                    </div>
+                </div>
+                <div class="h-box h-order clearfix">
+                    <div class="h-box-title">
+                        <a href="{url app=buyer_order}" class="h-box-more">查看全部订单 <i class="vvicon"></i></a>
+                        我的订单
+                    </div>
+                   
+                        <div class="h-box-content">
+                            <div class="h-order">
+                                <div id="order-content">
+
+
+                                    <!-- <a href="/user/orders_detail.html?order_id=2303673528561434637" target="_blank"> -->
+                                    <dl class="h-order-list first">
+                                        <dt class="h-order-info">
+                                        <div class="h-info-status">
+
+                                            <a href="{url app=cashier&order_id=$orderL.order_id}" target="_blank" class="btn btn-primary pay-btn j-pay">立即支付</a>
+
+                                        </div>
+                                        <span class="h-info-no">订单号：<em>{$orderL.order_sn}</em></span>
+                                        <span class="h-info-date">下单时间：<em>{$orderL.add_time|date:Y-m-d H:i:s}</em></span>
+                                        </dt>
+                                        <dd class="h-order-detail">
+                                            <ul>
+
+
+                                                <li skucolor="黑色" skuprice="34" skusize="均码" deliverystatus="0" refundstatus="">
+                                                    <a href="{url app=goods&id=$orderL.goods_id}" title="{$orderL.goods_name}" target="_blank">
+                                                        <img src="{$orderL.goods_image}">
+                                                    </a>
+                                                </li>
+
+
+                                            </ul>
+                                        </dd>
+                                    </dl>
+                                    <!-- </a> -->
+
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="h-header mt10 clearfix">
+                    <h2 class="h-header-title">我的收藏</h2>
+                    <a href="{url app=my_favorite}" class="h-header-more">查看更多 <i class="vvicon"></i></a>
+                </div>
+                <div class="h-favlist fav-main">
+                    <div id="fav-content">
+                        <div class="goods-list small-list clearfix" style="width:990px;">
+                            <ul class="clearfix goods-content">
+
+                            </ul>
+                        </div>
+                        <div class="h-favlist fav-main">
+                            <div id="fav-content">
+                                <div class="goods-list small-list clearfix" style="width:990px;">
+                                    <ul class="clearfix goods-content">
+										<!--{foreach from=$collect_goods item=goods k=k}-->
+                                        <li>
+                                            <div class="item">
+                                                <div class="pic">
+                                                    <a target="_blank" class="showed" vda="tp|itemcard||0|0|1" href="{url app=goods&id=$goods.goods_id}">
+                                                        <img class="" src="{$goods.default_image}" style="display: inline;">
+                                                    </a>
+
+                                                   <!-- <div class="ctrl clearfix">
+                                                        <div class="line"></div>
+                                                        <span class="j-addcart" vda="gwc|itemcard|5130696|0|0|1" data-id="5130696">加入购物车</span>
+
+                                                        <span class="j-upload upload" data-id="552807983940" data-vid="5130696" data-price="18.00" vda="yjsc|itemcard|5130696|0|0|1">一键上传
+                                    </span>
+                                                    </div>-->
+                                                </div>
+                                                <div class="desc" style="background:url();">
+                                                    <div class="info clearfix">
+                                                        <span class="fr up_time">{$goods.add_time|date:m月d日}收藏</span>
+
+                                                        <div class="price">
+                                                            <span class="yuan"></span>{$goods.price|price}
+                                                        </div>
+
+                                                        <!--<i class="fl ico_item_active_0 ico_item_active"></i></div>-->
+                                                        <div class="title">
+                                                            <a target="_blank" href="{url app=goods&id=$goods.goods_id}" vda="spbt|itemcard|5130696|0|0|1">
+                                                                {$goods.goods_name}
+                                                            </a>
+                                                        </div>
+                                                        <div class="clearfix shop-name-box">
+                                                            <div class="fr num j_clip_button">
+                                                               
+                                                            </div>
+                                                            <a target="_blank" class="shop-name" href="javascript:void(0)" title="{$goods.mk_name}" vda="dkmc|itemcard|0|24157|0|1">
+                                                                <span class="inner">{$goods.mk_name}</span>
+                                                            </a>
+                                                        </div>
+
+                                                        <div class="foot clearfix">
+                                                            <div class="fl pos tb">
+                                                                <a target="_blank" class="vam" href="{url app=shop&id=$goods.store_id}" title="{$goods.store_name|escape}" vda="dkmc|itemcard|0|24157|0|1">{$goods.store_name|escape}
+                                                                </a>
+                                                               
+                                                                    {imww touid=$goods.im_ww|escape:url&charset=$charset}
+                                                                
+
+                                                                <div class="triangle triangle-up1"></div>
+                                                                <div class="triangle triangle-up2"></div>
+                                                            </div>
+                                                            <div class="service-icon fr">
+
+															{if $goods.serv_sendgoods ==1}
+																<div class="s-item df j-v-tip" data-tip="df"><i></i></div>
+															{/if}
+															{if $goods.serv_refund ==1}
+																<div class="s-item tx j-v-tip" data-tip="tx"><i></i></div>
+															{/if}
+															{if $goods.serv_realpic ==1}
+																<div class="s-item sp j-v-tip" data-tip="sp"><i></i></div>
+															{/if}
+      
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+										</li>
+										<!--{/foreach}-->
+                                    </ul>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="clear"></div>
+{include file=footer2017.html}

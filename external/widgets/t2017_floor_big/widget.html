@@ -1,0 +1,54 @@
+<!--{if !$widget_data.ads}-->
+<div class="padding10 center">请配置</div>
+<!--{else}-->
+<div id="item{$widget_data.floor_no}" class="module_1200 items">
+	<div class="floor_item">
+		<div class="title clearfix">
+			<img class="title-number" src="static/images/floor{$widget_data.floor_no}.png"> <span>{$widget_data.floor_name}</span>
+		</div>
+		<div class="floor_goods_odd">
+		<!--{foreach from=$widget_data.ads item=ad name=fee_ad}-->
+		<div class="floor_goods_item {if $smarty.foreach.fee_ad.iteration % 2 eq 0}fright{/if}">
+		
+			
+				<img src="data/system/empty.gif" class="DataLazyLoad" data-ks-lazyload="{$ad.store_image_url}" alt="">
+				<div class="floor_goods_info">
+					<div class="floor_goods_bg"></div>
+					<p class="floor_shop_name">{$ad.ad_sname}</p>
+					<p class="floor_shop_position">{$ad.ad_saddr}</p>
+				</div>
+				<div class="floor_goods_hover">
+					<div class="inner">
+						<div class="floor_goods_imgs">
+							<ul>
+							<!--{foreach from=$ad.goods_arr item=goods name=fee_goods}-->
+								<li><a href="{$goods.goods_link_url}" target="_blank" title="{$goods.ad_gname}" class="showed"> <img src="{$goods.ad_image_url}" alt="" style="display: block;">
+										<p class="floor_goods_bottom">
+											<span class="money-icon">¥</span> <span class="money">{$goods.ad_gprice|default:0|number_format:2}</span>
+										</p>
+								</a></li>
+							<!--{/foreach}-->					
+
+							</ul>
+						</div>
+						<div>
+							<a href="{$ad.store_link_url}" target="_blank" class="floor_goods_name fl">{$ad.ad_sname}</a> 
+							<a href="{$ad.store_link_url}" target="_blank" class="btn btn-default fr">进入档口</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--{/foreach}-->	
+			
+			
+		</div>
+	</div>
+</div>
+<script>
+	
+</script>
+<!--{/if}-->
+
+
+
+

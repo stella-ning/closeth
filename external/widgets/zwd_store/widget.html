@@ -1,0 +1,65 @@
+<link type="text/css" href="{res file=css/search.css}" rel="stylesheet"/>
+
+<div class="layer">
+    <div class="Wholesale_market">
+        <!--批发市场-->
+        <?php if( OEM != 'nc' ){  ?>
+        <span class="market_left">
+            <div class="market_a">
+                <div class="market_name">市场导航</div>
+                <!--{if $markets}-->
+                <ul>
+					<!--{foreach from=$markets item=market name=fe_market}-->
+					<li><a href="/?app=search&act=store&mkid={$market.mk_id}"
+                           class="{if $smarty.get.mkid eq $market.mk_id }u_choice_select{/if}"
+                           title="{$market.mk_name|escape}" ectype="market" id="{$market.mk_id}">{$market.mk_name|escape}</a></li>
+                    <!--{/foreach}-->
+                </ul>
+                <!--{/if}-->
+            </div>
+            <!--楼层-->
+            <!--{if $smarty.get.mkid}-->
+            <div class="market_b">
+                <div class="market_name">楼层</div>
+                <ul class="nav-to-floor">
+					<!--{foreach from=$stores item=navstore}-->
+                    <li><a href="{$url}#{$navstore.mk_name}" data-scroll-nav="{$navstore.mkid}" title="{$navstore.mk_name}">{$navstore.mk_name}</a></li>
+                    <!--{/foreach}-->
+                </ul>
+            </div>
+            <!--{/if}-->
+        </span>
+        <?php }  ?>
+
+        <!--楼层店名-->
+        <div class="market_right" style="z-index: 0;">
+            <!--market start-->
+
+            <!--档口列表s-->
+            <!--{foreach from=$stores item=mstore}-->
+            <dl id="floor_{$mstore.mkid}" data-scroll-index="{$mstore.mkid}">
+                <!--{if $mstore.mk_name}-->
+                <dt class="market_header" id='{$mstore.mk_name}' >{$mstore.mk_name}</dt>
+                <!--{/if}-->
+                <dd>
+                    <ul>
+                        <!--{foreach from=$mstore.stores item=store name=fe_store}-->
+                        <li class="mous">
+                            <a href="{url app=shop&id=$store.store_id}" id="store_{$store.store_id}"
+                               class="show-pop-async" data-placement="auto"
+                               data-sinfo="{$store.store_id}" target="_blank">{$store.dangkou_address|escape}
+                                {$store.store_name|escape}</a>
+                        </li>
+                        <!--{/foreach}-->
+                    </ul>
+                </dd>
+            </dl>
+            <!-- {foreachelse} -->
+            <div class="store-empty padding10 mb10">{$lang.no_store}</div>
+            <!--{/foreach}-->
+            <!--档口列表e-->
+
+            <!--market end-->
+        </div>
+    </div>
+</div>

@@ -1,0 +1,1 @@
+ALTER TABLE ecm_my_moneylog ADD INDEX IDX_ORDER_ID (ORDER_ID);
